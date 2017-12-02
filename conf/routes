@@ -11,3 +11,22 @@ GET     /message                    controllers.AsyncController.message
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+
+# Rutas de recetas
+
+POST		/recipe					   controllers.RecipeController.createRecipe
+GET		/recipe/:name			   controllers.RecipeController.retrieveRecipe(name)
+PUT		/recipe/:name			   controllers.RecipeController.updateRecipe(name)
+DELETE	/recipe/:name			   controllers.RecipeController.deleteRecipe(name)
+
+GET 		/recipes					   controllers.RecipeController.retrieveRecipeCollection(page: Integer = 0)
+
+# Rutas de categorias
+
+POST		/category				   controllers.CategoryController.createCategory
+GET		/category/:name			   controllers.CategoryController.retrieveRecipesByCategory(name)
+PUT		/category/:name			   controllers.CategoryController.updateCategory(name)
+DELETE	/category:name			   controllers.CategoryController.deleteCategory(name)
+
+# Obtener las categorias de recetas
+GET 		/categories				   controllers.CategoryController.retrieveCategoryCollection(page: Integer = 0)
