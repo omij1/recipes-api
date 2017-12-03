@@ -2,6 +2,16 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
+#
+# User resource
+#
+
+POST        /user                   controllers.UserController.createUser
+GET         /user/:nick             controllers.UserController.retrieveUser(nick)
+PUT         /user/:nick             controllers.UserController.updateUser(nick)
+DELETE      /user/:nick             controllers.UserController.deleteUser(nick)
+GET         /users                  controllers.UserController.retrieveUserCollection(page: Integer = 0)
+
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index
 # An example controller showing how to use dependency injection
