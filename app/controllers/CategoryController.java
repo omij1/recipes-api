@@ -4,10 +4,16 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Results;
 
+/**
+ * Clase controladora de los métodos de acción del recurso category. 
+ * @author MIMO
+ *
+ */
+
 public class CategoryController extends Controller{
 	
 	/**
-	 * 
+	 * Método que permite crear una nueva categoría de recetas. Corresponde con un PUT.
 	 * @return Respuesta que indica si la categoría se creó correctamente o si hubo algún problema
 	 */
 	public Result createCategory() {
@@ -17,7 +23,7 @@ public class CategoryController extends Controller{
 	}
 	
 	/**
-	 * 
+	 * Método que permite visualizar todas las recetas pertenecientes a una categoría. Corresponde con un GET.
 	 * @param name Nombre de la categoría de recetas que se quiere visualizar
 	 * @return Devuelve las recetas pertenecientes a la categoría especificada o error
 	 */
@@ -28,7 +34,7 @@ public class CategoryController extends Controller{
 	}
 	
 	/**
-	 * 
+	 * Método que permite actualizar una categoría de recetas. Corresponde con un PUT.
 	 * @param name Nombre de la categoría de recetas que se desea actualizar
 	 * @return Respuesta indicativa del éxito o fracaso de la operación 
 	 */
@@ -38,7 +44,7 @@ public class CategoryController extends Controller{
 	}
 	
 	/**
-	 * 
+	 * Método que permite eliminar una categoría de recetas de la base de datos. Corresponde con un DELETE.
 	 * @param name Nombre de la categoría de recetas que se desea borrar
 	 * @return Respuesta indicativa del estado de la operación 
 	 */
@@ -48,7 +54,7 @@ public class CategoryController extends Controller{
 	}
 	
 	/**
-	 * 
+	 * Método que permite visualizar todas las categorías de recetas existentes. Corresponde con un GET.
 	 * @param page Página que se va a mostrar
 	 * @return Respuesta que muestra las categorías de recetas existentes o error 
 	 */
