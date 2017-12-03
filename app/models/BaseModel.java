@@ -1,6 +1,6 @@
 package models;
 
-import javax.persistence.Entity;
+import javax.persistence.MappedSuperclass;
 
 import io.ebean.Model;
 
@@ -10,7 +10,7 @@ import io.ebean.Model;
  *
  */
 
-@Entity
+@MappedSuperclass
 public class BaseModel extends Model{
 	
 	
