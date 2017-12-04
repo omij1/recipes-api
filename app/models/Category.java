@@ -3,6 +3,7 @@ package models;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import io.ebean.Ebean;
 import io.ebean.Finder;
 import io.ebean.Model;
 import play.data.validation.Constraints.Required;
@@ -15,6 +16,11 @@ import play.data.validation.Constraints.Required;
 
 @Entity
 public class Category extends Model{
+	
+	/**
+	 * Permite hacer búsquedas en las categorías de recetas
+	 */
+	public static final Finder<Long, Category> find = new Finder<>(Category.class);
 
 	/**
 	 * Identificador de la categoría de receta
@@ -28,20 +34,43 @@ public class Category extends Model{
 	@Required
 	String nombre_categoria;
 	
-	/**
-	 * Permite hacer búsquedas en las categorías de recetas
-	 */
-	public static final Finder<Long, Category> find = new Finder<>(Category.class);
-	
+
 	/**
 	 * Constructor de la clase Category
 	 * @param id_categoria Identificador de la categoría de recetas
 	 * @param nombre_categoria Nombre de la categoría de recetas
 	 */
-	public Category(Long id_categoria, @Required String nombre_categoria) {
+	public Category(@Required String nombre_categoria) {
+		
 		super();
-		this.id_categoria = id_categoria;
 		this.nombre_categoria = nombre_categoria;
+	}
+	
+	/**
+	 * 
+	 * @param nombreCategoria
+	 * @return
+	 */
+	public static Category buscarPorNombreCategoria(String nombreCategoria) {
+		
+		return find.query().where().isNotNull("nombre_categoria").eq("nombre_categoria", nombreCategoria).findOne();
+	}
+	
+	/**
+	 * Método que comprueba si una categoría está repetida
+	 * @return Verdadero si está repetida y falso en caso contrario
+	 */
+	public boolean comprobarCategoria() {
+		if(Category.buscarPorNombreCategoria(this.nombre_categoria) == null) {
+			
+			Ebean.beginTransaction();
+			this.save();
+			Ebean.commitTransaction();
+			Ebean.endTransaction();
+			return false;
+			
+		}
+		return true;
 	}
 
 	/**

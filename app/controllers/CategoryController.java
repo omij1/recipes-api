@@ -4,6 +4,13 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Results;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
+import models.Category;
+
 /**
  * Clase controladora de los métodos de acción del recurso category. 
  * @author MIMO
@@ -13,13 +20,34 @@ import play.mvc.Results;
 public class CategoryController extends Controller{
 	
 	/**
-	 * Método que permite crear una nueva categoría de recetas. Corresponde con un PUT.
+	 * Lista que contiene los datos de las categorías de las recetas
+	 */
+	private List<Category> categorias = new ArrayList<>();
+	
+	
+	/**
+	 * Método que permite crear una nueva categoría de recetas. Corresponde con un POST.
 	 * @return Respuesta que indica si la categoría se creó correctamente o si hubo algún problema
 	 */
 	public Result createCategory() {
 		//TODO solo puede crear una categoria el admin
-		//Hay que comprobar que se ha introducido la categoria que se desea crear y que no este repetida
-		return Results.ok();
+		JsonNode jn = request().body().asJson();
+		if(!request().hasBody() || jn == null) {
+			return Results.badRequest("Parámetros obligatorios");
+		}
+		
+		String nombreCategoria = jn.get("categoria").asText();
+		if(nombreCategoria == null || nombreCategoria == "") {
+			return Results.badRequest("La categoría introducida no puede estar vacía");
+		}
+		
+		Category categoria = new Category(nombreCategoria.toLowerCase());
+		if(!categoria.comprobarCategoria()) {
+			return Results.created("Categoría creada correctamente");
+		}
+		else {
+			return Results.status(409, "Categoría repetida");
+		}
 	}
 	
 	/**
