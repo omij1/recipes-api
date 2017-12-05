@@ -1,5 +1,6 @@
 package controllers;
 
+import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Results;
@@ -9,7 +10,9 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import io.ebean.PagedList;
 import models.Category;
+
 
 /**
  * Clase controladora de los métodos de acción del recurso category. 
@@ -36,13 +39,13 @@ public class CategoryController extends Controller{
 			return Results.badRequest("Parámetros obligatorios");
 		}
 		
-		String nombreCategoria = jn.get("categoria").asText();
-		if(nombreCategoria == null || nombreCategoria == "") {
-			return Results.badRequest("La categoría introducida no puede estar vacía");
+		String categoryName = jn.get("category").asText();
+		if(categoryName == null || categoryName == "") {
+			return Results.badRequest("La categoría introducida no tiene el formato correcto");
 		}
 		
-		Category categoria = new Category(nombreCategoria.toLowerCase());
-		if(!categoria.comprobarCategoria()) {
+		Category categoria = new Category(categoryName.toLowerCase());
+		if(!categoria.checkCategory()) {
 			return Results.created("Categoría creada correctamente");
 		}
 		else {
@@ -57,7 +60,7 @@ public class CategoryController extends Controller{
 	 */
 	public Result retrieveRecipesByCategory(String name) {
 		
-		//Comprobar si la categoria existe
+		
 		return ok();
 	}
 	
@@ -68,6 +71,7 @@ public class CategoryController extends Controller{
 	 */
 	public Result updateCategory(String name) {
 		//TODO solo el admin puede hacerlo
+		
 		return ok();
 	}
 	
@@ -77,7 +81,8 @@ public class CategoryController extends Controller{
 	 * @return Respuesta indicativa del estado de la operación 
 	 */
 	public Result deleteCategory(String name) {
-		//TODO solo el admin puede borrar una categoria
+		//TODO solo el admin puede borrar una categoria. 
+		
 		return ok();
 	}
 	
@@ -88,12 +93,15 @@ public class CategoryController extends Controller{
 	 */
 	public Result retrieveCategoryCollection(Integer page) {
 		
-		//Comprobaciones de salida
-		if(request().accepts("application/xml")) {
-			return ok();
+		PagedList<Category> list = Category.findPage(page);
+		List<Category> categories = list.getList();
+		Integer number = list.getTotalCount();
+
+		if(request().accepts("application/json")) {
+			return ok(Json.toJson(categories)).withHeader("X-Count", number.toString());
 		}
-		else if(request().accepts("application/json")) {
-			return ok();
+		else if(request().accepts("application/xml")) {
+			return ok(views.xml.categories.render(categories));
 		}
 		else {
 			return Results.status(415);//tipo de medio no soportado

@@ -3,9 +3,12 @@ package models;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import io.ebean.Ebean;
 import io.ebean.Finder;
 import io.ebean.Model;
+import io.ebean.PagedList;
 import play.data.validation.Constraints.Required;
 
 /**
@@ -26,6 +29,7 @@ public class Category extends Model{
 	 * Identificador de la categoría de receta
 	 */
 	@Id
+	@JsonIgnore
 	Long id_categoria;
 	
 	/**
@@ -51,17 +55,23 @@ public class Category extends Model{
 	 * @param nombreCategoria
 	 * @return
 	 */
-	public static Category buscarPorNombreCategoria(String nombreCategoria) {
+	public static Category findByCategoryName(String categoryName) {
 		
-		return find.query().where().isNotNull("nombre_categoria").eq("nombre_categoria", nombreCategoria).findOne();
+		return find.query().where().isNotNull("nombre_categoria").eq("nombre_categoria", categoryName).findOne();
+	}
+	
+	public static PagedList<Category> findPage(Integer page){
+		
+		return find.query().setMaxRows(10).setFirstRow(10*page).findPagedList();
 	}
 	
 	/**
 	 * Método que comprueba si una categoría está repetida
 	 * @return Verdadero si está repetida y falso en caso contrario
 	 */
-	public boolean comprobarCategoria() {
-		if(Category.buscarPorNombreCategoria(this.nombre_categoria) == null) {
+	public boolean checkCategory() {
+		
+		if(Category.findByCategoryName(this.nombre_categoria) == null) {
 			
 			Ebean.beginTransaction();
 			this.save();

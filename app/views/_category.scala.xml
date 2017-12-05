@@ -1,0 +1,4 @@
+@(category: Category)
+	<categoria>
+		<nombre>@category.getNombre_categoria()</nombre>
+	</categoria>
