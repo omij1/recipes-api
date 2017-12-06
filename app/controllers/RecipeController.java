@@ -1,7 +1,15 @@
 package controllers;
 
+import javax.inject.Inject;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
+import models.Recipe;
+import play.data.Form;
+import play.data.FormFactory;
 import play.mvc.Controller;
 import play.mvc.Result;
+import play.mvc.Results;
 
 /**
  * Clase controladora de los métodos de acción del recurso recipe.
@@ -10,6 +18,9 @@ import play.mvc.Result;
  */
 
 public class RecipeController extends Controller{
+	
+	@Inject
+	FormFactory formFactory;
 
 	/**
 	 * Método que permite crear una nueva receta. Corresponde con un POST
@@ -18,6 +29,13 @@ public class RecipeController extends Controller{
 	public Result createRecipe() {
 		
 		//Comprobar si la receta ya existe
+		Form<Recipe> f = formFactory.form(Recipe.class).bindFromRequest(); 
+		if(f.hasErrors()) {
+			return Results.status(409, f.errorsAsJson());
+		}
+		
+		Recipe r = f.get();
+		
 		return ok();
 	}
 	

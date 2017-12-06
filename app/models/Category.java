@@ -1,7 +1,12 @@
 package models;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -37,6 +42,13 @@ public class Category extends Model{
 	 */
 	@Required
 	String nombre_categoria;
+	
+	/**
+	 * Lista de recetas pertenecientes a una categoría
+	 */
+	@OneToMany(cascade=CascadeType.ALL,mappedBy="category")
+	private List<Recipe> relatedRecipes = new ArrayList<Recipe>();
+	
 	
 
 	/**
