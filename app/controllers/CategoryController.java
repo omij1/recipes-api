@@ -49,7 +49,7 @@ public class CategoryController extends Controller{
 			return Results.created("Categoría creada correctamente");
 		}
 		else {
-			return Results.status(409, "Categoría repetida");
+			return Results.status(409, "Categoría ya existente");
 		}
 	}
 	
@@ -100,9 +100,20 @@ public class CategoryController extends Controller{
 	 */
 	public Result deleteCategory(String name) {
 		//TODO solo el admin puede borrar una categoria. 
+		//TODO hacer borrado en cascada de las recetas
+		Category c = Category.findByCategoryName(name);
+		if(c == null) {
+			return Results.notFound("La categoría introducida no existe");
+		}
+		else {
+			if(c.delete()) {
+				return ok("Categoría eliminada correctamente");
+			}
+			else {
+				return internalServerError();
+			}
+		}
 		
-		
-		return ok();
 	}
 	
 	/**

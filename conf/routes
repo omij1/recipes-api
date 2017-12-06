@@ -26,7 +26,7 @@ GET 		/recipes					   controllers.RecipeController.retrieveRecipeCollection(page
 POST		/category				   controllers.CategoryController.createCategory
 GET		/category/:name			   controllers.CategoryController.retrieveRecipesByCategory(name)
 PUT		/category/:name			   controllers.CategoryController.updateCategory(name)
-DELETE	/category:name			   controllers.CategoryController.deleteCategory(name)
+DELETE	/category/:name			   controllers.CategoryController.deleteCategory(name)
 
 # Obtener las categorias de recetas
 GET 		/categories				   controllers.CategoryController.retrieveCategoryCollection(page: Integer = 0)
