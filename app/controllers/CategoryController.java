@@ -69,10 +69,28 @@ public class CategoryController extends Controller{
 	 * @param name Nombre de la categoría de recetas que se desea actualizar
 	 * @return Respuesta indicativa del éxito o fracaso de la operación 
 	 */
-	public Result updateCategory(String name) {
+	public Result updateCategory(String name) { //https://stackoverflow.com/questions/7543391/how-to-update-an-object-in-play-framework
 		//TODO solo el admin puede hacerlo
+		JsonNode jn = request().body().asJson();
+		if(!request().hasBody() || jn == null) {
+			return Results.badRequest("Parámetros obligatorios");
+		}
 		
-		return ok();
+		String newCategory = jn.get("newCategory").asText();
+		if(newCategory == null || newCategory == "") {
+			return Results.badRequest("La nueva categoría introducida no tiene el formato correcto");
+		}
+		
+		Category c = Category.findByCategoryName(name);
+		if(c == null) {
+			return Results.notFound("La categoría introducida no existe");
+		}
+		else {
+			c.setNombre_categoria(newCategory);
+			c.save();
+			return ok("Categoría actualizada correctamente");
+		}		
+		
 	}
 	
 	/**
@@ -82,6 +100,7 @@ public class CategoryController extends Controller{
 	 */
 	public Result deleteCategory(String name) {
 		//TODO solo el admin puede borrar una categoria. 
+		
 		
 		return ok();
 	}
