@@ -11,10 +11,12 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import io.ebean.Ebean;
 import io.ebean.Finder;
 import io.ebean.Model;
+import io.ebean.PagedList;
 import play.data.validation.Constraints.Required;
 
 /**
@@ -66,6 +68,7 @@ public class Recipe extends Model{
 	/**
 	 * Categoría de la receta
 	 */
+	@JsonManagedReference
 	@ManyToOne
 	public Category categoria;
 
@@ -98,6 +101,16 @@ public class Recipe extends Model{
 	public static Recipe findByName(String name) {
 		
 		return find.query().where().isNotNull("nombre").eq("nombre", name).findOne();
+	}
+	
+	/**
+	 * Método que muestra las recetas existentes de forma paginada
+	 * @param page Número de página que se desea ver
+	 * @return Devuelve una lista con las recetas
+	 */
+	public static PagedList<Recipe> findPage(Integer page){
+		
+		return find.query().setMaxRows(10).setFirstRow(10*page).findPagedList();
 	}
 	
 	/**

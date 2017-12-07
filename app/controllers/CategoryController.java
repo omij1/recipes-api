@@ -6,12 +6,15 @@ import play.mvc.Result;
 import play.mvc.Results;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 import io.ebean.PagedList;
 import models.Category;
+import models.Recipe;
 
 
 /**
@@ -127,6 +130,7 @@ public class CategoryController extends Controller{
 		List<Category> categories = list.getList();
 		Integer number = list.getTotalCount();
 
+		sortAlphabetically(categories);
 		if(request().accepts("application/json")) {
 			return ok(Json.toJson(categories)).withHeader("X-Count", number.toString());
 		}
@@ -138,4 +142,22 @@ public class CategoryController extends Controller{
 		}
 		
 	}
+	
+	/**
+	 * Método que ordena alfabéticamente las categorías de recetas
+	 * @param recipes Lista con las categorías de recetas
+	 */
+	private void sortAlphabetically(List<Category> categories) {
+		
+		if(categories.size() > 0) {
+			Collections.sort(categories, new Comparator<Category>() {
+
+				@Override
+				public int compare(Category o1, Category o2) {
+					return o1.getNombre_categoria().compareTo(o2.getNombre_categoria());
+				}
+			});
+		}
+	}
+	
 }

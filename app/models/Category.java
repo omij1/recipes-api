@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.ebean.Ebean;
@@ -46,6 +47,7 @@ public class Category extends Model{
 	/**
 	 * Lista de recetas pertenecientes a una categoría
 	 */
+	@JsonBackReference
 	@OneToMany(cascade=CascadeType.ALL,mappedBy="categoria")
 	public List<Recipe> relatedRecipes = new ArrayList<Recipe>();
 	
@@ -63,8 +65,8 @@ public class Category extends Model{
 	}
 	
 	/**
-	 * 
-	 * @param nombreCategoria
+	 * Método que busca una categoría basándose en su nombre
+	 * @param nombreCategoria Nombre de la categoría
 	 * @return Un objeto con los datos de la categoría
 	 */
 	public static Category findByCategoryName(String categoryName) {
@@ -72,6 +74,11 @@ public class Category extends Model{
 		return find.query().where().isNotNull("nombre_categoria").eq("nombre_categoria", categoryName).findOne();
 	}
 	
+	/**
+	 * Método que muestra las categorías existentes de forma paginada
+	 * @param page Número de página que se desea ver
+	 * @return Devuelve una lista con las categorías
+	 */
 	public static PagedList<Category> findPage(Integer page){
 		
 		return find.query().setMaxRows(10).setFirstRow(10*page).findPagedList();

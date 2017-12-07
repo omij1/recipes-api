@@ -19,7 +19,7 @@ GET		/recipe/:name			   controllers.RecipeController.retrieveRecipe(name)
 PUT		/recipe/:name			   controllers.RecipeController.updateRecipe(name)
 DELETE	/recipe/:name			   controllers.RecipeController.deleteRecipe(name)
 
-GET 		/recipes					   controllers.RecipeController.retrieveRecipeCollection(page: Integer = 0)
+GET 		/recipes					   controllers.RecipeController.retrieveRecipeCollection(page: Integer)
 
 # Rutas de categorias
 
@@ -29,4 +29,4 @@ PUT		/category/:name			   controllers.CategoryController.updateCategory(name)
 DELETE	/category/:name			   controllers.CategoryController.deleteCategory(name)
 
 # Obtener las categorias de recetas
-GET 		/categories				   controllers.CategoryController.retrieveCategoryCollection(page: Integer = 0)
+GET 		/categories				   controllers.CategoryController.retrieveCategoryCollection(page: Integer)

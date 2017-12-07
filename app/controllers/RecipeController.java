@@ -1,12 +1,19 @@
 package controllers;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import io.ebean.PagedList;
+import models.Category;
 import models.Recipe;
 import play.data.Form;
 import play.data.FormFactory;
+import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Results;
@@ -19,6 +26,9 @@ import play.mvc.Results;
 
 public class RecipeController extends Controller{
 	
+	/**
+	 * Variable formulario
+	 */
 	@Inject
 	FormFactory formFactory;
 
@@ -28,7 +38,6 @@ public class RecipeController extends Controller{
 	 */
 	public Result createRecipe() {
 		
-		//Comprobar si la receta ya existe
 		Form<Recipe> f = formFactory.form(Recipe.class).bindFromRequest(); 
 		if(f.hasErrors()) {
 			return Results.status(409, f.errorsAsJson());
@@ -83,12 +92,44 @@ public class RecipeController extends Controller{
 	}
 	
 	/**
-	 * Método que permite visualizar las recetas existentes. Corresponde con un GET.
+	 * Método que permite visualizar las recetas existentes sin tener en cuenta su categoría. Corresponde con un GET.
 	 * @param page Página que se va a mostrar
 	 * @return Respuesta que muestra todas las recetas existentes
 	 */
 	public Result retrieveRecipeCollection(Integer page) {
-		return ok();
+
+		PagedList<Recipe> list = Recipe.findPage(page);
+		List<Recipe> recipes = list.getList();
+		Integer number = list.getTotalCount();
+		
+		sortAlphabetically(recipes);
+		if(request().accepts("application/json")) {
+			return ok(Json.toJson(recipes)).withHeader("X-Count", number.toString());
+		}
+		else if(request().accepts("application/xml")) {
+			return ok(views.xml.recipes.render(recipes));
+		}
+		else {
+			return Results.status(415);//tipo de medio no soportado
+		}
+		
+	}
+	
+	/**
+	 * Método que ordena alfabéticamente las recetas
+	 * @param recipes Lista con las recetas
+	 */
+	private void sortAlphabetically(List<Recipe> recipes) {
+		
+		if(recipes.size() > 0) {
+			Collections.sort(recipes, new Comparator<Recipe>() {
+
+				@Override
+				public int compare(Recipe o1, Recipe o2) {
+					return o1.getNombre().compareTo(o2.getNombre());
+				}
+			});
+		}
 	}
 	
 }

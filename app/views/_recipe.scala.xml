@@ -1,0 +1,7 @@
+@(recipe: Recipe)
+	<receta>
+		<nombre>@recipe.getNombre()</nombre>
+		<pasos>@recipe.getPasos()</pasos>
+		<tiempo>@recipe.getTiempo()</tiempo>
+		<dificultad>@recipe.getDificultad()</dificultad>
+	</receta>
