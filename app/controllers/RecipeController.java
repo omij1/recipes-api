@@ -35,8 +35,18 @@ public class RecipeController extends Controller{
 		}
 		
 		Recipe r = f.get();
+		if(r.checkCategory()) {
+			if(r.checkRecipe()) {
+				return Results.ok("Receta creada correctamente");
+			}
+			else {
+				return Results.status(409, "Ya existe una receta con ese nombre");
+			}
+		}
+		else {
+			return Results.notFound("La categoría introducida no existe");
+		}
 		
-		return ok();
 	}
 	
 	/**
@@ -46,7 +56,7 @@ public class RecipeController extends Controller{
 	 */
 	public Result retrieveRecipe(String name) {
 		
-		//Comprobar si la receta existe
+		
 		return ok();
 	}
 	

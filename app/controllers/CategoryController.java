@@ -39,7 +39,7 @@ public class CategoryController extends Controller{
 			return Results.badRequest("Parámetros obligatorios");
 		}
 		
-		String categoryName = jn.get("category").asText();
+		String categoryName = jn.get("categoria").asText();
 		if(categoryName == null || categoryName == "") {
 			return Results.badRequest("La categoría introducida no tiene el formato correcto");
 		}

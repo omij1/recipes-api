@@ -9,8 +9,8 @@ public enum Dificultad {
 	@EnumValue("Fácil")
 	FACIL,
 	
-	@EnumValue("Normal")
-	NORMAL, 
+	@EnumValue("Intermedia")
+	INTERMEDIA, 
 	
 	@EnumValue("Difícil")
 	DIFICIL,

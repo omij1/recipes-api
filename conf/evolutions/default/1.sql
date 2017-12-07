@@ -22,19 +22,19 @@ create table recipe (
   pasos                         varchar(255),
   tiempo                        varchar(255),
   dificultad                    varchar(11),
-  category_id_categoria         bigint,
-  constraint ck_recipe_dificultad check ( dificultad in ('Fácil','Muy fácil','Difícil','Muy difícil','Normal')),
+  categoria_id_categoria        bigint,
+  constraint ck_recipe_dificultad check ( dificultad in ('Fácil','Muy fácil','Difícil','Muy difícil','Intermedia')),
   constraint pk_recipe primary key (id_receta)
 );
 
-alter table recipe add constraint fk_recipe_category_id_categoria foreign key (category_id_categoria) references category (id_categoria) on delete restrict on update restrict;
-create index ix_recipe_category_id_categoria on recipe (category_id_categoria);
+alter table recipe add constraint fk_recipe_categoria_id_categoria foreign key (categoria_id_categoria) references category (id_categoria) on delete restrict on update restrict;
+create index ix_recipe_categoria_id_categoria on recipe (categoria_id_categoria);
 
 
 # --- !Downs
 
-alter table recipe drop constraint if exists fk_recipe_category_id_categoria;
-drop index if exists ix_recipe_category_id_categoria;
+alter table recipe drop constraint if exists fk_recipe_categoria_id_categoria;
+drop index if exists ix_recipe_categoria_id_categoria;
 
 drop table if exists category;
 

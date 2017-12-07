@@ -3,6 +3,7 @@ package models;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -11,6 +12,7 @@ import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import io.ebean.Ebean;
 import io.ebean.Finder;
 import io.ebean.Model;
 import play.data.validation.Constraints.Required;
@@ -65,7 +67,7 @@ public class Recipe extends Model{
 	 * Categoría de la receta
 	 */
 	@ManyToOne
-	private Category category;
+	public Category categoria;
 
 	
 	
@@ -78,13 +80,54 @@ public class Recipe extends Model{
 	 * @param category Categoría de la receta
 	 */
 	public Recipe(@Required String nombre, @Required String pasos, @Required String tiempo, Dificultad dificultad,
-			Category category) {
+			Category categoria) {
+		
 		super();
 		this.nombre = nombre;
 		this.pasos = pasos;
 		this.tiempo = tiempo;
 		this.dificultad = dificultad;
-		this.category = category;
+		this.categoria = categoria;
+	}
+	
+	/**
+	 * Método que comprueba si una receta ya existe
+	 * @param name Nombre de la receta
+	 * @return Un objeto con la receta
+	 */
+	public static Recipe findByName(String name) {
+		
+		return find.query().where().isNotNull("nombre").eq("nombre", name).findOne();
+	}
+	
+	/**
+	 * Método que comprueba si la categoría de la receta introducida existe
+	 * @return Devuelve true si la categoría existe y false en caso contrario
+	 */
+	public boolean checkCategory() {
+		
+		Category c = Category.findByCategoryName(this.categoria.getNombre_categoria());
+		if(c != null) {
+			this.categoria = c;
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Método que comprueba si una receta ya existe y la crea en caso de que sea posible
+	 * @return Devuelve false si la receta ya existe y true si se creó correctamente
+	 */
+	public boolean checkRecipe() {
+		
+		if(Recipe.findByName(this.nombre) == null) {
+			Ebean.beginTransaction();
+			this.save();
+			Ebean.commitTransaction();
+			Ebean.endTransaction();
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -135,12 +178,12 @@ public class Recipe extends Model{
 		this.dificultad = dificultad;
 	}
 
-	public Category getCategory() {
-		return category;
+	public Category getCategoria() {
+		return categoria;
 	}
 
-	public void setCategory(Category category) {
-		this.category = category;
+	public void setCategoria(Category categoria) {
+		this.categoria = categoria;
 	}
 	
 }

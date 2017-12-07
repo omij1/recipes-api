@@ -46,8 +46,8 @@ public class Category extends Model{
 	/**
 	 * Lista de recetas pertenecientes a una categoría
 	 */
-	@OneToMany(cascade=CascadeType.ALL,mappedBy="category")
-	private List<Recipe> relatedRecipes = new ArrayList<Recipe>();
+	@OneToMany(cascade=CascadeType.ALL,mappedBy="categoria")
+	public List<Recipe> relatedRecipes = new ArrayList<Recipe>();
 	
 	
 
@@ -65,7 +65,7 @@ public class Category extends Model{
 	/**
 	 * 
 	 * @param nombreCategoria
-	 * @return
+	 * @return Un objeto con los datos de la categoría
 	 */
 	public static Category findByCategoryName(String categoryName) {
 		
