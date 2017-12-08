@@ -1,0 +1,7 @@
+@(users: List[User])
+        @_xmlDeclaration()
+        <users>
+            @for(user<- users) {
+                @_user(user)
+            }
+        </users>
