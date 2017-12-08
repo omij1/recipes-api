@@ -3,6 +3,7 @@ package models;
 import io.ebean.Finder;
 import io.ebean.Model;
 import io.ebean.PagedList;
+import io.ebean.annotation.JsonIgnore;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -18,6 +19,7 @@ public class User extends Model {
      * Identificador de usuario
      */
     @Id
+    @JsonIgnore
     Long id_user;
 
     /**
