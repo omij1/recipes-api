@@ -1,0 +1,3 @@
+@(user: User)
+        @_xmlDeclaration()
+        @_user(user)

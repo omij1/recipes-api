@@ -1,0 +1,7 @@
+@(user: User)
+<user>
+    <nick>@user.getNick()</nick>
+    <name>@user.getName()</name>
+    <surname>@user.getSurname()</surname>
+    <city>@user.getCity()</city>
+</user>
