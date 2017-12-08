@@ -37,7 +37,7 @@ public class RecipeController extends Controller{
 	 * @return Indica si la receta se creó satisfactoriamente o si por el contrario hubo algún error
 	 */
 	public Result createRecipe() {
-		
+		// TODO Añadir ingredientes
 		Form<Recipe> f = formFactory.form(Recipe.class).bindFromRequest(); 
 		if(f.hasErrors()) {
 			return Results.status(409, f.errorsAsJson());
@@ -87,8 +87,21 @@ public class RecipeController extends Controller{
 	 */
 	public Result deleteRecipe(String name) {
 		
-		//Comprobar que el usuario que quiere borrar la receta es el admin o el creador
-		return ok();
+		// TODO Comprobar que el usuario que quiere borrar la receta es el admin o el creador
+		String formattedName = name.replace("-", " "); //En curl no se puede poner por ejemplo Pollo con patatas como variable en la ruta DELETE
+		Recipe r = Recipe.findByName(formattedName);
+		if(r == null) {
+			return Results.notFound("No existe ninguna receta con ese nombre");
+		}
+		else {
+			if(r.delete()) {
+				return ok("Receta eliminada satisfactoriamente");
+			}
+			else {
+				return internalServerError();
+			}
+		}
+		
 	}
 	
 	/**
