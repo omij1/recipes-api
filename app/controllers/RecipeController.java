@@ -65,8 +65,24 @@ public class RecipeController extends Controller{
 	 */
 	public Result retrieveRecipe(String name) {
 		
+		//TODO Poner cache
+		String formattedName = name.replace("-", " ");
+		Recipe recipe = Recipe.findByName(formattedName);
+		if(recipe == null) {
+			return Results.notFound("No existe ninguna receta con ese nombre");
+		}
+		else {
+			if(request().accepts("application/json")) {
+				return ok(Json.toJson(recipe));
+			}
+			else if(request().accepts("application/xml")) {
+				return ok(views.xml._recipe.render(recipe));
+			}
+			else {
+				return Results.status(415);
+			}
+		}
 		
-		return ok();
 	}
 	
 	/**
