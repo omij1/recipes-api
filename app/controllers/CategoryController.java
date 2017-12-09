@@ -42,12 +42,12 @@ public class CategoryController extends Controller{
 			return Results.badRequest("Parámetros obligatorios");
 		}
 		
-		String categoryName = jn.get("categoria").asText();
+		String categoryName = jn.get("categoryName").asText();
 		if(categoryName == null || categoryName == "") {
 			return Results.badRequest("La categoría introducida no tiene el formato correcto");
 		}
 		
-		Category categoria = new Category(categoryName.toLowerCase());
+		Category categoria = new Category(categoryName.toUpperCase());
 		if(!categoria.checkCategory()) {
 			return Results.created("Categoría creada correctamente");
 		}
@@ -61,10 +61,26 @@ public class CategoryController extends Controller{
 	 * @param name Nombre de la categoría de recetas que se quiere visualizar
 	 * @return Devuelve las recetas pertenecientes a la categoría especificada o error
 	 */
-	public Result retrieveRecipesByCategory(String name) {
+	public Result retrieveRecipesByCategory(String id) {
 		
+		Category c = Category.findByCategoryId(id);
+		if(c == null) {
+			return Results.notFound("La categoría introducida no existe");
+		}
+		else {
+			if(request().accepts("application/json")) {
+				
+			}
+			else if(request().accepts("application/xml")) {
+				
+			}
+			else {
+				
+			}
+			System.out.println(c.relatedRecipes);
+			return ok();
+		}
 		
-		return ok();
 	}
 	
 	/**
@@ -72,7 +88,7 @@ public class CategoryController extends Controller{
 	 * @param name Nombre de la categoría de recetas que se desea actualizar
 	 * @return Respuesta indicativa del éxito o fracaso de la operación 
 	 */
-	public Result updateCategory(String name) { //https://stackoverflow.com/questions/7543391/how-to-update-an-object-in-play-framework
+	public Result updateCategory(String id) { //https://stackoverflow.com/questions/7543391/how-to-update-an-object-in-play-framework
 		//TODO solo el admin puede hacerlo
 		JsonNode jn = request().body().asJson();
 		if(!request().hasBody() || jn == null) {
@@ -84,12 +100,12 @@ public class CategoryController extends Controller{
 			return Results.badRequest("La nueva categoría introducida no tiene el formato correcto");
 		}
 		
-		Category c = Category.findByCategoryName(name);
+		Category c = Category.findByCategoryId(id);
 		if(c == null) {
 			return Results.notFound("La categoría introducida no existe");
 		}
 		else {
-			c.setNombre_categoria(newCategory);
+			c.setCategoryName(newCategory.toUpperCase());
 			c.save();
 			return ok("Categoría actualizada correctamente");
 		}		
@@ -101,10 +117,9 @@ public class CategoryController extends Controller{
 	 * @param name Nombre de la categoría de recetas que se desea borrar
 	 * @return Respuesta indicativa del estado de la operación 
 	 */
-	public Result deleteCategory(String name) {
+	public Result deleteCategory(String id) {
 		//TODO solo el admin puede borrar una categoria. 
-		//TODO hacer borrado en cascada de las recetas
-		Category c = Category.findByCategoryName(name);
+		Category c = Category.findByCategoryId(id);
 		if(c == null) {
 			return Results.notFound("La categoría introducida no existe");
 		}
@@ -154,7 +169,7 @@ public class CategoryController extends Controller{
 
 				@Override
 				public int compare(Category o1, Category o2) {
-					return o1.getNombre_categoria().compareTo(o2.getNombre_categoria());
+					return o1.getCategoryName().compareTo(o2.getCategoryName());
 				}
 			});
 		}

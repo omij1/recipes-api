@@ -63,11 +63,10 @@ public class RecipeController extends Controller{
 	 * @param name Nombre de la receta que se desea visualizar
 	 * @return Respuesta que muestra la receta o error si se produjo alguno
 	 */
-	public Result retrieveRecipe(String name) {
+	public Result retrieveRecipe(String id) {
 		
 		//TODO Poner cache
-		String formattedName = name.replace("-", " ");
-		Recipe recipe = Recipe.findByName(formattedName);
+		Recipe recipe = Recipe.findById(id);
 		if(recipe == null) {
 			return Results.notFound("No existe ninguna receta con ese nombre");
 		}
@@ -90,8 +89,12 @@ public class RecipeController extends Controller{
 	 * @param name Nombre de la receta que se desea actualizar
 	 * @return Respuesta que indica el resultado de la operación
 	 */
-	public Result updateRecipe(String name) {
+	public Result updateRecipe(String id) {
 		
+		//TODO Solo puede actualizar una receta el admin o el creador
+		if(!request().hasBody()) {
+			return Results.badRequest("Parámetros obligatorios");
+		}
 		
 		return ok();
 	}
@@ -101,11 +104,10 @@ public class RecipeController extends Controller{
 	 * @param name Nombre de la receta que se desea eliminar
 	 * @return Respuesta que indica si la receta se borró o si se produjo un error
 	 */
-	public Result deleteRecipe(String name) {
+	public Result deleteRecipe(String id) {
 		
 		// TODO Comprobar que el usuario que quiere borrar la receta es el admin o el creador
-		String formattedName = name.replace("-", " "); //En curl no se puede poner por ejemplo Pollo con patatas como variable en la ruta DELETE
-		Recipe r = Recipe.findByName(formattedName);
+		Recipe r = Recipe.findById(id);
 		if(r == null) {
 			return Results.notFound("No existe ninguna receta con ese nombre");
 		}
@@ -155,7 +157,7 @@ public class RecipeController extends Controller{
 
 				@Override
 				public int compare(Recipe o1, Recipe o2) {
-					return o1.getNombre().compareTo(o2.getNombre());
+					return o1.getTitle().compareTo(o2.getTitle());
 				}
 			});
 		}

@@ -1,8 +1,9 @@
 @(recipe: Recipe)
-	<receta>
-		<nombre>@recipe.getNombre()</nombre>
-		<pasos>@recipe.getPasos()</pasos>
-		<tiempo>@recipe.getTiempo()</tiempo>
-		<dificultad>@recipe.getDificultad()</dificultad>
-		<categoria>@recipe.getCategoria().getNombre_categoria()</categoria>
-	</receta>
+	<recipe>
+		<id>@recipe.getRecipeId()</id>
+		<title>@recipe.getTitle()</title>
+		<steps>@recipe.getSteps()</steps>
+		<time>@recipe.getTime()</time>
+		<difficulty>@recipe.getDifficulty()</difficulty>
+		<category>@recipe.getCategory().getCategoryName()</category>
+	</recipe>

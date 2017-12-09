@@ -1,8 +1,8 @@
 @(categories:List[Category])
 <?xml version="1.0" encoding="UTF-8"?>
 
-<categorias>
+<categories>
 	@for(category <- categories){
 		@_category(category)
 	}
-</categorias>
+</categories>

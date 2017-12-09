@@ -15,18 +15,18 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 # Rutas de recetas
 
 POST		/recipe					   controllers.RecipeController.createRecipe
-GET		/recipe/:name			   controllers.RecipeController.retrieveRecipe(name)
-PUT		/recipe/:name			   controllers.RecipeController.updateRecipe(name)
-DELETE	/recipe/:name			   controllers.RecipeController.deleteRecipe(name)
+GET		/recipe/:id				   controllers.RecipeController.retrieveRecipe(id)
+PUT		/recipe/:id				   controllers.RecipeController.updateRecipe(id)
+DELETE	/recipe/:id				   controllers.RecipeController.deleteRecipe(id)
 
 GET 		/recipes					   controllers.RecipeController.retrieveRecipeCollection(page: Integer)
 
 # Rutas de categorias
 
 POST		/category				   controllers.CategoryController.createCategory
-GET		/category/:name			   controllers.CategoryController.retrieveRecipesByCategory(name)
-PUT		/category/:name			   controllers.CategoryController.updateCategory(name)
-DELETE	/category/:name			   controllers.CategoryController.deleteCategory(name)
+GET		/category/:id			   controllers.CategoryController.retrieveRecipesByCategory(id)
+PUT		/category/:id			   controllers.CategoryController.updateCategory(id)
+DELETE	/category/:id			   controllers.CategoryController.deleteCategory(id)
 
 # Obtener las categorias de recetas
 GET 		/categories				   controllers.CategoryController.retrieveCategoryCollection(page: Integer)

@@ -10,7 +10,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import io.ebean.Ebean;
@@ -37,70 +36,78 @@ public class Recipe extends Model{
 	 * Identificador de la receta
 	 */
 	@Id
-	@JsonIgnore
-	Long id_receta;
+	Long recipeId;
 	
 	/**
 	 * Nombre de la receta
 	 */
 	@Required
-	String nombre;
+	String title;
 	
 	/**
 	 * Pasos para elaborar la receta
 	 */
 	@Required
-	String pasos;
+	String steps;
 	
 	/**
 	 * Unidad de tiempo necesario para elaborar la receta. Pueden ser minutos u horas
 	 */
 	@Required
-	String tiempo;
+	String time;
 	
 	/**
 	 * Valor de dificultad de la receta
 	 */
 	@Enumerated(EnumType.STRING)
 	@Required
-	public Dificultad dificultad;
+	public Difficulty difficulty;
 	
 	/**
 	 * Categoría de la receta
 	 */
 	@JsonManagedReference
 	@ManyToOne
-	public Category categoria;
+	public Category category;
 
 	
 	
 	/**
 	 * Constructor de la clase Recipe
-	 * @param nombre Nombre de la receta
-	 * @param pasos Pasos para elaborar la receta
-	 * @param tiempo Unidad de tiempo para elaborar la receta
-	 * @param dificultad Dificultad de la receta
+	 * @param title Nombre de la receta
+	 * @param steps Pasos para elaborar la receta
+	 * @param time Unidad de tiempo para elaborar la receta
+	 * @param difficulty Dificultad de la receta
 	 * @param category Categoría de la receta
 	 */
-	public Recipe(@Required String nombre, @Required String pasos, @Required String tiempo, Dificultad dificultad,
-			Category categoria) {
+	public Recipe(@Required String title, @Required String steps, @Required String time, Difficulty difficulty,
+			Category category) {
 		
 		super();
-		this.nombre = nombre;
-		this.pasos = pasos;
-		this.tiempo = tiempo;
-		this.dificultad = dificultad;
-		this.categoria = categoria;
+		this.title = title;
+		this.steps = steps;
+		this.time = time;
+		this.difficulty = difficulty;
+		this.category = category;
+	}
+	
+	/**
+	 * Método que busca una receta basándose en su identificcador
+	 * @param id Identificador de la receta
+	 * @return Un objeto con la receta
+	 */
+	public static Recipe findById(String id) {
+		return find.query().where().isNotNull("recipeId").eq("recipeId", id).findOne();
 	}
 	
 	/**
 	 * Método que comprueba si una receta ya existe
-	 * @param name Nombre de la receta
+	 * @param title Nombre de la receta
 	 * @return Un objeto con la receta
 	 */
-	public static Recipe findByName(String name) {
+	public static Recipe findByName(String title) {
 		
-		return find.query().where().isNotNull("nombre").eq("nombre", name).findOne();
+		return find.query().where().isNotNull("title").eq("title", title).findOne();
 	}
 	
 	/**
@@ -118,10 +125,10 @@ public class Recipe extends Model{
 	 * @return Devuelve true si la categoría existe y false en caso contrario
 	 */
 	public boolean checkCategory() {
-		
-		Category c = Category.findByCategoryName(this.categoria.getNombre_categoria());
+
+		Category c = Category.findByCategoryName(this.category.getCategoryName());
 		if(c != null) {
-			this.categoria = c;
+			this.category = c;
 			return true;
 		}
 		return false;
@@ -133,7 +140,8 @@ public class Recipe extends Model{
 	 */
 	public boolean checkRecipe() {
 		
-		if(Recipe.findByName(this.nombre) == null) {
+		if(Recipe.findByName(this.title.toUpperCase()) == null) {
+			this.title = this.title.toUpperCase();
 			Ebean.beginTransaction();
 			this.save();
 			Ebean.commitTransaction();
@@ -144,59 +152,99 @@ public class Recipe extends Model{
 	}
 
 	/**
-	 * Método que permite obtener el id de una receta
-	 * @return Id de la receta
+	 * Getter de recipeId
+	 * @return Identificador de la receta
 	 */
-	public Long getId_receta() {
-		return id_receta;
+	public Long getRecipeId() {
+		return recipeId;
 	}
 
 	/**
-	 * 
-	 * @param id_receta
+	 * Setter de recipeId
+	 * @param recipeId El identificador de la receta
 	 */
-	public void setId_receta(Long id_receta) {
-		this.id_receta = id_receta;
+	public void setRecipeId(Long recipeId) {
+		this.recipeId = recipeId;
 	}
 
-	public String getNombre() {
-		return nombre;
+	/**
+	 * Getter de title
+	 * @return El título de la receta
+	 */
+	public String getTitle() {
+		return title;
 	}
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
+	/**
+	 * Setter de title
+	 * @param title Título de la receta
+	 */
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
-	public String getPasos() {
-		return pasos;
+	/**
+	 * Getter de steps
+	 * @return Los pasos para elaborar la receta
+	 */
+	public String getSteps() {
+		return steps;
 	}
 
-	public void setPasos(String pasos) {
-		this.pasos = pasos;
+	/**
+	 * Setter de steps
+	 * @param steps Pasos para elaborar la receta
+	 */
+	public void setSteps(String steps) {
+		this.steps = steps;
 	}
 
-	public String getTiempo() {
-		return tiempo;
+	/**
+	 * Getter de time
+	 * @return El tiempo necesario para elaborar una receta
+	 */
+	public String getTime() {
+		return time;
 	}
 
-	public void setTiempo(String tiempo) {
-		this.tiempo = tiempo;
+	/**
+	 * Setter de time
+	 * @param time El tiempo necesario para elaborar una receta
+	 */
+	public void setTime(String time) {
+		this.time = time;
 	}
 
-	public Dificultad getDificultad() {
-		return dificultad;
+	/**
+	 * Getter de difficulty
+	 * @return Valor de dificultad para elaborar la receta
+	 */
+	public Difficulty getDifficulty() {
+		return difficulty;
 	}
 
-	public void setDificultad(Dificultad dificultad) {
-		this.dificultad = dificultad;
+	/**
+	 * Setter de difficulty
+	 * @param difficulty Dificultad de la receta
+	 */
+	public void setDifficulty(Difficulty difficulty) {
+		this.difficulty = difficulty;
 	}
 
-	public Category getCategoria() {
-		return categoria;
+	/**
+	 * Getter de category
+	 * @return Categoría de la receta
+	 */
+	public Category getCategory() {
+		return category;
 	}
 
-	public void setCategoria(Category categoria) {
-		this.categoria = categoria;
+	/**
+	 * Setter de category
+	 * @param category Categoría de la receta
+	 */
+	public void setCategory(Category category) {
+		this.category = category;
 	}
 	
 }

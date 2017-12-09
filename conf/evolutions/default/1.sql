@@ -4,9 +4,9 @@
 # --- !Ups
 
 create table category (
-  id_categoria                  bigint auto_increment not null,
-  nombre_categoria              varchar(255),
-  constraint pk_category primary key (id_categoria)
+  category_id                   bigint auto_increment not null,
+  category_name                 varchar(255),
+  constraint pk_category primary key (category_id)
 );
 
 create table ingredient (
@@ -17,24 +17,24 @@ create table ingredient (
 );
 
 create table recipe (
-  id_receta                     bigint auto_increment not null,
-  nombre                        varchar(255),
-  pasos                         varchar(255),
-  tiempo                        varchar(255),
-  dificultad                    varchar(11),
-  categoria_id_categoria        bigint,
-  constraint ck_recipe_dificultad check ( dificultad in ('Fácil','Muy fácil','Difícil','Muy difícil','Intermedia')),
-  constraint pk_recipe primary key (id_receta)
+  recipe_id                     bigint auto_increment not null,
+  title                         varchar(255),
+  steps                         varchar(255),
+  time                          varchar(255),
+  difficulty                    varchar(11),
+  category_category_id          bigint,
+  constraint ck_recipe_difficulty check ( difficulty in ('Fácil','Muy fácil','Difícil','Muy difícil','Intermedia')),
+  constraint pk_recipe primary key (recipe_id)
 );
 
-alter table recipe add constraint fk_recipe_categoria_id_categoria foreign key (categoria_id_categoria) references category (id_categoria) on delete restrict on update restrict;
-create index ix_recipe_categoria_id_categoria on recipe (categoria_id_categoria);
+alter table recipe add constraint fk_recipe_category_category_id foreign key (category_category_id) references category (category_id) on delete restrict on update restrict;
+create index ix_recipe_category_category_id on recipe (category_category_id);
 
 
 # --- !Downs
 
-alter table recipe drop constraint if exists fk_recipe_categoria_id_categoria;
-drop index if exists ix_recipe_categoria_id_categoria;
+alter table recipe drop constraint if exists fk_recipe_category_category_id;
+drop index if exists ix_recipe_category_category_id;
 
 drop table if exists category;
 

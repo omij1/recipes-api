@@ -9,7 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.ebean.Ebean;
 import io.ebean.Finder;
@@ -35,20 +34,19 @@ public class Category extends Model{
 	 * Identificador de la categoría de receta
 	 */
 	@Id
-	@JsonIgnore
-	Long id_categoria;
-	
+	Long categoryId;
+
 	/**
 	 * Nombre de la categoría de receta
 	 */
 	@Required
-	String nombre_categoria;
-	
+	String categoryName;
+
 	/**
 	 * Lista de recetas pertenecientes a una categoría
 	 */
 	@JsonBackReference
-	@OneToMany(cascade=CascadeType.ALL,mappedBy="categoria")
+	@OneToMany(cascade=CascadeType.ALL,mappedBy="category")
 	public List<Recipe> relatedRecipes = new ArrayList<Recipe>();
 	
 	
@@ -58,10 +56,19 @@ public class Category extends Model{
 	 * @param id_categoria Identificador de la categoría de recetas
 	 * @param nombre_categoria Nombre de la categoría de recetas
 	 */
-	public Category(@Required String nombre_categoria) {
+	public Category(@Required String categoryName) {
 		
 		super();
-		this.nombre_categoria = nombre_categoria;
+		this.categoryName = categoryName;
+	}
+	
+	/**
+	 * Método que busca una categoría basándose en su identificador
+	 * @param id Identificador de la categoría
+	 * @return Un objeto con los datos de la categoría
+	 */
+	public static Category findByCategoryId(String id) {
+		return find.query().where().isNotNull("categoryId").eq("categoryId", id).findOne();
 	}
 	
 	/**
@@ -71,7 +78,7 @@ public class Category extends Model{
 	 */
 	public static Category findByCategoryName(String categoryName) {
 		
-		return find.query().where().isNotNull("nombre_categoria").eq("nombre_categoria", categoryName).findOne();
+		return find.query().where().isNotNull("categoryName").eq("categoryName", categoryName).findOne();
 	}
 	
 	/**
@@ -90,7 +97,7 @@ public class Category extends Model{
 	 */
 	public boolean checkCategory() {
 		
-		if(Category.findByCategoryName(this.nombre_categoria) == null) {
+		if(Category.findByCategoryName(this.categoryName) == null) {
 			
 			Ebean.beginTransaction();
 			this.save();
@@ -103,34 +110,34 @@ public class Category extends Model{
 	}
 
 	/**
-	 * Getter de id_categoría
+	 * Getter de categoryId
 	 * @return Devuelve el id de la categoría de receta
 	 */
-	public Long getId_categoria() {
-		return id_categoria;
+	public Long getCategoryId() {
+		return categoryId;
 	}
 
 	/**
-	 * Setter de id_categoria
-	 * @param id_categoria El identificador de la categoría de receta
+	 * Setter de categoryId
+	 * @param categoryId El identificador de la categoría de receta
 	 */
-	public void setId_categoria(Long id_categoria) {
-		this.id_categoria = id_categoria;
+	public void setCategoryId(Long categoryId) {
+		this.categoryId = categoryId;
 	}
 
 	/**
-	 * Getter de nombre_categoria
+	 * Getter de categoryName
 	 * @return Devuelve el nombre de la categoría de receta
 	 */
-	public String getNombre_categoria() {
-		return nombre_categoria;
+	public String getCategoryName() {
+		return categoryName;
 	}
 
 	/**
-	 * Setter de nombre_categoria
-	 * @param nombre_categoria El nombre de la categoría de receta
+	 * Setter de categoryName
+	 * @param categoryName El nombre de la categoría de receta
 	 */
-	public void setNombre_categoria(String nombre_categoria) {
-		this.nombre_categoria = nombre_categoria;
+	public void setCategoryName(String categoryName) {
+		this.categoryName = categoryName;
 	}
 }
