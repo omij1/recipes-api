@@ -6,18 +6,18 @@
 # User resource
 #
 
-POST        /user                   controllers.UserController.createUser
-GET         /user/:nick             controllers.UserController.retrieveUser(nick)
-PUT         /user/:nick             controllers.UserController.updateUser(nick)
-DELETE      /user/:nick             controllers.UserController.deleteUser(nick)
-GET         /users                  controllers.UserController.retrieveUserCollection(page: Integer = 0)
+POST          /user                 controllers.UserController.createUser
+GET           /user/:id_user        controllers.UserController.retrieveUser(id_user: Long)
+PUT           /user/:id_user        controllers.UserController.updateUser(id_user: Long)
+DELETE        /user/:id_user        controllers.UserController.deleteUser(id_user: Long)
+GET           /users                controllers.UserController.retrieveUserCollection(page: Integer = 0)
 
 # An example controller showing a sample home page
-GET     /                           controllers.HomeController.index
+GET           /                     controllers.HomeController.index
 # An example controller showing how to use dependency injection
-GET     /count                      controllers.CountController.count
+GET           /count                controllers.CountController.count
 # An example controller showing how to write asynchronous code
-GET     /message                    controllers.AsyncController.message
+GET           /message              controllers.AsyncController.message
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+GET           /assets/*file         controllers.Assets.versioned(path="/public", file: Asset)

@@ -65,15 +65,15 @@ public class UserController extends Controller {
     /**
      * Método para obtener los datos de un usuario
      *
-     * @param nick Nombre del usuario del que se quiere obtener la información
+     * @param id_user Id del usuario del que se quiere obtener la información
      * @return Indica si se ha realizado correctamente o no la operación
      */
-    public Result retrieveUser(String nick) {
+    public Result retrieveUser(Long id_user) {
 
-        User user = User.findByNick(nick);
+        User user = User.findById(id_user);
 
         /**
-         * Si el nick no existe, se devuelve un error
+         * Si el Id no existe, se devuelve un error
          */
         if (user == null) {
             return Results.notFound(); //TODO cambiar cuando se implemente el objeto error
@@ -98,10 +98,10 @@ public class UserController extends Controller {
     /**
      * Método para actualizar los datos de un usuario
      *
-     * @param nick Nombre del usuario del que se quiere realizar una modificación de los datos
+     * @param id_user Id del usuario del que se quiere realizar una modificación de los datos
      * @return Indica si se ha realizado correctamente o no la operación
      */
-    public Result updateUser(String nick) {
+    public Result updateUser(Long id_user) {
 
         /**
          * Creación de objeto Form para obtener los datos de la petición
@@ -117,10 +117,10 @@ public class UserController extends Controller {
          * Objeto User donde se guarda la información de la petición
          */
         User updateUser = f.get();
-        User user = User.findByNick(nick);
+        User user = User.findById(id_user);
 
         /**
-         * Comprobar si existe el usuario con el nick indicado
+         * Comprobar si existe el usuario con el Id indicado
          */
         if (user == null) {
             return Results.notFound();
@@ -139,12 +139,12 @@ public class UserController extends Controller {
     /**
      * Método para borrar un usuario
      *
-     * @param nick Nombre del usuario que se quiere borrar
+     * @param id_user Id del usuario que se quiere borrar
      * @return Indica si se ha realizado correctamente o no la operación
      */
-    public Result deleteUser(String nick) {
+    public Result deleteUser(Long id_user) {
 
-        User user = User.findByNick(nick);
+        User user = User.findById(id_user);
         /**
          * Si el usuario existe, borrar
          */
