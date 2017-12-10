@@ -2,6 +2,7 @@ package controllers;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -10,6 +11,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import io.ebean.PagedList;
 import models.Category;
+import models.Difficulty;
 import models.Recipe;
 import play.data.Form;
 import play.data.FormFactory;
@@ -68,7 +70,7 @@ public class RecipeController extends Controller{
 		//TODO Poner cache
 		Recipe recipe = Recipe.findById(id);
 		if(recipe == null) {
-			return Results.notFound("No existe ninguna receta con ese nombre");
+			return Results.notFound("No existe ninguna receta con ese identificador");
 		}
 		else {
 			if(request().accepts("application/json")) {
@@ -96,9 +98,48 @@ public class RecipeController extends Controller{
 			return Results.badRequest("Parámetros obligatorios");
 		}
 		
-		return ok();
+		Recipe r = Recipe.findById(id);
+		if(r == null) {
+			return Results.notFound("No existe ninguna receta con ese identificador");
+		}
+		else {
+			Form<Recipe> f = formFactory.form(Recipe.class).bindFromRequest();
+			if(f.hasErrors()) {
+				return Results.ok(f.errorsAsJson());
+			}
+			if(updateFields(r,f)) {
+				return ok("Receta actualizada correctamente");
+			}
+			else {
+				return Results.notFound("La categoría introducida no existe");
+			}
+		}
+		
 	}
 	
+	/**
+	 * Método que actualiza la información de una receta en la base de datos. Se ha utilizado un form para soportar posibles
+	 * ampliaciones o modificaciones del modelo.
+	 * @param r La receta que se va a modificar
+	 * @param f La nueva información
+	 * @return Verdadero si la receta se actualizó y falso en caso contrario
+	 */
+	private boolean updateFields(Recipe r, Form<Recipe> f) {
+		
+		r.setTitle(f.get().getTitle().toUpperCase());
+		r.setSteps(f.get().getSteps());
+		r.setTime(f.get().getTime());
+		r.setDifficulty(f.get().getDifficulty());
+		if(f.get().getCategory() != null) {
+			r.setCategory(f.get().getCategory());
+			if(!r.checkCategory()) {
+				return false;
+			}
+		}
+		r.save();
+		return true;
+	}
+
 	/**
 	 * Método que permite eliminar una receta. Corresponde con un DELETE.
 	 * @param name Nombre de la receta que se desea eliminar
@@ -109,7 +150,7 @@ public class RecipeController extends Controller{
 		// TODO Comprobar que el usuario que quiere borrar la receta es el admin o el creador
 		Recipe r = Recipe.findById(id);
 		if(r == null) {
-			return Results.notFound("No existe ninguna receta con ese nombre");
+			return Results.notFound("No existe ninguna receta con ese identificador");
 		}
 		else {
 			if(r.delete()) {

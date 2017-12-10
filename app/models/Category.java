@@ -68,6 +68,7 @@ public class Category extends Model{
 	 * @return Un objeto con los datos de la categoría
 	 */
 	public static Category findByCategoryId(String id) {
+		
 		return find.query().where().isNotNull("categoryId").eq("categoryId", id).findOne();
 	}
 	
