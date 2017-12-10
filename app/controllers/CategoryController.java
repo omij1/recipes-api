@@ -57,11 +57,11 @@ public class CategoryController extends Controller{
 	}
 	
 	/**
-	 * Método que permite visualizar todas las recetas pertenecientes a una categoría. Corresponde con un GET.
-	 * @param name Nombre de la categoría de recetas que se quiere visualizar
-	 * @return Devuelve las recetas pertenecientes a la categoría especificada o error
+	 * Método que ver la categoría de recetas correspondiente a un id
+	 * @param id El identificador de la categoría de recetas
+	 * @return La categoría de recetas correspondiente
 	 */
-	public Result retrieveRecipesByCategory(String id) {
+	public Result retrieveCategory(String id) {
 		
 		Category c = Category.findByCategoryId(id);
 		if(c == null) {
@@ -69,16 +69,14 @@ public class CategoryController extends Controller{
 		}
 		else {
 			if(request().accepts("application/json")) {
-				
+				return ok(Json.toJson(c));
 			}
 			else if(request().accepts("application/xml")) {
-				
+				return ok(views.xml._category.render(c));
 			}
 			else {
-				
+				return Results.status(415);
 			}
-			System.out.println(c.relatedRecipes);
-			return ok();
 		}
 		
 	}
@@ -88,7 +86,7 @@ public class CategoryController extends Controller{
 	 * @param name Nombre de la categoría de recetas que se desea actualizar
 	 * @return Respuesta indicativa del éxito o fracaso de la operación 
 	 */
-	public Result updateCategory(String id) { //https://stackoverflow.com/questions/7543391/how-to-update-an-object-in-play-framework
+	public Result updateCategory(String id) { // Referencia a https://stackoverflow.com/questions/7543391/how-to-update-an-object-in-play-framework
 		//TODO solo el admin puede hacerlo
 		JsonNode jn = request().body().asJson();
 		if(!request().hasBody() || jn == null) {
@@ -154,6 +152,31 @@ public class CategoryController extends Controller{
 		}
 		else {
 			return Results.status(415);//tipo de medio no soportado
+		}
+		
+	}
+	
+	/**
+	 * Método que permite visualizar todas las recetas pertenecientes a una categoría. Corresponde con un GET.
+	 * @param name Nombre de la categoría de recetas que se quiere visualizar
+	 * @return Devuelve las recetas pertenecientes a la categoría especificada o error
+	 */
+	public Result retrieveRecipesByCategory(String id) {
+		
+		Category c = Category.findByCategoryId(id);
+		if(c == null) {
+			return Results.notFound("La categoría introducida no existe");
+		}
+		else {
+			if(request().accepts("application/json")) {
+				return ok(Json.toJson(c.relatedRecipes));
+			}
+			else if(request().accepts("application/xml")) {
+				return ok(views.xml.recipes.render(c.relatedRecipes));
+			}
+			else {
+				return Results.status(415);
+			}
 		}
 		
 	}

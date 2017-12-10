@@ -1,6 +1,6 @@
 @(recipe: Recipe)
 	<recipe>
-		<id>@recipe.getRecipeId()</id>
+		<recipeId>@recipe.getRecipeId()</recipeId>
 		<title>@recipe.getTitle()</title>
 		<steps>@recipe.getSteps()</steps>
 		<time>@recipe.getTime()</time>

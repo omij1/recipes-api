@@ -126,7 +126,7 @@ public class Recipe extends Model{
 	 */
 	public boolean checkCategory() {
 
-		Category c = Category.findByCategoryName(this.category.getCategoryName());
+		Category c = Category.findByCategoryName(this.category.getCategoryName().toUpperCase());
 		if(c != null) {
 			this.category = c;
 			return true;

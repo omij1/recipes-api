@@ -14,19 +14,22 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 
 # Rutas de recetas
 
-POST		/recipe					   controllers.RecipeController.createRecipe
-GET		/recipe/:id				   controllers.RecipeController.retrieveRecipe(id)
-PUT		/recipe/:id				   controllers.RecipeController.updateRecipe(id)
-DELETE	/recipe/:id				   controllers.RecipeController.deleteRecipe(id)
+POST		/recipe					   	controllers.RecipeController.createRecipe
+GET		/recipe/:id				   	controllers.RecipeController.retrieveRecipe(id)
+PUT		/recipe/:id				   	controllers.RecipeController.updateRecipe(id)
+DELETE	/recipe/:id				   	controllers.RecipeController.deleteRecipe(id)
 
-GET 		/recipes					   controllers.RecipeController.retrieveRecipeCollection(page: Integer)
+GET 		/recipes					   	controllers.RecipeController.retrieveRecipeCollection(page: Integer)
 
-# Rutas de categorias
+# Rutas de categoría
 
-POST		/category				   controllers.CategoryController.createCategory
-GET		/category/:id			   controllers.CategoryController.retrieveRecipesByCategory(id)
-PUT		/category/:id			   controllers.CategoryController.updateCategory(id)
-DELETE	/category/:id			   controllers.CategoryController.deleteCategory(id)
+POST		/category				   	controllers.CategoryController.createCategory
+GET		/category/:id			   	controllers.CategoryController.retrieveCategory(id)
+PUT		/category/:id			   	controllers.CategoryController.updateCategory(id)
+DELETE	/category/:id			   	controllers.CategoryController.deleteCategory(id)
 
-# Obtener las categorias de recetas
-GET 		/categories				   controllers.CategoryController.retrieveCategoryCollection(page: Integer)
+# Obtener las categorías de recetas
+GET 		/categories				   	controllers.CategoryController.retrieveCategoryCollection(page: Integer)
+
+# Obtener las recetas de una categoría
+GET 		/category/:id/recipes/list 	controllers.CategoryController.retrieveRecipesByCategory(id)
