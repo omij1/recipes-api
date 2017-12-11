@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -45,6 +46,14 @@ public class Recipe extends Model{
 	String title;
 	
 	/**
+	 * Lista de ingredientes de una receta
+	 */
+	@Required
+	@JsonManagedReference
+	@ManyToMany(cascade=CascadeType.ALL)
+	public List<Ingredient> ingredients = new ArrayList<Ingredient>();
+	
+	/**
 	 * Pasos para elaborar la receta
 	 */
 	@Required
@@ -66,6 +75,7 @@ public class Recipe extends Model{
 	/**
 	 * Categoría de la receta
 	 */
+	@Required
 	@JsonManagedReference
 	@ManyToOne
 	public Category category;
@@ -80,11 +90,12 @@ public class Recipe extends Model{
 	 * @param difficulty Dificultad de la receta
 	 * @param category Categoría de la receta
 	 */
-	public Recipe(@Required String title, @Required String steps, @Required String time, Difficulty difficulty,
+	public Recipe(@Required String title, @Required List<Ingredient> ingredients, @Required String steps, @Required String time, Difficulty difficulty,
 			Category category) {
 		
 		super();
 		this.title = title;
+		this.ingredients = ingredients;
 		this.steps = steps;
 		this.time = time;
 		this.difficulty = difficulty;
@@ -182,6 +193,22 @@ public class Recipe extends Model{
 	 */
 	public void setTitle(String title) {
 		this.title = title;
+	}
+	
+	/**
+	 * Getter de ingredients
+	 * @return los ingredientes de la receta
+	 */
+	public List<Ingredient> getIngredients() {
+		return ingredients;
+	}
+
+	/**
+	 * Setter de ingredients
+	 * @param ingredients Ingredientes de la receta
+	 */
+	public void setIngredients(List<Ingredient> ingredients) {
+		this.ingredients = ingredients;
 	}
 
 	/**

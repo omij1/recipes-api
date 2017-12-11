@@ -1,8 +1,15 @@
 package models;
 
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import io.ebean.Finder;
 import io.ebean.Model;
 import play.data.validation.Constraints.Required;
 
@@ -14,6 +21,11 @@ import play.data.validation.Constraints.Required;
 
 @Entity
 public class Ingredient extends Model {
+	
+	/**
+	 * Permite hacer búsquedas de ingredientes
+	 */
+	public static final Finder<Long, Ingredient> find = new Finder<>(Ingredient.class);
 
 	/**
 	 * Id del ingrediente
@@ -33,6 +45,25 @@ public class Ingredient extends Model {
 	@Required
 	String units;
 	
+	/**
+	 * Recetas en las que se encuentra el ingrediente
+	 */
+	@JsonBackReference
+	@ManyToMany(mappedBy="ingredients")
+	public Set<Recipe> recipes;
+
+	
+	/**
+	 * Constructor de la clase Ingredient
+	 * @param ingredientName Nombre del ingrediente
+	 * @param units Unidades del ingrediente
+	 */
+	public Ingredient(@Required String ingredientName, @Required String units) {
+		
+		super();
+		this.ingredientName = ingredientName;
+		this.units = units;
+	}
 
 	/**
 	 * Getter de ingredientId
