@@ -10,10 +10,10 @@ create table category (
 );
 
 create table ingredient (
-  id_ingrediente                bigint auto_increment not null,
-  nombre_ing                    varchar(255),
-  unidades                      varchar(255),
-  constraint pk_ingredient primary key (id_ingrediente)
+  ingredient_id                 bigint auto_increment not null,
+  ingredient_name               varchar(255),
+  units                         varchar(255),
+  constraint pk_ingredient primary key (ingredient_id)
 );
 
 create table recipe (

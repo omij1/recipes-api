@@ -21,6 +21,9 @@ DELETE	/recipe/:id				   	controllers.RecipeController.deleteRecipe(id)
 
 GET 		/recipes					   	controllers.RecipeController.retrieveRecipeCollection(page: Integer)
 
+# Buscar una receta por su título
+GET 		/recipes/search				controllers.RecipeController.searchRecipe(title: String)
+
 # Rutas de categoría
 
 POST		/category				   	controllers.CategoryController.createCategory

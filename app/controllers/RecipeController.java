@@ -188,6 +188,30 @@ public class RecipeController extends Controller{
 	}
 	
 	/**
+	 * Método que permite buscar una receta por su título
+	 * @param title Título de la receta que se quiere buscar
+	 * @return Respuesta que muestra la receta o error
+	 */
+	public Result searchRecipe(String title) {
+
+		Recipe recipe = Recipe.findByName(title.toUpperCase());
+		if(recipe == null){
+			return Results.notFound("No existe ninguna receta con ese nombre");
+		}
+		
+		if(request().accepts("application/json")) {
+			return ok(Json.toJson(recipe));
+		}
+		else if(request().accepts("application/xml")) {
+			return ok(views.xml._recipe.render(recipe));
+		}
+		else {
+			return Results.status(415);//tipo de medio no soportado
+		}
+		
+	}
+	
+	/**
 	 * Método que ordena alfabéticamente las recetas
 	 * @param recipes Lista con las recetas
 	 */
