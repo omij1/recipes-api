@@ -1,5 +1,6 @@
 @(user: User)
 <user>
+    <id_user>@user.getId_user()</id_user>
     <nick>@user.getNick()</nick>
     <name>@user.getName()</name>
     <surname>@user.getSurname()</surname>
