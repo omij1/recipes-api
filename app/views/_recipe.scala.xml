@@ -3,9 +3,9 @@
 		<recipeId>@recipe.getRecipeId()</recipeId>
 		<title>@recipe.getTitle()</title>
 		<ingredients>
-		@for(ingredient <- recipe.getIngredients()){
-			@_ingredient(ingredient)
-		}
+			@for(ingredient <- recipe.getIngredients()){
+				@_ingredient(ingredient)
+			}
 		</ingredients>
 		<steps>@recipe.getSteps()</steps>
 		<time>@recipe.getTime()</time>

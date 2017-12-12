@@ -27,7 +27,7 @@ import play.data.validation.Constraints.Required;
 
 @Entity
 public class Recipe extends Model{
-	//TODO agregar ingredientes
+
 	/**
 	 * Permite hacer búsquedas de recetas
 	 */
@@ -52,7 +52,7 @@ public class Recipe extends Model{
 	@JsonManagedReference
 	@ManyToMany(cascade=CascadeType.ALL)
 	public List<Ingredient> ingredients = new ArrayList<Ingredient>();
-	
+
 	/**
 	 * Pasos para elaborar la receta
 	 */
@@ -85,6 +85,7 @@ public class Recipe extends Model{
 	/**
 	 * Constructor de la clase Recipe
 	 * @param title Nombre de la receta
+	 * @param ingredients Ingredientes de la receta
 	 * @param steps Pasos para elaborar la receta
 	 * @param time Unidad de tiempo para elaborar la receta
 	 * @param difficulty Dificultad de la receta
@@ -154,6 +155,7 @@ public class Recipe extends Model{
 		
 		if(Recipe.findByName(this.title.toUpperCase()) == null) {
 			this.title = this.title.toUpperCase();
+			this.checkIngredients(this.ingredients);
 			Ebean.beginTransaction();
 			this.save();
 			Ebean.commitTransaction();
@@ -161,6 +163,25 @@ public class Recipe extends Model{
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Método que comprueba si los ingredientes de la receta ya existen en la base de datos para evitar la creación de tuplas repetidas con la 
+	 * misma información. Además transforma los ingredientes en minúsculas.
+	 * @param i Los ingredientes de la receta
+	 */
+	public void checkIngredients(List<Ingredient> i) {
+		
+		Ingredient ing;
+		for(int j=0; j < i.size(); j++) {
+			i.get(j).setIngredientName(i.get(j).getIngredientName().toLowerCase());
+			i.get(j).setUnits(i.get(j).getUnits().toLowerCase());
+			ing = Ingredient.findIngredientByNameAndUnit(i.get(j).getIngredientName(), i.get(j).getUnits());
+			if(ing != null) {
+				i.set(j, ing);
+			}
+		}
+
 	}
 
 	/**

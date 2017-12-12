@@ -64,6 +64,17 @@ public class Ingredient extends Model {
 		this.ingredientName = ingredientName;
 		this.units = units;
 	}
+	
+	/**
+	 * Método que comprueba si un ingrediente ya existe
+	 * @param name Nombre del ingrediente
+	 * @param units Unidades del ingrediente
+	 * @return UN objeto con la instancia del ingrediente
+	 */
+	public static Ingredient findIngredientByNameAndUnit(String name, String units) {
+		return find.query().where().isNotNull("ingredientName").eq("ingredientName", name)
+				.and().isNotNull("units").eq("units", units).findOne();
+	}
 
 	/**
 	 * Getter de ingredientId

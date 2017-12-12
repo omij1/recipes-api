@@ -39,7 +39,7 @@ public class RecipeController extends Controller{
 	 * @return Indica si la receta se creó satisfactoriamente o si por el contrario hubo algún error
 	 */
 	public Result createRecipe() {
-		// TODO Añadir ingredientes
+		
 		Form<Recipe> f = formFactory.form(Recipe.class).bindFromRequest(); 
 		if(f.hasErrors()) {
 			return Results.status(409, f.errorsAsJson());
