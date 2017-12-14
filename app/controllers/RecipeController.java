@@ -127,10 +127,13 @@ public class RecipeController extends Controller{
 	private boolean updateFields(Recipe r, Form<Recipe> f) {
 		
 		r.setTitle(f.get().getTitle().toUpperCase());
-		r.setIngredients(f.get().getIngredients());
+		
+		r.updateRecipeIngredients(f.get().getIngredients());
+		
 		r.setSteps(f.get().getSteps());
 		r.setTime(f.get().getTime());
 		r.setDifficulty(f.get().getDifficulty());
+		
 		r.setCategory(f.get().getCategory());
 		if(!r.checkCategory()) {
 			return false;

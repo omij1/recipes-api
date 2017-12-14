@@ -10,5 +10,5 @@
 		<steps>@recipe.getSteps()</steps>
 		<time>@recipe.getTime()</time>
 		<difficulty>@recipe.getDifficulty()</difficulty>
-		<category>@recipe.getCategory().getCategoryName()</category>
+			@_category(recipe.getCategory())
 	</recipe>

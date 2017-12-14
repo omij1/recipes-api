@@ -183,6 +183,27 @@ public class Recipe extends Model{
 		}
 
 	}
+	
+	/**
+	 * Método que actualiza los ingredientes de una receta. Hay cuatro escenarios posibles: se incorpora un ingrediente/es, se
+	 * elimina un ingrediente/es, se modifica un ingrediente/es y la unión de los casos anteriores.
+	 * @param i Lista con los ingredientes de la receta que se pretende actualizar
+	 */
+	public void updateRecipeIngredients(List<Ingredient> i){
+		
+		Ingredient ing;
+		this.ingredients.clear();
+		for(int j=0; j < i.size(); j++) {
+			i.get(j).setIngredientName(i.get(j).getIngredientName().toLowerCase());
+			i.get(j).setUnits(i.get(j).getUnits().toLowerCase());
+			ing = Ingredient.findIngredientByNameAndUnit(i.get(j).getIngredientName(), i.get(j).getUnits());
+			if(ing == null) {
+				ing = new Ingredient(i.get(j).getIngredientName(),i.get(j).getUnits());
+			}
+			this.ingredients.add(ing);
+		}
+		
+	}
 
 	/**
 	 * Getter de recipeId

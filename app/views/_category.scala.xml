@@ -1,5 +1,5 @@
 @(category: Category)
-	<category>
-		<id>@category.getCategoryId()</id>
-		<name>@category.getCategoryName()</name>
-	</category>
+		<category>
+			<id>@category.getCategoryId()</id>
+			<name>@category.getCategoryName()</name>
+		</category>
