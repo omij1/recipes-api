@@ -80,7 +80,7 @@ public class UserController extends Controller {
         }
 
         /**
-         * Formato de respuesta dependiendo de que lo que acepte la petición
+         * Formato de respuesta dependiendo de lo que acepte la petición
          */
         if (request().accepts("application/xml")) {
             return ok(views.xml.user.render(user));
@@ -94,6 +94,158 @@ public class UserController extends Controller {
 
         //TODO idioma de la respuesta
     }
+
+
+    /**
+     * Método para buscar a todos los usuarios que tengan el nombre proporcionado como parámetro
+     *
+     * @param name nombre de los usuarios que se quieren buscar
+     * @return Indica si se ha realizado correctamente o no la operación
+     */
+    public Result retrieveUserByName(String name, Integer page) {
+
+        /**
+         * Creamos un objeto de la clase PagedList para obtener la lista
+         */
+        PagedList<User> list = User.findByName(name, page);
+        List<User> usersList = list.getList();
+
+        /**
+         * Si la lista está vacía
+         */
+        if (usersList.isEmpty()) { //TODO devuelve cadenas vacías o error???
+            if (request().accepts("application/xml")) {
+                return ok(views.xml.users.render(usersList));
+            } else if (request().accepts("application/json")) {
+                return ok(Json.toJson(usersList));
+            }
+            return status(415);  //Unsupported media type
+        }
+
+        /**
+         * Si la lista no está vacía
+         */
+        if (request().accepts("application/xml")) {
+            return ok(views.xml.users.render(usersList));
+        } else if (request().accepts("application/json")) {
+            return ok(Json.toJson(usersList));
+        }
+        return status(415); //Unsupported media type
+    }
+
+    /**
+     * Método que devuelve un listado de los usuarios que tienen el apellido proporcionado como parámetro
+     *
+     * @param surname apellido de los usuarios que se quieren buscar
+     * @return Indica si se ha realizado correctamente o no la operación
+     */
+    public Result retrieveUserBySurname(String surname, Integer page) {
+        /**
+         * Creamos un objeto de la clase PagedList para obtener la lista
+         */
+        PagedList<User> list = User.findBySurname(surname, page);
+        List<User> usersList = list.getList();
+
+        /**
+         * Si la lista está vacía
+         */
+        if (usersList.isEmpty()) {
+            if (request().accepts("application/xml")) {
+                return ok(views.xml.users.render(usersList));
+            } else if (request().accepts("application/json")) {
+                return ok(Json.toJson(usersList));
+            }
+            return status(415);   //Unsupported media type
+        }
+
+        /**
+         * Si la lista no está vacía
+         */
+        if (request().accepts("application/xml")) {
+            return ok(views.xml.users.render(usersList));
+        } else if (request().accepts("application/json")) {
+            return ok(Json.toJson(usersList));
+        }
+        return status(415);  //Unsupported media type
+    }
+
+    /**
+     * Método que devuelve un listado de los usuarios que tienen el nombre y apellido proporcionados como parámetros
+     *
+     * @param name    nombre de los usuarios que se quieren buscar
+     * @param surname apellido de los usuarios que se quieren buscar
+     * @return Indica si se ha realizado correctamente o no la operación
+     */
+    public Result retrieveUserByFullName(String name, String surname, Integer page) {
+        /**
+         * Creamos un objeto de la clase PagedList para obtener la lista
+         */
+        PagedList<User> list = User.findByFullName(name, surname, page);
+        List<User> userList = list.getList();
+
+        /**
+         * Si la lista está vacía
+         */
+        if (userList.isEmpty()) {
+            if (request().accepts("application/xml")) {
+                return ok(views.xml.users.render(userList));
+            } else if (request().accepts("application/json")) {
+                return ok(Json.toJson(userList));
+            }
+            return status(415);  //Usupported media type
+        }
+
+        /**
+         * Si la lista no está vacía
+         */
+        if (request().accepts("application/xml")) {
+            return ok(views.xml.users.render(userList));
+        } else if (request().accepts("application/json")) {
+            return ok(Json.toJson(userList));
+        }
+        return status(415); //Unsupported media type
+
+    }
+
+
+    /**
+     * Método que devuelve un listado de los usuarios que son de la ciudad proporcionada como parámetro
+     *
+     * @param city ciudad de los usuarios que se quieren buscar
+     * @return Indica si se ha realizado correctamente o no la operación
+     */
+    public Result retrieveUserByCity(String city, Integer page) {
+
+        /**
+         * Creamos un objeto de la clase PagedList para obtener la lista
+         */
+        PagedList<User> list = User.findByCity(city, page);
+        List<User> userList = list.getList();
+
+        /**
+         * Si la lista está vacía
+         */
+        if (userList.isEmpty()) {
+            if (request().accepts("application/xml")) {
+                return ok(views.xml.users.render(userList));
+            } else if (request().accepts("application/json")) {
+                return ok(Json.toJson(userList));
+            }
+            return status(415);  //Unsupported media type
+        }
+
+        /**
+         * Si la lista no está vacía
+         */
+        if (request().accepts("application/xml")) {
+            return ok(views.xml.users.render(userList));
+        } else if (request().accepts("application/json")) {
+            return ok(Json.toJson(userList));
+        }
+        return status(415);  //Unsupported media type
+
+    }
+
 
     /**
      * Método para actualizar los datos de un usuario
@@ -180,14 +332,13 @@ public class UserController extends Controller {
         PagedList<User> list = User.findAll(page);
         List<User> usersList = list.getList();
 
-        if (usersList.isEmpty()) {
+        if (usersList.isEmpty()) { //TODO devuelve cadenas vacías o error???
             if (request().accepts("application/xml")) {
                 return ok(views.xml.users.render(usersList));
             } else if (request().accepts("application/json")) {
                 return ok(Json.toJson(usersList));
-            } else {
-                return status(415); //Unsupported media type
             }
+            return status(415); //Unsupported media type
         }
 
         if (request().accepts("application/xml")) {
@@ -195,7 +346,6 @@ public class UserController extends Controller {
         } else if (request().accepts("application/json")) {
             return ok(Json.toJson(usersList));
         }
-
         return status(415); //Unsupported media type
 
 

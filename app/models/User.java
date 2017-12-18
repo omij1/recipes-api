@@ -87,8 +87,9 @@ public class User extends Model {
      * @param name Nombre del usuario
      * @return <p>Devuelve el usuario o usuarios con el nombre indicado</p>
      */
-    public static PagedList<User> findByName(String name) {
-        return find.query().where().isNotNull("name").eq("name", name).findPagedList();
+    public static PagedList<User> findByName(String name, Integer page) {
+        return find.query().where().isNotNull("name").eq("name", name).setMaxRows(25)
+                .setFirstRow(25 * page).findPagedList();
     }
 
     /**
@@ -97,8 +98,9 @@ public class User extends Model {
      * @param surname Apellido del usuario
      * @return <p>Devuelve el usuario o usuarios con el apellido indicado</p>
      */
-    public static PagedList<User> findBySurname(String surname) {
-        return find.query().where().isNotNull("surname").eq("surname", surname).findPagedList();
+    public static PagedList<User> findBySurname(String surname, Integer page) {
+        return find.query().where().isNotNull("surname").eq("surname", surname).setMaxRows(25)
+                .setFirstRow(25 * page).findPagedList();
     }
 
     /**
@@ -108,9 +110,9 @@ public class User extends Model {
      * @param surname Apellido del usuario
      * @return <p>Devuelve el usuario o usuarios con el nombre y apellido indicados</p>
      */
-    public static PagedList<User> findByFullName(String name, String surname) {
-        return find.query().where().isNotNull("name").isNotNull("surname").eq("name", name)
-                .eq("surname", surname).findPagedList();
+    public static PagedList<User> findByFullName(String name, String surname, Integer page) {
+        return find.query().where().isNotNull("name").eq("name", name).and().isNotNull("surname")
+                .eq("surname", surname).setMaxRows(25).setFirstRow(25 * page).findPagedList();
     }
 
     /**
@@ -119,8 +121,9 @@ public class User extends Model {
      * @param city Ciudad del usuario
      * @return <p>Devuelve el usuario o usuarios que vivan en la ciudad indicada</p>
      */
-    public static PagedList<User> findByCity(String city) {
-        return find.query().where().isNotNull("city").eq("city", city).findPagedList();
+    public static PagedList<User> findByCity(String city, Integer page) {
+        return find.query().where().isNotNull("city").eq("city", city).setMaxRows(25)
+                .setFirstRow(25 * page).findPagedList();
     }
 
     /**
