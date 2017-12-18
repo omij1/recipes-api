@@ -69,7 +69,7 @@ public class CategoryController extends Controller{
 		}
 		else {
 			if(request().accepts("application/json")) {
-				return ok(Json.toJson(c));
+				return ok(Json.prettyPrint(Json.toJson(c)));
 			}
 			else if(request().accepts("application/xml")) {
 				return ok(views.xml._category.render(c));
@@ -145,7 +145,7 @@ public class CategoryController extends Controller{
 
 		sortAlphabetically(categories);
 		if(request().accepts("application/json")) {
-			return ok(Json.toJson(categories)).withHeader("X-Count", number.toString());
+			return ok(Json.prettyPrint(Json.toJson(categories))).withHeader("X-Count", number.toString());
 		}
 		else if(request().accepts("application/xml")) {
 			return ok(views.xml.categories.render(categories));
@@ -169,7 +169,7 @@ public class CategoryController extends Controller{
 		}
 		else {
 			if(request().accepts("application/json")) {
-				return ok(Json.toJson(c.relatedRecipes));
+				return ok(Json.prettyPrint(Json.toJson(c.relatedRecipes)));
 			}
 			else if(request().accepts("application/xml")) {
 				return ok(views.xml.recipes.render(c.relatedRecipes));

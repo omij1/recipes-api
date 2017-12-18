@@ -74,7 +74,7 @@ public class RecipeController extends Controller{
 		}
 		else {
 			if(request().accepts("application/json")) {
-				return ok(Json.toJson(recipe));
+				return ok(Json.prettyPrint(Json.toJson(recipe)));
 			}
 			else if(request().accepts("application/xml")) {
 				return ok(views.xml._recipe.render(recipe));
@@ -178,7 +178,7 @@ public class RecipeController extends Controller{
 		
 		sortAlphabetically(recipes);
 		if(request().accepts("application/json")) {
-			return ok(Json.toJson(recipes)).withHeader("X-Count", number.toString());
+			return ok(Json.prettyPrint(Json.toJson(recipes))).withHeader("X-Count", number.toString());
 		}
 		else if(request().accepts("application/xml")) {
 			return ok(views.xml.recipes.render(recipes));

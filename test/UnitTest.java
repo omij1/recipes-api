@@ -12,9 +12,7 @@ import static org.awaitility.Awaitility.await;
 import static play.test.Helpers.contentAsString;
 
 /**
- * Unit testing does not require Play application start up.
- *
- * https://www.playframework.com/documentation/latest/JavaTest
+ * Clase que contiene los test unitarios del API de recetas de cocina
  */
 public class UnitTest {
 
@@ -24,7 +22,6 @@ public class UnitTest {
         assertThat(a).isEqualTo(2);
     }
 
-    // Unit test a controller
     @Test
     public void testCount() {
         final CountController controller = new CountController(() -> 49);
