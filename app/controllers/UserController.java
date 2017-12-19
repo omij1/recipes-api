@@ -86,13 +86,39 @@ public class UserController extends Controller {
             return ok(views.xml.user.render(user));
         } else if (request().accepts("application/json")) {
             return ok(Json.toJson(user));
-        } else {
-            //TODO cambiar cuando se implemente el objeto Error
-            return status(415); //Unsupported media type
         }
+        //TODO cambiar cuando se implemente el objeto Error
+        return status(415); //Unsupported media type
 
 
         //TODO idioma de la respuesta
+    }
+
+    /**
+     * Método para obtener los datos de un usuario a través de su nick
+     *
+     * @param nick nick del usuario del que se quiere obtener la información
+     * @return Indica si se ha realizado correctamente o no la operación
+     */
+    public Result retrieveUserByNick(String nick) {
+        User user = User.findByNick(nick);
+        /**
+         * Si no existe ningún usuario con ese nick
+         */
+        if (user == null) {
+            return Results.notFound(); //TODO Cambiar cuando se implemente el objeto error
+        }
+        /**
+         * Formato de respuesta dependiendo de lo que acepte la petición
+         */
+        if (request().accepts("application/xml")) {
+            return ok(views.xml.user.render(user));
+        } else if (request().accepts("application/json")) {
+            return ok(Json.toJson(user));
+        }
+        return status(415); //Unsupported media type
+
+
     }
 
 
