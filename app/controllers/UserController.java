@@ -29,32 +29,22 @@ public class UserController extends Controller {
      */
     public Result createUser() {
 
-        /**
-         * Creación de objeto Form para obtener los datos de la petición
-         */
-        Form<User> f = formFactory.form(User.class).bindFromRequest();
 
-        //Comprobar si hay errores
-        if (f.hasErrors()) {
+        Form<User> f = formFactory.form(User.class).bindFromRequest(); //Creación de objeto Form para obtener los datos de la petición
+        if (f.hasErrors()) {         //Comprobar si hay errores
             //TODO Crear objeto Error
             return ok(f.errorsAsJson());
         }
-        /**
-         * Objeto User donde se guarda la información de la petición
-         */
-        User user = f.get();
+        User user = f.get();  //Objeto User donde se guarda la información de la petición
 
 
         //TODO Crear formato de respuestas.
         //TODO Crear objeto respuestas
         //TODO Internacionalización de las respuestas
-        /**
-         * Validación y guardado en caso de que el nick no exista. EN caso contrario se muestra el error
-         * correspondiente
-         */
+        //Validación y guardado en caso de que el nick no exista. EN caso contrario se muestra el error correspondiente
         if (user.checkAndSave()) {
             //TODO Personalizar mensaje e internacionalización
-            return Results.created();
+            return Results.created("Usuario creado correctamente");
         } else {
             //TODO Crear objeto Error
             return Results.status(409, "{\"Error:\": \"usuario repetido\"}");
@@ -72,16 +62,12 @@ public class UserController extends Controller {
 
         User user = User.findById(id_user);
 
-        /**
-         * Si el Id no existe, se devuelve un error
-         */
+        //Si el Id no existe, se devuelve un error
         if (user == null) {
             return Results.notFound(); //TODO cambiar cuando se implemente el objeto error
         }
 
-        /**
-         * Formato de respuesta dependiendo de lo que acepte la petición
-         */
+       //Formato de respuesta dependiendo de lo que acepte la petición
         if (request().accepts("application/xml")) {
             return ok(views.xml.user.render(user));
         } else if (request().accepts("application/json")) {
@@ -89,8 +75,6 @@ public class UserController extends Controller {
         }
         //TODO cambiar cuando se implemente el objeto Error
         return status(415); //Unsupported media type
-
-
         //TODO idioma de la respuesta
     }
 
@@ -102,23 +86,16 @@ public class UserController extends Controller {
      */
     public Result retrieveUserByNick(String nick) {
         User user = User.findByNick(nick);
-        /**
-         * Si no existe ningún usuario con ese nick
-         */
+        //Si no existe ningún usuario con ese nick
         if (user == null) {
             return Results.notFound(); //TODO Cambiar cuando se implemente el objeto error
         }
-        /**
-         * Formato de respuesta dependiendo de lo que acepte la petición
-         */
+        //Formato de respuesta dependiendo de lo que acepte la petición
         if (request().accepts("application/xml")) {
             return ok(views.xml.user.render(user));
         } else if (request().accepts("application/json")) {
-            return ok(Json.toJson(user));
-        }
+            return ok(Json.toJson(user));        }
         return status(415); //Unsupported media type
-
-
     }
 
 
@@ -130,27 +107,21 @@ public class UserController extends Controller {
      */
     public Result retrieveUserByName(String name, Integer page) {
 
-        /**
-         * Creamos un objeto de la clase PagedList para obtener la lista
-         */
+        //Creamos un objeto de la clase PagedList para obtener la lista
         PagedList<User> list = User.findByName(name, page);
         List<User> usersList = list.getList();
 
-        /**
-         * Si la lista está vacía
-         */
+        //Si la lista está vacía
         if (usersList.isEmpty()) { //TODO devuelve cadenas vacías o error???
             if (request().accepts("application/xml")) {
-                return ok(views.xml.users.render(usersList));
+                return Results.notFound(); //TODO Cambiar cuando se implemente el objeto Errores
             } else if (request().accepts("application/json")) {
-                return ok(Json.toJson(usersList));
+                return Results.notFound(); //TODO Cambiar cuando se implemente el objeto Errores
             }
             return status(415);  //Unsupported media type
         }
 
-        /**
-         * Si la lista no está vacía
-         */
+        //Si la lista no está vacía
         if (request().accepts("application/xml")) {
             return ok(views.xml.users.render(usersList));
         } else if (request().accepts("application/json")) {
@@ -166,27 +137,22 @@ public class UserController extends Controller {
      * @return Indica si se ha realizado correctamente o no la operación
      */
     public Result retrieveUserBySurname(String surname, Integer page) {
-        /**
-         * Creamos un objeto de la clase PagedList para obtener la lista
-         */
+
+        //Creamos un objeto de la clase PagedList para obtener la lista
         PagedList<User> list = User.findBySurname(surname, page);
         List<User> usersList = list.getList();
 
-        /**
-         * Si la lista está vacía
-         */
+        //Si la lista está vacía
         if (usersList.isEmpty()) {
             if (request().accepts("application/xml")) {
-                return ok(views.xml.users.render(usersList));
+                return Results.notFound(); //TODO Cambiar cuando se implemente el objeto Errores
             } else if (request().accepts("application/json")) {
-                return ok(Json.toJson(usersList));
+                return Results.notFound(); //TODO Cambiar cuando se implemente el objeto Errores
             }
             return status(415);   //Unsupported media type
         }
 
-        /**
-         * Si la lista no está vacía
-         */
+        //Si la lista no está vacía
         if (request().accepts("application/xml")) {
             return ok(views.xml.users.render(usersList));
         } else if (request().accepts("application/json")) {
@@ -203,27 +169,21 @@ public class UserController extends Controller {
      * @return Indica si se ha realizado correctamente o no la operación
      */
     public Result retrieveUserByFullName(String name, String surname, Integer page) {
-        /**
-         * Creamos un objeto de la clase PagedList para obtener la lista
-         */
+        //Creamos un objeto de la clase PagedList para obtener la lista
         PagedList<User> list = User.findByFullName(name, surname, page);
         List<User> userList = list.getList();
 
-        /**
-         * Si la lista está vacía
-         */
+        //Si la lista está vacía
         if (userList.isEmpty()) {
             if (request().accepts("application/xml")) {
-                return ok(views.xml.users.render(userList));
+                return Results.notFound(); //TODO Cambiar cuando se implemente el objeto Errores
             } else if (request().accepts("application/json")) {
-                return ok(Json.toJson(userList));
+                return Results.notFound(); //TODO Cambiar cuando se implemente el objeto Errores
             }
             return status(415);  //Usupported media type
         }
 
-        /**
-         * Si la lista no está vacía
-         */
+        //Si la lista no está vacía
         if (request().accepts("application/xml")) {
             return ok(views.xml.users.render(userList));
         } else if (request().accepts("application/json")) {
@@ -242,27 +202,21 @@ public class UserController extends Controller {
      */
     public Result retrieveUserByCity(String city, Integer page) {
 
-        /**
-         * Creamos un objeto de la clase PagedList para obtener la lista
-         */
+        //Creamos un objeto de la clase PagedList para obtener la lista
         PagedList<User> list = User.findByCity(city, page);
         List<User> userList = list.getList();
 
-        /**
-         * Si la lista está vacía
-         */
+       //Si la lista está vacía
         if (userList.isEmpty()) {
             if (request().accepts("application/xml")) {
-                return ok(views.xml.users.render(userList));
+                return Results.notFound(); //TODO Cambiar cuando se implemente el objeto Errores
             } else if (request().accepts("application/json")) {
-                return ok(Json.toJson(userList));
+                return Results.notFound(); //TODO Cambiar cuando se implemente el objeto Errores
             }
             return status(415);  //Unsupported media type
         }
 
-        /**
-         * Si la lista no está vacía
-         */
+        //Si la lista no está vacía
         if (request().accepts("application/xml")) {
             return ok(views.xml.users.render(userList));
         } else if (request().accepts("application/json")) {
@@ -281,9 +235,7 @@ public class UserController extends Controller {
      */
     public Result updateUser(Long id_user) {
 
-        /**
-         * Creación de objeto Form para obtener los datos de la petición
-         */
+        //Creación de objeto Form para obtener los datos de la petición
         Form<User> f = formFactory.form(User.class).bindFromRequest();
 
         //Comprobar si hay errores
@@ -291,22 +243,16 @@ public class UserController extends Controller {
             //TODO Crear objeto Error
             return ok(f.errorsAsJson());
         }
-        /**
-         * Objeto User donde se guarda la información de la petición
-         */
+        //Objeto User donde se guarda la información de la petición
         User updateUser = f.get();
         User user = User.findById(id_user);
 
-        /**
-         * Comprobar si existe el usuario con el Id indicado
-         */
+        //Comprobar si existe el usuario con el Id indicado
         if (user == null) {
             return Results.notFound();
         }
 
-        /**
-         * Si existe, asignamos el id del usuario a los nuevos datos y actualizamos
-         */
+        //Si existe, asignamos el id del usuario a los nuevos datos y actualizamos
         updateUser.setId_user(user.getId_user());
         updateUser.update();
         return ok();
@@ -323,9 +269,7 @@ public class UserController extends Controller {
     public Result deleteUser(Long id_user) {
 
         User user = User.findById(id_user);
-        /**
-         * Si el usuario existe, borrar
-         */
+        //Si el usuario existe, borrar
         if (user != null) {
             if (user.delete()) {
                 return ok();
@@ -333,13 +277,8 @@ public class UserController extends Controller {
                 return Results.internalServerError("Error al eliminar usuario"); //TODO cambiar cuando se implemente el objeto Error
             }
         }
-
-        /**
-         * Por idempotencia, aunque no exista el usuario, la respuesta debe ser correcta.
-         */
+        //Por idempotencia, aunque no exista el usuario, la respuesta debe ser correcta.
         return ok();
-
-
         //TODO Sólo pueden borrar un usuario el propio usuario y el administrador
     }
 
@@ -352,29 +291,27 @@ public class UserController extends Controller {
      */
     public Result retrieveUserCollection(Integer page) {
 
-        /**
-         * Creamos un objeto de la clase PagedList para obtener la lista
-         */
+        //Creamos un objeto de la clase PagedList para obtener la lista
         PagedList<User> list = User.findAll(page);
         List<User> usersList = list.getList();
 
-        if (usersList.isEmpty()) { //TODO devuelve cadenas vacías o error???
+        //Si la lista está vacía
+        if (usersList.isEmpty()) {
             if (request().accepts("application/xml")) {
-                return ok(views.xml.users.render(usersList));
+                return Results.notFound(); //TODO Cambiar cuando se implemente el objeto Errores
             } else if (request().accepts("application/json")) {
-                return ok(Json.toJson(usersList));
+                return Results.notFound(); //TODO Cambiar cuando se implemente el objeto Errores
             }
             return status(415); //Unsupported media type
         }
 
+        //Si la lista tiene usuarios
         if (request().accepts("application/xml")) {
             return ok(views.xml.users.render(usersList));
         } else if (request().accepts("application/json")) {
             return ok(Json.toJson(usersList));
         }
         return status(415); //Unsupported media type
-
-
         //TODO Comprobar el idioma de la respuesta
     }
 
