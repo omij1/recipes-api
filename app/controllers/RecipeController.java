@@ -51,7 +51,7 @@ public class RecipeController extends Controller{
 				return Results.ok("Receta creada correctamente");
 			}
 			else {
-				return Results.status(409, "Ya existe una receta con ese nombre");
+				return Results.status(409, new ErrorObject("2","Ya existe una receta con ese nombre").convertToJson()).as("application/json");
 			}
 		}
 		else {

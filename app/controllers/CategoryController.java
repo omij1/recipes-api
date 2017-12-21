@@ -52,7 +52,8 @@ public class CategoryController extends Controller{
 			return Results.created("Categoría creada correctamente");
 		}
 		else {
-			return Results.status(409, "Categoría ya existente");
+			//TODO todos los mensajes deberían estar guardados en algún sitio para no ponerlos directamente aqui
+			return Results.status(409, new ErrorObject("1","Categoría ya existente").convertToJson()).as("application/json");
 		}
 	}
 	
