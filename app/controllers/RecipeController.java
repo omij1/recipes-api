@@ -65,7 +65,7 @@ public class RecipeController extends Controller{
 	 * @param name Nombre de la receta que se desea visualizar
 	 * @return Respuesta que muestra la receta o error si se produjo alguno
 	 */
-	public Result retrieveRecipe(String id) {
+	public Result retrieveRecipe(Long id) {
 		
 		//TODO Poner cache
 		Recipe recipe = Recipe.findById(id);
@@ -79,9 +79,8 @@ public class RecipeController extends Controller{
 			else if(request().accepts("application/xml")) {
 				return ok(views.xml._recipe.render(recipe));
 			}
-			else {
-				return Results.status(415);
-			}
+			
+			return Results.status(415);
 		}
 		
 	}
@@ -91,7 +90,7 @@ public class RecipeController extends Controller{
 	 * @param name Nombre de la receta que se desea actualizar
 	 * @return Respuesta que indica el resultado de la operación
 	 */
-	public Result updateRecipe(String id) {
+	public Result updateRecipe(Long id) {
 		
 		//TODO Solo puede actualizar una receta el admin o el creador
 		if(!request().hasBody()) {
@@ -147,7 +146,7 @@ public class RecipeController extends Controller{
 	 * @param name Nombre de la receta que se desea eliminar
 	 * @return Respuesta que indica si la receta se borró o si se produjo un error
 	 */
-	public Result deleteRecipe(String id) {
+	public Result deleteRecipe(Long id) {
 		
 		// TODO Comprobar que el usuario que quiere borrar la receta es el admin o el creador
 		Recipe r = Recipe.findById(id);
@@ -181,11 +180,10 @@ public class RecipeController extends Controller{
 			return ok(Json.prettyPrint(Json.toJson(recipes))).withHeader("X-Count", number.toString());
 		}
 		else if(request().accepts("application/xml")) {
-			return ok(views.xml.recipes.render(recipes));
+			return ok(views.xml.recipes.render(recipes)).withHeader("X-Count", number.toString());
 		}
-		else {
-			return Results.status(415);//tipo de medio no soportado
-		}
+		
+		return Results.status(415);//tipo de medio no soportado
 		
 	}
 	
@@ -207,9 +205,8 @@ public class RecipeController extends Controller{
 		else if(request().accepts("application/xml")) {
 			return ok(views.xml._recipe.render(recipe));
 		}
-		else {
-			return Results.status(415);//tipo de medio no soportado
-		}
+		
+		return Results.status(415);//tipo de medio no soportado
 		
 	}
 	

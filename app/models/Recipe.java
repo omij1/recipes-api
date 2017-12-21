@@ -108,9 +108,9 @@ public class Recipe extends Model{
 	 * @param id Identificador de la receta
 	 * @return Un objeto con la receta
 	 */
-	public static Recipe findById(String id) {
+	public static Recipe findById(Long id) {
 		
-		return find.query().where().isNotNull("recipeId").eq("recipeId", id).findOne();
+		return find.byId(id);
 	}
 	
 	/**
@@ -139,7 +139,7 @@ public class Recipe extends Model{
 	 */
 	public boolean checkCategory() {
 
-		Category c = Category.findByCategoryId(this.category.getCategoryId().toString());
+		Category c = Category.findByCategoryId(this.category.getCategoryId());
 		if(c != null) {
 			this.category = c;
 			return true;

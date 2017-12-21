@@ -61,7 +61,7 @@ public class CategoryController extends Controller{
 	 * @param id El identificador de la categoría de recetas
 	 * @return La categoría de recetas correspondiente
 	 */
-	public Result retrieveCategory(String id) {
+	public Result retrieveCategory(Long id) {
 		
 		Category c = Category.findByCategoryId(id);
 		if(c == null) {
@@ -74,9 +74,8 @@ public class CategoryController extends Controller{
 			else if(request().accepts("application/xml")) {
 				return ok(views.xml._category.render(c));
 			}
-			else {
-				return Results.status(415);
-			}
+
+			return Results.status(415);
 		}
 		
 	}
@@ -86,14 +85,14 @@ public class CategoryController extends Controller{
 	 * @param name Nombre de la categoría de recetas que se desea actualizar
 	 * @return Respuesta indicativa del éxito o fracaso de la operación 
 	 */
-	public Result updateCategory(String id) { // Referencia a https://stackoverflow.com/questions/7543391/how-to-update-an-object-in-play-framework
+	public Result updateCategory(Long id) { // Referencia a https://stackoverflow.com/questions/7543391/how-to-update-an-object-in-play-framework
 		//TODO solo el admin puede hacerlo
 		JsonNode jn = request().body().asJson();
 		if(!request().hasBody() || jn == null) {
 			return Results.badRequest("Parámetros obligatorios");
 		}
 		
-		String newCategory = jn.get("newCategory").asText();
+		String newCategory = jn.get("categoryName").asText();
 		if(newCategory == null || newCategory == "") {
 			return Results.badRequest("La nueva categoría introducida no tiene el formato correcto");
 		}
@@ -115,7 +114,7 @@ public class CategoryController extends Controller{
 	 * @param name Nombre de la categoría de recetas que se desea borrar
 	 * @return Respuesta indicativa del estado de la operación 
 	 */
-	public Result deleteCategory(String id) {
+	public Result deleteCategory(Long id) {
 		//TODO solo el admin puede borrar una categoria. 
 		Category c = Category.findByCategoryId(id);
 		if(c == null) {
@@ -148,11 +147,10 @@ public class CategoryController extends Controller{
 			return ok(Json.prettyPrint(Json.toJson(categories))).withHeader("X-Count", number.toString());
 		}
 		else if(request().accepts("application/xml")) {
-			return ok(views.xml.categories.render(categories));
+			return ok(views.xml.categories.render(categories)).withHeader("X-Count", number.toString());
 		}
-		else {
-			return Results.status(415);//tipo de medio no soportado
-		}
+
+		return Results.status(415);//tipo de medio no soportado
 		
 	}
 	
@@ -161,7 +159,7 @@ public class CategoryController extends Controller{
 	 * @param name Nombre de la categoría de recetas que se quiere visualizar
 	 * @return Devuelve las recetas pertenecientes a la categoría especificada o error
 	 */
-	public Result retrieveRecipesByCategory(String id) {
+	public Result retrieveRecipesByCategory(Long id) {
 		
 		Category c = Category.findByCategoryId(id);
 		if(c == null) {
@@ -174,9 +172,9 @@ public class CategoryController extends Controller{
 			else if(request().accepts("application/xml")) {
 				return ok(views.xml.recipes.render(c.relatedRecipes));
 			}
-			else {
-				return Results.status(415);
-			}
+
+			return Results.status(415);
+
 		}
 		
 	}

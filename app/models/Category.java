@@ -67,9 +67,9 @@ public class Category extends Model{
 	 * @param id Identificador de la categoría
 	 * @return Un objeto con los datos de la categoría
 	 */
-	public static Category findByCategoryId(String id) {
+	public static Category findByCategoryId(Long id) {
 		
-		return find.query().where().isNotNull("categoryId").eq("categoryId", id).findOne();
+		return find.byId(id);
 	}
 	
 	/**
