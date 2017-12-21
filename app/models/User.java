@@ -4,8 +4,10 @@ import io.ebean.Finder;
 import io.ebean.Model;
 import io.ebean.PagedList;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 /**
  * Modelo que representa la tabla Users de la base de datos
@@ -36,6 +38,11 @@ public class User extends Model {
      * Ciudad del usuario
      */
     private String city;
+    /**
+     * Se asigna una apiKey al usuario
+     */
+    @OneToOne(cascade = CascadeType.ALL)
+    private ApiKey apiKey;
 
 
     /**
@@ -137,26 +144,32 @@ public class User extends Model {
     }
 
 
-    //Método de validación y guardado de usuarios
-
     /**
      * Método que comprueba si el nick ya existe en la base de datos
      *
      * @return <ul>
-     * <li>true: guarda el usuario</li>
+     * <li>true: genera una clave API y guarda el usuario</li>
      * <li>false: el nick ya existe en la base de datos</li>
      * </ul>
      */
     public boolean checkAndSave() {
         if (User.findByNick(this.nick) == null) {
+            this.generateApiKey();
             this.save();
             return true;
         }
         return false;
     }
 
+    /**
+     * Método que genera una clave API
+     */
+    public void generateApiKey() {
+       this.apiKey = new ApiKey();
+       this.apiKey.generateRandomApikey();
+    }
 
-    //Getter and Setters
+    //Getter y Setters
 
     public Long getId_user() {
         return id_user;
@@ -196,5 +209,13 @@ public class User extends Model {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public ApiKey getApiKey() {
+        return apiKey;
+    }
+
+    public void setApiKey(ApiKey apiKey) {
+        this.apiKey = apiKey;
     }
 }
