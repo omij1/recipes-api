@@ -1,0 +1,14 @@
+@(recipe: Recipe)
+	<recipe>
+		<recipeId>@recipe.getRecipeId()</recipeId>
+		<title>@recipe.getTitle()</title>
+		<ingredients>
+			@for(ingredient <- recipe.getIngredients()){
+				@_ingredient(ingredient)
+			}
+		</ingredients>
+		<steps>@recipe.getSteps()</steps>
+		<time>@recipe.getTime()</time>
+		<difficulty>@recipe.getDifficulty()</difficulty>
+			@_category(recipe.getCategory())
+	</recipe>
