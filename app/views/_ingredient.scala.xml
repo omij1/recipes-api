@@ -1,5 +1,8 @@
 @(ingredient: Ingredient)
 			<ingredient>
-				<id>@ingredient.getIngredientId()</id>
+				<id>@ingredient.getId()</id>
 				<name>@ingredient.getIngredientName()</name>
+				<version>@ingredient.getVersion()</version>
+				<created>@ingredient.getCreated()</created>
+				<updated>@ingredient.getUpdated()</updated>
 			</ingredient>

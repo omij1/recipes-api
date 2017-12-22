@@ -1,5 +1,9 @@
 @(category: Category)
 		<category>
-			<id>@category.getCategoryId()</id>
+			<id>@category.getId()</id>
 			<name>@category.getCategoryName()</name>
+			<version>@category.getVersion()</version>
+			<created>@category.getCreated()</created>
+			<updated>@category.getUpdated()</updated>
 		</category>
+		

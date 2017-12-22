@@ -11,13 +11,8 @@ import javax.persistence.OneToOne;
  * Modelo que representa la tabla ApiKeys de la base de datos
  */
 @Entity
-public class ApiKey extends Model {
+public class ApiKey extends BaseModel {
 
-    /**
-     * Identificador de la clave usuario
-     */
-    @Id
-    private Long id;
     /**
      * Clave usuario
      */
@@ -45,14 +40,6 @@ public class ApiKey extends Model {
 
 
     //Getter y setters
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getApiKey() {
         return apiKey;

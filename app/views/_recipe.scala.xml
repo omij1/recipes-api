@@ -1,6 +1,6 @@
 @(recipe: Recipe)
 	<recipe>
-		<recipeId>@recipe.getRecipeId()</recipeId>
+		<recipeId>@recipe.getId()</recipeId>
 		<title>@recipe.getTitle()</title>
 		<ingredients>
 			@for(ingredient <- recipe.getIngredients()){
@@ -11,4 +11,7 @@
 		<time>@recipe.getTime()</time>
 		<difficulty>@recipe.getDifficulty()</difficulty>
 			@_category(recipe.getCategory())
+		<version>@recipe.getVersion()</version>
+		<created>@recipe.getCreated()</created>
+		<updated>@recipe.getUpdated()</updated>	
 	</recipe>

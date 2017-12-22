@@ -26,18 +26,12 @@ import play.data.validation.Constraints.Required;
  */
 
 @Entity
-public class Recipe extends Model{
+public class Recipe extends BaseModel{
 
 	/**
 	 * Permite hacer búsquedas de recetas
 	 */
 	public static final Finder<Long, Recipe> find = new Finder<>(Recipe.class);
-
-	/**
-	 * Identificador de la receta
-	 */
-	@Id
-	Long recipeId;
 	
 	/**
 	 * Nombre de la receta
@@ -139,7 +133,7 @@ public class Recipe extends Model{
 	 */
 	public boolean checkCategory() {
 
-		Category c = Category.findByCategoryId(this.category.getCategoryId());
+		Category c = Category.findByCategoryId(this.category.getId());
 		if(c != null) {
 			this.category = c;
 			return true;
@@ -203,22 +197,6 @@ public class Recipe extends Model{
 			this.ingredients.add(ing);
 		}
 		
-	}
-
-	/**
-	 * Getter de recipeId
-	 * @return Identificador de la receta
-	 */
-	public Long getRecipeId() {
-		return recipeId;
-	}
-
-	/**
-	 * Setter de recipeId
-	 * @param recipeId El identificador de la receta
-	 */
-	public void setRecipeId(Long recipeId) {
-		this.recipeId = recipeId;
 	}
 
 	/**

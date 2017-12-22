@@ -41,7 +41,7 @@ public class UserController extends Controller {
         //TODO Crear formato de respuestas.
         //TODO Crear objeto respuestas
         //TODO Internacionalización de las respuestas
-        //Validación y guardado en caso de que el nick no exista. EN caso contrario se muestra el error correspondiente
+        //Validación y guardado en caso de que el nick no exista. En caso contrario se muestra el error correspondiente
         if (user.checkAndSave()) {
             //TODO Personalizar mensaje e internacionalización
             return Results.created("Usuario creado correctamente");
@@ -253,7 +253,7 @@ public class UserController extends Controller {
         }
 
         //Si existe, asignamos el id del usuario a los nuevos datos y actualizamos
-        updateUser.setId_user(user.getId_user());
+        updateUser.setId(user.getId());
         updateUser.update();
         return ok();
 

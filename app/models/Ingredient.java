@@ -20,18 +20,12 @@ import play.data.validation.Constraints.Required;
  */
 
 @Entity
-public class Ingredient extends Model {
+public class Ingredient extends BaseModel {
 	
 	/**
 	 * Permite hacer búsquedas de ingredientes
 	 */
 	public static final Finder<Long, Ingredient> find = new Finder<>(Ingredient.class);
-
-	/**
-	 * Id del ingrediente
-	 */
-	@Id
-	Long ingredientId;
 
 	/**
 	 * Nombre del ingrediente
@@ -74,22 +68,6 @@ public class Ingredient extends Model {
 	public static Ingredient findIngredientByNameAndUnit(String name, String units) {
 		return find.query().where().isNotNull("ingredientName").eq("ingredientName", name)
 				.and().isNotNull("units").eq("units", units).findOne();
-	}
-
-	/**
-	 * Getter de ingredientId
-	 * @return Devuelve el identificador del ingrediente
-	 */
-	public Long getIngredientId() {
-		return ingredientId;
-	}
-
-	/**
-	 * Setter de ingredientId
-	 * @param ingredientId El identificador del ingrediente
-	 */
-	public void setIngredientId(Long ingredientId) {
-		this.ingredientId = ingredientId;
 	}
 	
 	/**
