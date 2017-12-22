@@ -18,10 +18,11 @@ public class ApiKey extends Model {
      */
     @Id
     private Long id;
+
     /**
      * Clave usuario
      */
-    private String apiKey;
+    private String key;
 
     /**
      * La clave usuario sólo puede pertenecer a un usuario
@@ -34,13 +35,13 @@ public class ApiKey extends Model {
     }
 
     //Código modificado del de la página "https://stackoverflow.com/questions/20536566/creating-a-random-string-with-a-z-and-0-9-in-java"
-    protected void generateRandomApikey() {
+    protected void generateRandomKey() {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         StringBuilder stringBuilder = new StringBuilder();
         while (stringBuilder.length() < 30) {
             stringBuilder.append(characters.charAt((int) (Math.random() * characters.length())));
         }
-        this.setApiKey(stringBuilder.toString());
+        this.setKey(stringBuilder.toString());
     }
 
 
@@ -54,11 +55,12 @@ public class ApiKey extends Model {
         this.id = id;
     }
 
-    public String getApiKey() {
-        return apiKey;
+    public String getKey() {
+        return key;
     }
 
-    public void setApiKey(String apiKey) {
-        this.apiKey = apiKey;
+    public void setKey(String key) {
+        this.key = key;
     }
+
 }

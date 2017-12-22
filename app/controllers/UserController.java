@@ -9,6 +9,7 @@ import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Results;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -44,11 +45,17 @@ public class UserController extends Controller {
         //Validación y guardado en caso de que el nick no exista. EN caso contrario se muestra el error correspondiente
         if (user.checkAndSave()) {
             //TODO Personalizar mensaje e internacionalización
-            return Results.created("Usuario creado correctamente");
-        } else {
-            //TODO Crear objeto Error
-            return Results.status(409, "{\"Error:\": \"usuario repetido\"}");
+            if (request().accepts("application/xml")) {
+                return Results.created(views.xml.apiKey.render(user));
+            } else if (request().accepts("application/json")) {
+                ObjectNode apiKey = Json.newObject();
+                apiKey.put("apiKey", user.getApiKey().getKey());
+                return Results.created(apiKey);
+            }
         }
+        //TODO Crear objeto Error
+        return Results.status(409, "{\"Error:\": \"usuario repetido\"}");
+
 
     }
 
@@ -67,7 +74,7 @@ public class UserController extends Controller {
             return Results.notFound(); //TODO cambiar cuando se implemente el objeto error
         }
 
-       //Formato de respuesta dependiendo de lo que acepte la petición
+        //Formato de respuesta dependiendo de lo que acepte la petición
         if (request().accepts("application/xml")) {
             return ok(views.xml.user.render(user));
         } else if (request().accepts("application/json")) {
@@ -94,7 +101,8 @@ public class UserController extends Controller {
         if (request().accepts("application/xml")) {
             return ok(views.xml.user.render(user));
         } else if (request().accepts("application/json")) {
-            return ok(Json.toJson(user));        }
+            return ok(Json.toJson(user));
+        }
         return status(415); //Unsupported media type
     }
 
@@ -206,7 +214,7 @@ public class UserController extends Controller {
         PagedList<User> list = User.findByCity(city, page);
         List<User> userList = list.getList();
 
-       //Si la lista está vacía
+        //Si la lista está vacía
         if (userList.isEmpty()) {
             if (request().accepts("application/xml")) {
                 return Results.notFound(); //TODO Cambiar cuando se implemente el objeto Errores

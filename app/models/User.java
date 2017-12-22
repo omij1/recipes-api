@@ -171,7 +171,7 @@ public class User extends Model {
      */
     public void generateApiKey() {
        this.apiKey = new ApiKey();
-       this.apiKey.generateRandomApikey();
+       this.apiKey.generateRandomKey();
     }
 
     //Getter y Setters

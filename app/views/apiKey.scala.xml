@@ -1,0 +1,5 @@
+@(user: User)
+        @_xmlDeclaration()
+<apiKey>
+    @user.getApiKey().getKey()
+</apiKey>

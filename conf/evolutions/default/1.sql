@@ -5,7 +5,7 @@
 
 create table api_key (
   id                            bigint auto_increment not null,
-  api_key                       varchar(255),
+  key                           varchar(255),
   constraint pk_api_key primary key (id)
 );
 
