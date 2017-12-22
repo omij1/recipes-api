@@ -4,10 +4,9 @@ import io.ebean.Finder;
 import io.ebean.Model;
 import io.ebean.PagedList;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Modelo que representa la tabla Users de la base de datos
@@ -43,6 +42,12 @@ public class User extends Model {
      */
     @OneToOne(cascade = CascadeType.ALL)
     private ApiKey apiKey;
+
+    /**
+     * Lista de recetas perteneciente a un usuario
+     */
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    public List<Recipe> userRecipes = new ArrayList<>();
 
 
     /**
@@ -218,4 +223,13 @@ public class User extends Model {
     public void setApiKey(ApiKey apiKey) {
         this.apiKey = apiKey;
     }
+
+    public List<Recipe> getUserRecipes() {
+        return userRecipes;
+    }
+
+    public void setUserRecipes(List<Recipe> userRecipes) {
+        this.userRecipes = userRecipes;
+    }
+
 }
