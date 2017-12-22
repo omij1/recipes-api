@@ -84,6 +84,16 @@ public class User extends Model {
     }
 
     /**
+     * Búsqueda por apiKey
+     *
+     * @param Apikey apiKey del usuario
+     * @return <p>Devuelve el usuario con el apiKey indicado</p>
+     */
+    public static User findByApiKey(String Apikey) {
+        return find.query().where().isNotNull("apiKey").eq("apiKey", Apikey).findOne();
+    }
+
+    /**
      * Búsqueda por nick
      *
      * @param nick Nick del usuario
