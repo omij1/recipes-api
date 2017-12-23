@@ -87,7 +87,7 @@ public class Recipe extends Model {
      */
     @JsonManagedReference
     @JsonIgnore
-    @Transient
+    @Transient  //Sacado de la página https://stackoverflow.com/questions/28345582/exclude-fields-from-ebean-to-save-it-in-db
     private String apiKey;
 
     /**

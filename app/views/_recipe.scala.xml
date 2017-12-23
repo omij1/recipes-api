@@ -11,4 +11,5 @@
 		<time>@recipe.getTime()</time>
 		<difficulty>@recipe.getDifficulty()</difficulty>
 			@_category(recipe.getCategory())
+		<userId>@recipe.getUser().getId_user()</userId>
 	</recipe>
