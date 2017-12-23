@@ -3,14 +3,9 @@ package models;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import io.ebean.Ebean;
@@ -84,8 +79,16 @@ public class Recipe extends Model {
      * Autor de la receta
      */
     @ManyToOne
+    @JsonIgnore
     public User user;
 
+    /**
+     * ApiKey del autor de la receta
+     */
+    @JsonManagedReference
+    @JsonIgnore
+    @Transient
+    private String apiKey;
 
     /**
      * Constructor de la clase Recipe
@@ -98,7 +101,7 @@ public class Recipe extends Model {
      * @param category    Categoría de la receta
      */
     public Recipe(@Required String title, @Required List<Ingredient> ingredients, @Required String steps, @Required String time, Difficulty difficulty,
-                  Category category) {
+                  Category category, @Required String apiKey) {
 
         super();
         this.title = title;
@@ -107,6 +110,7 @@ public class Recipe extends Model {
         this.time = time;
         this.difficulty = difficulty;
         this.category = category;
+        this.apiKey = apiKey;
     }
 
     /**
@@ -351,5 +355,15 @@ public class Recipe extends Model {
     public void setUser(User user) {
         this.user = user;
     }
+
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
+    }
+
+
 
 }

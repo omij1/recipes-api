@@ -1,5 +1,6 @@
 package models;
 
+import io.ebean.Finder;
 import io.ebean.Model;
 
 import javax.persistence.Entity;
@@ -30,6 +31,11 @@ public class ApiKey extends Model {
     @OneToOne(mappedBy = "apiKey")
     private User user;
 
+    /**
+     * Permite hacer búsquedas de apiKeys
+     */
+    public static final Finder<Long, ApiKey> find = new Finder<>(ApiKey.class);
+
     public ApiKey() {
         super();
     }
@@ -42,6 +48,10 @@ public class ApiKey extends Model {
             stringBuilder.append(characters.charAt((int) (Math.random() * characters.length())));
         }
         this.setKey(stringBuilder.toString());
+    }
+
+    public static ApiKey findBykey(String key) {
+        return find.query().where().isNotNull("key").eq("key", key).findOne();
     }
 
 

@@ -34,7 +34,7 @@ GET		/recipe/:id				   	controllers.RecipeController.retrieveRecipe(id: Long)
 PUT		/recipe/:id				   	controllers.RecipeController.updateRecipe(id: Long)
 DELETE	/recipe/:id				   	controllers.RecipeController.deleteRecipe(id: Long)
 
-GET 		/recipes					   	controllers.RecipeController.retrieveRecipeCollection(page: Integer)
+GET 		/recipes/:page					   	controllers.RecipeController.retrieveRecipeCollection(page: Integer)
 
 # Buscar una receta por su título
 GET 		/recipes/search				controllers.RecipeController.searchRecipe(title: String)
@@ -47,7 +47,7 @@ PUT		/category/:id			   	controllers.CategoryController.updateCategory(id: Long)
 DELETE	/category/:id			   	controllers.CategoryController.deleteCategory(id: Long)
 
 # Obtener las categorías de recetas
-GET 		/categories				   	controllers.CategoryController.retrieveCategoryCollection(page: Integer)
+GET 		/categories/:page				   	controllers.CategoryController.retrieveCategoryCollection(page: Integer)
 
 # Obtener las recetas de una categoría
 GET 		/category/:id/recipes/list 	controllers.CategoryController.retrieveRecipesByCategory(id: Long)

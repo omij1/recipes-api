@@ -1,5 +1,6 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import io.ebean.Finder;
 import io.ebean.Model;
 import io.ebean.PagedList;
@@ -46,6 +47,7 @@ public class User extends Model {
     /**
      * Lista de recetas perteneciente a un usuario
      */
+    @JsonBackReference
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     public List<Recipe> userRecipes = new ArrayList<>();
 
@@ -83,14 +85,16 @@ public class User extends Model {
         return find.byId(id);
     }
 
+
     /**
-     * Búsqueda por apiKey
+     * Método para obtener el usuario a partir del ApiKey
      *
-     * @param Apikey apiKey del usuario
-     * @return <p>Devuelve el usuario con el apiKey indicado</p>
+     * @param apikey Clave del usuario a buscar
+     * @return <p>Devuelve el usuario con el id indicado</p>
      */
-    public static User findByApiKey(String Apikey) {
-        return find.query().where().isNotNull("apiKey").eq("apiKey", Apikey).findOne();
+    public static User findByApiKey(String apikey) {
+        Long apiKeyId = ApiKey.findBykey(apikey).getId();
+        return find.query().where().isNotNull("api_key_id").eq("api_key_id", apiKeyId).findOne();
     }
 
     /**

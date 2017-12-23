@@ -13,6 +13,7 @@ import io.ebean.PagedList;
 import models.Category;
 import models.Difficulty;
 import models.Recipe;
+import models.User;
 import play.data.Form;
 import play.data.FormFactory;
 import play.libs.Json;
@@ -46,6 +47,7 @@ public class RecipeController extends Controller{
 		}
 		
 		Recipe r = f.get();
+		r.setUser(User.findByApiKey(f.get().getApiKey()));
 		if(r.checkCategory()) {
 			if(r.checkRecipe()) {
 				return Results.ok("Receta creada correctamente");
@@ -62,7 +64,7 @@ public class RecipeController extends Controller{
 	
 	/**
 	 * Método que permite obtener la información de una receta. Corresponde con un GET.
-	 * @param name Nombre de la receta que se desea visualizar
+	 * @param id Id de la receta que se desea visualizar
 	 * @return Respuesta que muestra la receta o error si se produjo alguno
 	 */
 	public Result retrieveRecipe(Long id) {
@@ -87,7 +89,7 @@ public class RecipeController extends Controller{
 	
 	/**
 	 * Método que permite actualizar la información de una receta. Corresponde con un PUT.
-	 * @param name Nombre de la receta que se desea actualizar
+	 * @param id Id de la receta que se desea actualizar
 	 * @return Respuesta que indica el resultado de la operación
 	 */
 	public Result updateRecipe(Long id) {
@@ -143,7 +145,7 @@ public class RecipeController extends Controller{
 
 	/**
 	 * Método que permite eliminar una receta. Corresponde con un DELETE.
-	 * @param name Nombre de la receta que se desea eliminar
+	 * @param id Id de la receta que se desea eliminar
 	 * @return Respuesta que indica si la receta se borró o si se produjo un error
 	 */
 	public Result deleteRecipe(Long id) {
