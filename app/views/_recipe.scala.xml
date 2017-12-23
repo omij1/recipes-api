@@ -12,4 +12,8 @@
 		<difficulty>@recipe.getDifficulty()</difficulty>
 			@_category(recipe.getCategory())
 		<userId>@recipe.getUser().getId_user()</userId>
+		<nick>@recipe.getUser().getNick()</nick>
+		<name>@recipe.getUser().getName()</name>
+		<surname>@recipe.getUser().getSurname()</surname>
+		<city>@recipe.getUser().getCity()</city>
 	</recipe>

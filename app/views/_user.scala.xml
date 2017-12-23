@@ -5,5 +5,4 @@
     <name>@user.getName()</name>
     <surname>@user.getSurname()</surname>
     <city>@user.getCity()</city>
-    <apiKey>@user.getApiKey().getKey()</apiKey>
 </user>

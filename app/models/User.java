@@ -1,6 +1,8 @@
 package models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import io.ebean.Finder;
 import io.ebean.Model;
 import io.ebean.PagedList;
@@ -42,6 +44,7 @@ public class User extends Model {
      * Se asigna una apiKey al usuario
      */
     @OneToOne(cascade = CascadeType.ALL)
+    @JsonIgnore
     private ApiKey apiKey;
 
     /**

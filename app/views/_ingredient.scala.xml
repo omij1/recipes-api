@@ -2,4 +2,5 @@
 			<ingredient>
 				<id>@ingredient.getIngredientId()</id>
 				<name>@ingredient.getIngredientName()</name>
+				<units>@ingredient.getUnits()</units>
 			</ingredient>

@@ -78,6 +78,7 @@ public class Recipe extends Model {
     /**
      * Autor de la receta
      */
+    @JsonManagedReference
     @ManyToOne
     @JsonIgnore
     public User user;
@@ -85,7 +86,7 @@ public class Recipe extends Model {
     /**
      * ApiKey del autor de la receta
      */
-    @JsonManagedReference
+    @Required
     @JsonIgnore
     @Transient  //Sacado de la página https://stackoverflow.com/questions/28345582/exclude-fields-from-ebean-to-save-it-in-db
     private String apiKey;
@@ -100,7 +101,7 @@ public class Recipe extends Model {
      * @param difficulty  Dificultad de la receta
      * @param category    Categoría de la receta
      */
-    public Recipe(@Required String title, @Required List<Ingredient> ingredients, @Required String steps, @Required String time, Difficulty difficulty,
+    public Recipe(@Required String title, @Required List<Ingredient> ingredients, @Required String steps, @Required String time, @Required Difficulty difficulty,
                   Category category, @Required String apiKey) {
 
         super();
