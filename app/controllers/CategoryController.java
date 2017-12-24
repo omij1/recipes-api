@@ -35,8 +35,9 @@ public class CategoryController extends Controller{
 	 * Método que permite crear una nueva categoría de recetas. Corresponde con un POST.
 	 * @return Respuesta que indica si la categoría se creó correctamente o si hubo algún problema
 	 */
-	public Result createCategory() {
+	public Result createCategory(String apiKey) {
 		//TODO solo puede crear una categoria el admin
+		//TODO Comprobar si el apiKey existe ejemplo en metodo de accion createUser
 		JsonNode jn = request().body().asJson();
 		if(!request().hasBody() || jn == null) {
 			return Results.badRequest("Parámetros obligatorios");
@@ -86,8 +87,9 @@ public class CategoryController extends Controller{
 	 * @param name Nombre de la categoría de recetas que se desea actualizar
 	 * @return Respuesta indicativa del éxito o fracaso de la operación 
 	 */
-	public Result updateCategory(Long id) { // Referencia a https://stackoverflow.com/questions/7543391/how-to-update-an-object-in-play-framework
+	public Result updateCategory(Long id, String apiKey) { // Referencia a https://stackoverflow.com/questions/7543391/how-to-update-an-object-in-play-framework
 		//TODO solo el admin puede hacerlo
+		//TODO Comprobar si el apiKey existe ejemplo en metodo de accion createUser
 		JsonNode jn = request().body().asJson();
 		if(!request().hasBody() || jn == null) {
 			return Results.badRequest("Parámetros obligatorios");
@@ -115,8 +117,9 @@ public class CategoryController extends Controller{
 	 * @param name Nombre de la categoría de recetas que se desea borrar
 	 * @return Respuesta indicativa del estado de la operación 
 	 */
-	public Result deleteCategory(Long id) {
+	public Result deleteCategory(Long id, String apiKey) {
 		//TODO solo el admin puede borrar una categoria. 
+		//TODO Comprobar si el apiKey existe ejemplo en metodo de accion createUser
 		Category c = Category.findByCategoryId(id);
 		if(c == null) {
 			return Results.notFound("La categoría introducida no existe");

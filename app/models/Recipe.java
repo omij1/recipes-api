@@ -84,14 +84,6 @@ public class Recipe extends Model {
     public User user;
 
     /**
-     * ApiKey del autor de la receta
-     */
-    @Required
-    @JsonIgnore
-    @Transient  //Sacado de la página https://stackoverflow.com/questions/28345582/exclude-fields-from-ebean-to-save-it-in-db
-    private String apiKey;
-
-    /**
      * Constructor de la clase Recipe
      *
      * @param title       Nombre de la receta
@@ -102,7 +94,7 @@ public class Recipe extends Model {
      * @param category    Categoría de la receta
      */
     public Recipe(@Required String title, @Required List<Ingredient> ingredients, @Required String steps, @Required String time, @Required Difficulty difficulty,
-                  Category category, @Required String apiKey) {
+                  Category category) {
 
         super();
         this.title = title;
@@ -111,7 +103,6 @@ public class Recipe extends Model {
         this.time = time;
         this.difficulty = difficulty;
         this.category = category;
-        this.apiKey = apiKey;
     }
 
     /**
@@ -349,22 +340,20 @@ public class Recipe extends Model {
         this.category = category;
     }
 
+    /**
+     * Getter de user
+     * @return Usuario que publicó la receta
+     */
     public User getUser() {
         return user;
     }
 
+    /**
+     * Setter de user
+     * @param user Usuario que publica la receta
+     */
     public void setUser(User user) {
         this.user = user;
     }
-
-    public String getApiKey() {
-        return apiKey;
-    }
-
-    public void setApiKey(String apiKey) {
-        this.apiKey = apiKey;
-    }
-
-
 
 }

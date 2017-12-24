@@ -39,7 +39,7 @@ public class RecipeController extends Controller{
 	 * Método que permite crear una nueva receta. Corresponde con un POST
 	 * @return Indica si la receta se creó satisfactoriamente o si por el contrario hubo algún error
 	 */
-	public Result createRecipe() {
+	public Result createRecipe(String apiKey) {
 		
 		Form<Recipe> f = formFactory.form(Recipe.class).bindFromRequest(); 
 		if(f.hasErrors()) {
@@ -47,7 +47,16 @@ public class RecipeController extends Controller{
 		}
 		
 		Recipe r = f.get();
-		r.setUser(User.findByApiKey(f.get().getApiKey()));
+		
+		//Usuario que sube la receta
+		User u = User.findByApiKey(apiKey);
+		
+		if(u == null) {
+			return Results.notFound("El usuario introducido no existe");
+		}
+		
+		//Asignamos el creador de la receta
+		r.setUser(u);
 		if(r.checkCategory()) {
 			if(r.checkRecipe()) {
 				return Results.ok("Receta creada correctamente");
@@ -92,8 +101,8 @@ public class RecipeController extends Controller{
 	 * @param id Id de la receta que se desea actualizar
 	 * @return Respuesta que indica el resultado de la operación
 	 */
-	public Result updateRecipe(Long id) {
-		
+	public Result updateRecipe(Long id, String apiKey) {
+		//TODO Comprobar si el apiKey existe ejemplo en metodo de accion createUser
 		//TODO Solo puede actualizar una receta el admin o el creador
 		if(!request().hasBody()) {
 			return Results.badRequest("Parámetros obligatorios");
@@ -148,8 +157,8 @@ public class RecipeController extends Controller{
 	 * @param id Id de la receta que se desea eliminar
 	 * @return Respuesta que indica si la receta se borró o si se produjo un error
 	 */
-	public Result deleteRecipe(Long id) {
-		
+	public Result deleteRecipe(Long id, String apiKey) {
+		//TODO Comprobar si el apiKey existe ejemplo en metodo de accion createUser
 		// TODO Comprobar que el usuario que quiere borrar la receta es el admin o el creador
 		Recipe r = Recipe.findById(id);
 		if(r == null) {

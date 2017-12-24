@@ -96,8 +96,13 @@ public class User extends Model {
      * @return <p>Devuelve el usuario con el id indicado</p>
      */
     public static User findByApiKey(String apikey) {
-        Long apiKeyId = ApiKey.findBykey(apikey).getId();
-        return find.query().where().isNotNull("api_key_id").eq("api_key_id", apiKeyId).findOne();
+
+    		ApiKey key = ApiKey.findBykey(apikey);
+    		if(key != null) {
+    			Long apiKeyId = key.getId();
+    			return find.query().where().isNotNull("api_key_id").eq("api_key_id", apiKeyId).findOne();
+    		}
+    		return null;
     }
 
     /**

@@ -30,7 +30,6 @@ public class UserController extends Controller {
      */
     public Result createUser() {
 
-
         Form<User> f = formFactory.form(User.class).bindFromRequest(); //Creación de objeto Form para obtener los datos de la petición
         if (f.hasErrors()) {         //Comprobar si hay errores
             //TODO Crear objeto Error
@@ -241,7 +240,7 @@ public class UserController extends Controller {
      * @param id_user Id del usuario del que se quiere realizar una modificación de los datos
      * @return Indica si se ha realizado correctamente o no la operación
      */
-    public Result updateUser(Long id_user) {
+    public Result updateUser(Long id_user, String apiKey) {
 
         //Creación de objeto Form para obtener los datos de la petición
         Form<User> f = formFactory.form(User.class).bindFromRequest();
@@ -265,6 +264,7 @@ public class UserController extends Controller {
         updateUser.update();
         return ok();
 
+        //TODO Comprobar si el apiKey existe ejemplo en metodo de accion createUser
         //TODO Sólo pueden modificar los datos de un usuario el propio usuario o el administrador
     }
 
@@ -274,7 +274,7 @@ public class UserController extends Controller {
      * @param id_user Id del usuario que se quiere borrar
      * @return Indica si se ha realizado correctamente o no la operación
      */
-    public Result deleteUser(Long id_user) {
+    public Result deleteUser(Long id_user, String apiKey) {
 
         User user = User.findById(id_user);
         //Si el usuario existe, borrar
@@ -287,6 +287,7 @@ public class UserController extends Controller {
         }
         //Por idempotencia, aunque no exista el usuario, la respuesta debe ser correcta.
         return ok();
+      //TODO Comprobar si el apiKey existe ejemplo en metodo de accion createUser
         //TODO Sólo pueden borrar un usuario el propio usuario y el administrador
     }
 
