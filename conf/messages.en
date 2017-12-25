@@ -1,0 +1,19 @@
+wrongOutputFormat = The requested output format is incorrect
+emptyParams = Required parameters
+
+
+category.wrongFormat = The input category does not have the correct format
+category.created = Category created
+category.alreadyExist = Category already exist
+category.notExist = The input category does not exist
+category.updated = Category updated
+category.deleted = Category deleted
+
+
+
+recipe.created = Recipe created
+recipe.alreadyExist = Recipe already exist
+recipe.wrongId = There is no recipe with that identifier
+recipe.updated = Recipe updated
+recipe.deleted = Recipe deleted
+recipe.wrongName = There id no recipe with that name
