@@ -6,48 +6,48 @@
 # User resource
 #
 
-POST          /user                                            controllers.UserController.createUser
-GET           /user/:id_user                                   controllers.UserController.retrieveUser(id_user: Long)
-PUT           /user/:id_user                                   controllers.UserController.updateUser(id_user: Long, apiKey: String)
-DELETE        /user/:id_user                                   controllers.UserController.deleteUser(id_user: Long, apiKey: String)
-GET           /user/nick/:nick                                 controllers.UserController.retrieveUserByNick(nick: String)
-GET           /users		                                      controllers.UserController.retrieveUserCollection(page: Integer)
-GET           /users/name/:name/page/:page                     controllers.UserController.retrieveUserByName(name: String, page: Integer)
-GET           /users/surname/:surname/page/:page               controllers.UserController.retrieveUserBySurname(surname: String, page: Integer)
-GET           /users/fullname/:name/:surname/page/:page        controllers.UserController.retrieveUserByFullName(name: String, surname: String, page: Integer)
-GET           /users/city/:city/page/:page                     controllers.UserController.retrieveUserByCity(city: String, page: Integer)
+POST          /user                             controllers.UserController.createUser
+GET           /user/:id_user                    controllers.UserController.retrieveUser(id_user: Long)
+PUT           /user/:id_user                    controllers.UserController.updateUser(id_user: Long, apiKey: String)
+DELETE        /user/:id_user                    controllers.UserController.deleteUser(id_user: Long, apiKey: String)
+GET           /user/nick/:nick                  controllers.UserController.retrieveUserByNick(nick: String)
+GET           /users                            controllers.UserController.retrieveUserCollection(page: Integer)
+GET           /users/name/:name                 controllers.UserController.retrieveUserByName(name: String, page: Integer)
+GET           /users/surname/:surname           controllers.UserController.retrieveUserBySurname(surname: String, page: Integer)
+GET           /users/fullname/:name             controllers.UserController.retrieveUserByFullName(name: String, surname: String, page: Integer)
+GET           /users/city/:city                 controllers.UserController.retrieveUserByCity(city: String, page: Integer)
 
 # An example controller showing a sample home page
-GET           /                                                controllers.HomeController.index
+GET           /                                 controllers.HomeController.index
 # An example controller showing how to use dependency injection
-GET           /count                                           controllers.CountController.count
+GET           /count                            controllers.CountController.count
 # An example controller showing how to write asynchronous code
-GET           /message                                         controllers.AsyncController.message
+GET           /message                          controllers.AsyncController.message
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+GET           /assets/*file                     controllers.Assets.versioned(path="/public", file: Asset)
 
 # Rutas de recetas
 
-POST		/recipe					   	controllers.RecipeController.createRecipe(apiKey: String)
-GET		/recipe/:id				   	controllers.RecipeController.retrieveRecipe(id: Long)
-PUT		/recipe/:id				   	controllers.RecipeController.updateRecipe(id: Long, apiKey: String)
-DELETE	/recipe/:id				   	controllers.RecipeController.deleteRecipe(id: Long, apiKey: String)
+POST          /recipe                           controllers.RecipeController.createRecipe(apiKey: String)
+GET           /recipe/:id                       controllers.RecipeController.retrieveRecipe(id: Long)
+PUT           /recipe/:id                       controllers.RecipeController.updateRecipe(id: Long, apiKey: String)
+DELETE        /recipe/:id                       controllers.RecipeController.deleteRecipe(id: Long, apiKey: String)
 
-GET 		/recipes						controllers.RecipeController.retrieveRecipeCollection(page: Integer)
+GET           /recipes                          controllers.RecipeController.retrieveRecipeCollection(page: Integer)
 
 # Buscar una receta por su título
-GET 		/recipes/search				controllers.RecipeController.searchRecipe(title: String)
+GET           /recipes/search                   controllers.RecipeController.searchRecipe(title: String)
 
 # Rutas de categoría
 
-POST		/category				   	controllers.CategoryController.createCategory(apiKey: String)
-GET		/category/:id			   	controllers.CategoryController.retrieveCategory(id: Long)
-PUT		/category/:id			   	controllers.CategoryController.updateCategory(id: Long, apiKey: String)
-DELETE	/category/:id			   	controllers.CategoryController.deleteCategory(id: Long, apiKey: String)
+POST          /category                         controllers.CategoryController.createCategory(apiKey: String)
+GET           /category/:id                     controllers.CategoryController.retrieveCategory(id: Long)
+PUT           /category/:id                     controllers.CategoryController.updateCategory(id: Long, apiKey: String)
+DELETE        /category/:id                     controllers.CategoryController.deleteCategory(id: Long, apiKey: String)
 
 # Obtener las categorías de recetas
-GET 		/categories					controllers.CategoryController.retrieveCategoryCollection(page: Integer)
+GET           /categories                       controllers.CategoryController.retrieveCategoryCollection(page: Integer)
 
 # Obtener las recetas de una categoría
-GET 		/category/:id/recipes/list 	controllers.CategoryController.retrieveRecipesByCategory(id: Long)
+GET           /category/:id/recipes/list        controllers.CategoryController.retrieveRecipesByCategory(id: Long)

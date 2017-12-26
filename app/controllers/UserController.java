@@ -49,7 +49,7 @@ public class UserController extends Controller {
             } else if (request().accepts("application/json")) {
                 ObjectNode apiKey = Json.newObject();
                 apiKey.put("apiKey", user.getApiKey().getKey());
-                return Results.created(apiKey);
+                return Results.created(Json.prettyPrint(apiKey));
             }
         }
         //TODO Crear objeto Error
@@ -77,7 +77,7 @@ public class UserController extends Controller {
         if (request().accepts("application/xml")) {
             return ok(views.xml.user.render(user));
         } else if (request().accepts("application/json")) {
-            return ok(Json.toJson(user));
+            return ok(Json.prettyPrint(Json.toJson(user)));
         }
         //TODO cambiar cuando se implemente el objeto Error
         return status(415); //Unsupported media type
@@ -100,7 +100,7 @@ public class UserController extends Controller {
         if (request().accepts("application/xml")) {
             return ok(views.xml.user.render(user));
         } else if (request().accepts("application/json")) {
-            return ok(Json.toJson(user));
+            return ok(Json.prettyPrint(Json.toJson(user)));
         }
         return status(415); //Unsupported media type
     }
@@ -132,7 +132,7 @@ public class UserController extends Controller {
         if (request().accepts("application/xml")) {
             return ok(views.xml.users.render(usersList));
         } else if (request().accepts("application/json")) {
-            return ok(Json.toJson(usersList));
+            return ok(Json.prettyPrint(Json.toJson(usersList)));
         }
         return status(415); //Unsupported media type
     }
@@ -163,7 +163,7 @@ public class UserController extends Controller {
         if (request().accepts("application/xml")) {
             return ok(views.xml.users.render(usersList));
         } else if (request().accepts("application/json")) {
-            return ok(Json.toJson(usersList));
+            return ok(Json.prettyPrint(Json.toJson(usersList)));
         }
         return status(415);  //Unsupported media type
     }
@@ -194,7 +194,7 @@ public class UserController extends Controller {
         if (request().accepts("application/xml")) {
             return ok(views.xml.users.render(userList));
         } else if (request().accepts("application/json")) {
-            return ok(Json.toJson(userList));
+            return ok(Json.prettyPrint(Json.toJson(userList)));
         }
         return status(415); //Unsupported media type
 
@@ -227,7 +227,7 @@ public class UserController extends Controller {
         if (request().accepts("application/xml")) {
             return ok(views.xml.users.render(userList));
         } else if (request().accepts("application/json")) {
-            return ok(Json.toJson(userList));
+            return ok(Json.prettyPrint(Json.toJson(userList)));
         }
         return status(415);  //Unsupported media type
 
@@ -318,7 +318,7 @@ public class UserController extends Controller {
         if (request().accepts("application/xml")) {
             return ok(views.xml.users.render(usersList));
         } else if (request().accepts("application/json")) {
-            return ok(Json.toJson(usersList));
+            return ok(Json.prettyPrint(Json.toJson(usersList)));
         }
         return status(415); //Unsupported media type
         //TODO Comprobar el idioma de la respuesta
