@@ -2,6 +2,7 @@ package controllers;
 
 
 import io.ebean.PagedList;
+import models.ApiKey;
 import models.User;
 import play.data.Form;
 import play.data.FormFactory;
@@ -112,8 +113,10 @@ public class UserController extends Controller {
      * @param name nombre de los usuarios que se quieren buscar
      * @return Indica si se ha realizado correctamente o no la operación
      */
-    public Result retrieveUserByName(String name, Integer page) {
+    public Result retrieveUserByName(String name) {
 
+        //Obtenemos la página
+        Integer page = Integer.parseInt(request().getQueryString("page"));
         //Creamos un objeto de la clase PagedList para obtener la lista
         PagedList<User> list = User.findByName(name, page);
         List<User> usersList = list.getList();
@@ -143,8 +146,10 @@ public class UserController extends Controller {
      * @param surname apellido de los usuarios que se quieren buscar
      * @return Indica si se ha realizado correctamente o no la operación
      */
-    public Result retrieveUserBySurname(String surname, Integer page) {
+    public Result retrieveUserBySurname(String surname) {
 
+        //Obtenemos la página
+        Integer page = Integer.parseInt(request().getQueryString("page"));
         //Creamos un objeto de la clase PagedList para obtener la lista
         PagedList<User> list = User.findBySurname(surname, page);
         List<User> usersList = list.getList();
@@ -175,7 +180,10 @@ public class UserController extends Controller {
      * @param surname apellido de los usuarios que se quieren buscar
      * @return Indica si se ha realizado correctamente o no la operación
      */
-    public Result retrieveUserByFullName(String name, String surname, Integer page) {
+    public Result retrieveUserByFullName(String name, String surname) {
+
+        //Obtenemos la página
+        Integer page = Integer.parseInt(request().getQueryString("page"));
         //Creamos un objeto de la clase PagedList para obtener la lista
         PagedList<User> list = User.findByFullName(name, surname, page);
         List<User> userList = list.getList();
@@ -207,8 +215,10 @@ public class UserController extends Controller {
      * @param city ciudad de los usuarios que se quieren buscar
      * @return Indica si se ha realizado correctamente o no la operación
      */
-    public Result retrieveUserByCity(String city, Integer page) {
+    public Result retrieveUserByCity(String city) {
 
+        //Obtenemos la página
+        Integer page = Integer.parseInt(request().getQueryString("page"));
         //Creamos un objeto de la clase PagedList para obtener la lista
         PagedList<User> list = User.findByCity(city, page);
         List<User> userList = list.getList();
@@ -240,16 +250,19 @@ public class UserController extends Controller {
      * @param id_user Id del usuario del que se quiere realizar una modificación de los datos
      * @return Indica si se ha realizado correctamente o no la operación
      */
-    public Result updateUser(Long id_user, String apiKey) {
+    public Result updateUser(Long id_user) {
 
         //Creación de objeto Form para obtener los datos de la petición
         Form<User> f = formFactory.form(User.class).bindFromRequest();
-
         //Comprobar si hay errores
         if (f.hasErrors()) {
             //TODO Crear objeto Error
             return ok(f.errorsAsJson());
         }
+
+        //Se obtiene el apiKey de la cadena
+        String apiKey = request().getQueryString("apiKey");
+
         //Objeto User donde se guarda la información de la petición
         User updateUser = f.get();
         User user = User.findById(id_user);
@@ -259,10 +272,14 @@ public class UserController extends Controller {
             return Results.notFound();
         }
 
-        //Si existe, asignamos el id del usuario a los nuevos datos y actualizamos
-        updateUser.setId_user(user.getId_user());
-        updateUser.update();
-        return ok();
+        //Si existe el usuario y su apiKey coincide con el apiKey suministrado, ejecutamos la actualización
+        if (user.getApiKey().getKey().matches(apiKey)) {
+            updateUser.setId_user(user.getId_user());
+            updateUser.update();
+            return ok();
+        }
+        return Results.badRequest("No tienes permiso para realizar esta acción");
+
 
         //TODO Comprobar si el apiKey existe ejemplo en metodo de accion createUser
         //TODO Sólo pueden modificar los datos de un usuario el propio usuario o el administrador
@@ -274,20 +291,26 @@ public class UserController extends Controller {
      * @param id_user Id del usuario que se quiere borrar
      * @return Indica si se ha realizado correctamente o no la operación
      */
-    public Result deleteUser(Long id_user, String apiKey) {
-
+    public Result deleteUser(Long id_user) {
         User user = User.findById(id_user);
-        //Si el usuario existe, borrar
+        //Si el usuario existe
         if (user != null) {
-            if (user.delete()) {
-                return ok();
-            } else {
-                return Results.internalServerError("Error al eliminar usuario"); //TODO cambiar cuando se implemente el objeto Error
+            //Se obtiene el apiKey de la cadena
+            String apiKey = request().getQueryString("apiKey");
+            //Si el apiKey del usuario con el id indicado coincide con el apiKey suministrado ejecutamos la operación
+            if (user.getApiKey().getKey().matches(apiKey)) {
+                if (user.delete()) {
+                    return ok("Usuario borrado correctamente");
+                } else {
+                    return Results.internalServerError("Error al eliminar usuario"); //TODO cambiar cuando se implemente el objeto Error
+                }
             }
+            return Results.badRequest("No tiene permiso para realizar esta acción"); //TODO cambiar cuando se implemente el objeto Error
         }
         //Por idempotencia, aunque no exista el usuario, la respuesta debe ser correcta.
-        return ok();
-      //TODO Comprobar si el apiKey existe ejemplo en metodo de accion createUser
+        return ok("Usuario borrado correctamente");
+
+        //TODO Comprobar si el apiKey existe ejemplo en metodo de accion createUser
         //TODO Sólo pueden borrar un usuario el propio usuario y el administrador
     }
 
@@ -295,11 +318,12 @@ public class UserController extends Controller {
     /**
      * Método para obtener un listado de los usuarios
      *
-     * @param page Página que se quiere obtener
      * @return Indica si se ha realizado correctamente o no la operación
      */
-    public Result retrieveUserCollection(Integer page) {
+    public Result retrieveUserCollection() {
 
+        //Obtenemos la página
+        Integer page = Integer.parseInt(request().getQueryString("page"));
         //Creamos un objeto de la clase PagedList para obtener la lista
         PagedList<User> list = User.findAll(page);
         List<User> usersList = list.getList();
@@ -307,9 +331,9 @@ public class UserController extends Controller {
         //Si la lista está vacía
         if (usersList.isEmpty()) {
             if (request().accepts("application/xml")) {
-                return Results.notFound(); //TODO Cambiar cuando se implemente el objeto Errores
+                return Results.notFound("No hay usuarios registrados"); //TODO Cambiar cuando se implemente el objeto Errores
             } else if (request().accepts("application/json")) {
-                return Results.notFound(); //TODO Cambiar cuando se implemente el objeto Errores
+                return Results.notFound("No hay usuarios registrados"); //TODO Cambiar cuando se implemente el objeto Errores
             }
             return status(415); //Unsupported media type
         }

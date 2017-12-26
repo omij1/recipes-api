@@ -8,14 +8,14 @@
 
 POST          /user                             controllers.UserController.createUser
 GET           /user/:id_user                    controllers.UserController.retrieveUser(id_user: Long)
-PUT           /user/:id_user                    controllers.UserController.updateUser(id_user: Long, apiKey: String)
-DELETE        /user/:id_user                    controllers.UserController.deleteUser(id_user: Long, apiKey: String)
+PUT           /user/:id_user                    controllers.UserController.updateUser(id_user: Long)
+DELETE        /user/:id_user                    controllers.UserController.deleteUser(id_user: Long)
 GET           /user/nick/:nick                  controllers.UserController.retrieveUserByNick(nick: String)
-GET           /users                            controllers.UserController.retrieveUserCollection(page: Integer)
-GET           /users/name/:name                 controllers.UserController.retrieveUserByName(name: String, page: Integer)
-GET           /users/surname/:surname           controllers.UserController.retrieveUserBySurname(surname: String, page: Integer)
-GET           /users/fullname/:name             controllers.UserController.retrieveUserByFullName(name: String, surname: String, page: Integer)
-GET           /users/city/:city                 controllers.UserController.retrieveUserByCity(city: String, page: Integer)
+GET           /users                            controllers.UserController.retrieveUserCollection()
+GET           /users/name/:name                 controllers.UserController.retrieveUserByName(name: String)
+GET           /users/surname/:surname           controllers.UserController.retrieveUserBySurname(surname: String)
+GET           /users/fullname/:name             controllers.UserController.retrieveUserByFullName(name: String, surname: String)
+GET           /users/city/:city                 controllers.UserController.retrieveUserByCity(city: String)
 
 # An example controller showing a sample home page
 GET           /                                 controllers.HomeController.index
