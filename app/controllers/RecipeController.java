@@ -39,8 +39,9 @@ public class RecipeController extends Controller{
 	 * Método que permite crear una nueva receta. Corresponde con un POST
 	 * @return Indica si la receta se creó satisfactoriamente o si por el contrario hubo algún error
 	 */
-	public Result createRecipe(String apiKey) {
-		
+	public Result createRecipe() {
+
+		String apiKey = request().getQueryString("apiKey");
 		Form<Recipe> f = formFactory.form(Recipe.class).bindFromRequest(); 
 		if(f.hasErrors()) {
 			return Results.status(409, f.errorsAsJson());
@@ -101,9 +102,11 @@ public class RecipeController extends Controller{
 	 * @param id Id de la receta que se desea actualizar
 	 * @return Respuesta que indica el resultado de la operación
 	 */
-	public Result updateRecipe(Long id, String apiKey) {
+	public Result updateRecipe(Long id) {
 		//TODO Comprobar si el apiKey existe ejemplo en metodo de accion createUser
 		//TODO Solo puede actualizar una receta el admin o el creador
+
+		String apiKey = request().getQueryString("apiKey");
 		if(!request().hasBody()) {
 			return Results.badRequest("Parámetros obligatorios");
 		}
@@ -157,9 +160,10 @@ public class RecipeController extends Controller{
 	 * @param id Id de la receta que se desea eliminar
 	 * @return Respuesta que indica si la receta se borró o si se produjo un error
 	 */
-	public Result deleteRecipe(Long id, String apiKey) {
+	public Result deleteRecipe(Long id) {
 		//TODO Comprobar si el apiKey existe ejemplo en metodo de accion createUser
 		// TODO Comprobar que el usuario que quiere borrar la receta es el admin o el creador
+		String apiKey = request().getQueryString("apiKey");
 		Recipe r = Recipe.findById(id);
 		if(r == null) {
 			return Results.notFound("No existe ninguna receta con ese identificador");
@@ -177,11 +181,11 @@ public class RecipeController extends Controller{
 	
 	/**
 	 * Método que permite visualizar las recetas existentes sin tener en cuenta su categoría. Corresponde con un GET.
-	 * @param page Página que se va a mostrar
 	 * @return Respuesta que muestra todas las recetas existentes
 	 */
-	public Result retrieveRecipeCollection(Integer page) {
+	public Result retrieveRecipeCollection() {
 
+		Integer page = Integer.parseInt(request().getQueryString("page"));
 		PagedList<Recipe> list = Recipe.findPage(page);
 		List<Recipe> recipes = list.getList();
 		Integer number = list.getTotalCount();
@@ -200,11 +204,11 @@ public class RecipeController extends Controller{
 	
 	/**
 	 * Método que permite buscar una receta por su título
-	 * @param title Título de la receta que se quiere buscar
 	 * @return Respuesta que muestra la receta o error
 	 */
-	public Result searchRecipe(String title) {
+	public Result searchRecipe() {
 
+		String title = request().getQueryString("title");
 		Recipe recipe = Recipe.findByName(title.toUpperCase());
 		if(recipe == null){
 			return Results.notFound("No existe ninguna receta con ese nombre");

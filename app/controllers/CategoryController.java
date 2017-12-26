@@ -35,9 +35,10 @@ public class CategoryController extends Controller{
 	 * Método que permite crear una nueva categoría de recetas. Corresponde con un POST.
 	 * @return Respuesta que indica si la categoría se creó correctamente o si hubo algún problema
 	 */
-	public Result createCategory(String apiKey) {
+	public Result createCategory() {
 		//TODO solo puede crear una categoria el admin
 		//TODO Comprobar si el apiKey existe ejemplo en metodo de accion createUser
+		String apiKey = request().getQueryString("apiKey");
 		JsonNode jn = request().body().asJson();
 		if(!request().hasBody() || jn == null) {
 			return Results.badRequest("Parámetros obligatorios");
@@ -84,12 +85,13 @@ public class CategoryController extends Controller{
 	
 	/**
 	 * Método que permite actualizar una categoría de recetas. Corresponde con un PUT.
-	 * @param name Nombre de la categoría de recetas que se desea actualizar
+	 * @param id Id de la categoría de recetas que se desea actualizar
 	 * @return Respuesta indicativa del éxito o fracaso de la operación 
 	 */
-	public Result updateCategory(Long id, String apiKey) { // Referencia a https://stackoverflow.com/questions/7543391/how-to-update-an-object-in-play-framework
+	public Result updateCategory(Long id) { // Referencia a https://stackoverflow.com/questions/7543391/how-to-update-an-object-in-play-framework
 		//TODO solo el admin puede hacerlo
 		//TODO Comprobar si el apiKey existe ejemplo en metodo de accion createUser
+		String apiKey = request().getQueryString("apiKey");
 		JsonNode jn = request().body().asJson();
 		if(!request().hasBody() || jn == null) {
 			return Results.badRequest("Parámetros obligatorios");
@@ -114,12 +116,13 @@ public class CategoryController extends Controller{
 	
 	/**
 	 * Método que permite eliminar una categoría de recetas de la base de datos. Corresponde con un DELETE.
-	 * @param name Nombre de la categoría de recetas que se desea borrar
+	 * @param id Id de la categoría de recetas que se desea borrar
 	 * @return Respuesta indicativa del estado de la operación 
 	 */
-	public Result deleteCategory(Long id, String apiKey) {
+	public Result deleteCategory(Long id) {
 		//TODO solo el admin puede borrar una categoria. 
 		//TODO Comprobar si el apiKey existe ejemplo en metodo de accion createUser
+		String apiKey = request().getQueryString("apiKey");
 		Category c = Category.findByCategoryId(id);
 		if(c == null) {
 			return Results.notFound("La categoría introducida no existe");
@@ -137,11 +140,10 @@ public class CategoryController extends Controller{
 	
 	/**
 	 * Método que permite visualizar todas las categorías de recetas existentes. Corresponde con un GET.
-	 * @param page Página que se va a mostrar
-	 * @return Respuesta que muestra las categorías de recetas existentes o error 
+	 * @return Respuesta que muestra las categorías de recetas existentes o error
 	 */
-	public Result retrieveCategoryCollection(Integer page) {
-		
+	public Result retrieveCategoryCollection() {
+		Integer page = Integer.parseInt(request().getQueryString("page"));
 		PagedList<Category> list = Category.findPage(page);
 		List<Category> categories = list.getList();
 		Integer number = list.getTotalCount();
@@ -160,7 +162,7 @@ public class CategoryController extends Controller{
 	
 	/**
 	 * Método que permite visualizar todas las recetas pertenecientes a una categoría. Corresponde con un GET.
-	 * @param name Nombre de la categoría de recetas que se quiere visualizar
+	 * @param id Id de la categoría de recetas que se quiere visualizar
 	 * @return Devuelve las recetas pertenecientes a la categoría especificada o error
 	 */
 	public Result retrieveRecipesByCategory(Long id) {
@@ -185,7 +187,7 @@ public class CategoryController extends Controller{
 	
 	/**
 	 * Método que ordena alfabéticamente las categorías de recetas
-	 * @param recipes Lista con las categorías de recetas
+	 * @param categories Lista con las categorías de recetas
 	 */
 	private void sortAlphabetically(List<Category> categories) {
 		
