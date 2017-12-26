@@ -3,6 +3,7 @@ package models;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import io.ebean.Ebean;
 import io.ebean.Finder;
 import io.ebean.Model;
 import io.ebean.PagedList;
@@ -181,8 +182,14 @@ public class User extends Model {
      */
     public boolean checkAndSave() {
         if (User.findByNick(this.nick) == null) {
-            this.generateApiKey();
-            this.save();
+            Ebean.beginTransaction();
+            try {
+                this.generateApiKey();
+                this.save();
+                Ebean.commitTransaction();
+            } finally {
+                Ebean.endTransaction();
+            }
             return true;
         }
         return false;
