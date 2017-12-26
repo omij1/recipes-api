@@ -23,18 +23,12 @@ import play.data.validation.Constraints.Required;
  */
 
 @Entity
-public class Category extends Model{
+public class Category extends BaseModel{
 	
 	/**
 	 * Permite hacer búsquedas en las categorías de recetas
 	 */
 	public static final Finder<Long, Category> find = new Finder<>(Category.class);
-
-	/**
-	 * Identificador de la categoría de receta
-	 */
-	@Id
-	Long categoryId;
 
 	/**
 	 * Nombre de la categoría de receta
@@ -108,22 +102,6 @@ public class Category extends Model{
 			
 		}
 		return true;
-	}
-
-	/**
-	 * Getter de categoryId
-	 * @return Devuelve el id de la categoría de receta
-	 */
-	public Long getCategoryId() {
-		return categoryId;
-	}
-
-	/**
-	 * Setter de categoryId
-	 * @param categoryId El identificador de la categoría de receta
-	 */
-	public void setCategoryId(Long categoryId) {
-		this.categoryId = categoryId;
 	}
 
 	/**

@@ -1,7 +1,9 @@
 package controllers;
 
+import play.i18n.Messages;
 import play.libs.Json;
 import play.mvc.Controller;
+import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.Results;
 
@@ -26,9 +28,9 @@ import models.Recipe;
 public class CategoryController extends Controller{
 	
 	/**
-	 * Lista que contiene los datos de las categorías de las recetas
+	 * Variable para presentar los mensajes al usuario según el idioma
 	 */
-	private List<Category> categorias = new ArrayList<>();
+	private Messages messages;
 	
 	
 	/**
@@ -39,23 +41,26 @@ public class CategoryController extends Controller{
 		//TODO solo puede crear una categoria el admin
 		//TODO Comprobar si el apiKey existe ejemplo en metodo de accion createUser
 		String apiKey = request().getQueryString("apiKey");
+
+		messages = Http.Context.current().messages();//le asigno el contexto actual del método de acción
+		
 		JsonNode jn = request().body().asJson();
 		if(!request().hasBody() || jn == null) {
-			return Results.badRequest("Parámetros obligatorios");
+			return Results.badRequest(messages.at("emptyParams"));
 		}
 		
 		String categoryName = jn.get("categoryName").asText();
 		if(categoryName == null || categoryName == "") {
-			return Results.badRequest("La categoría introducida no tiene el formato correcto");
+			return Results.badRequest(messages.at("category.wrongFormat"));
 		}
 		
 		Category categoria = new Category(categoryName.toUpperCase());
 		if(!categoria.checkCategory()) {
-			return Results.created("Categoría creada correctamente");
+			return Results.created(messages.at("category.created"));
 		}
 		else {
 			//TODO todos los mensajes deberían estar guardados en algún sitio para no ponerlos directamente aqui
-			return Results.status(409, new ErrorObject("1","Categoría ya existente").convertToJson()).as("application/json");
+			return Results.status(409, new ErrorObject("1",messages.at("category.alreadyExist")).convertToJson()).as("application/json");
 		}
 	}
 	
@@ -66,9 +71,11 @@ public class CategoryController extends Controller{
 	 */
 	public Result retrieveCategory(Long id) {
 		
+		messages = Http.Context.current().messages();//le asigno el contexto actual del método de acción
+		
 		Category c = Category.findByCategoryId(id);
 		if(c == null) {
-			return Results.notFound("La categoría introducida no existe");
+			return Results.notFound(messages.at("category.notExist"));
 		}
 		else {
 			if(request().accepts("application/json")) {
@@ -78,7 +85,7 @@ public class CategoryController extends Controller{
 				return ok(views.xml._category.render(c));
 			}
 
-			return Results.status(415);
+			return Results.status(415, new ErrorObject("2", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
 		}
 		
 	}
@@ -92,24 +99,27 @@ public class CategoryController extends Controller{
 		//TODO solo el admin puede hacerlo
 		//TODO Comprobar si el apiKey existe ejemplo en metodo de accion createUser
 		String apiKey = request().getQueryString("apiKey");
+
+		messages = Http.Context.current().messages();
+		
 		JsonNode jn = request().body().asJson();
 		if(!request().hasBody() || jn == null) {
-			return Results.badRequest("Parámetros obligatorios");
+			return Results.badRequest(messages.at("emptyParams"));
 		}
 		
 		String newCategory = jn.get("categoryName").asText();
 		if(newCategory == null || newCategory == "") {
-			return Results.badRequest("La nueva categoría introducida no tiene el formato correcto");
+			return Results.badRequest(messages.at("category.wrongFormat"));
 		}
 		
 		Category c = Category.findByCategoryId(id);
 		if(c == null) {
-			return Results.notFound("La categoría introducida no existe");
+			return Results.notFound(messages.at("category.notExist"));
 		}
 		else {
 			c.setCategoryName(newCategory.toUpperCase());
 			c.save();
-			return ok("Categoría actualizada correctamente");
+			return ok(messages.at("category.updated"));
 		}		
 		
 	}
@@ -123,13 +133,16 @@ public class CategoryController extends Controller{
 		//TODO solo el admin puede borrar una categoria. 
 		//TODO Comprobar si el apiKey existe ejemplo en metodo de accion createUser
 		String apiKey = request().getQueryString("apiKey");
+
+		messages = Http.Context.current().messages();
+		
 		Category c = Category.findByCategoryId(id);
 		if(c == null) {
-			return Results.notFound("La categoría introducida no existe");
+			return Results.notFound(messages.at("category.notExist"));
 		}
 		else {
 			if(c.delete()) {
-				return ok("Categoría eliminada correctamente");
+				return ok(messages.at("category.deleted"));
 			}
 			else {
 				return internalServerError();
@@ -143,7 +156,11 @@ public class CategoryController extends Controller{
 	 * @return Respuesta que muestra las categorías de recetas existentes o error
 	 */
 	public Result retrieveCategoryCollection() {
+		
 		Integer page = Integer.parseInt(request().getQueryString("page"));
+		
+		messages = Http.Context.current().messages();	
+
 		PagedList<Category> list = Category.findPage(page);
 		List<Category> categories = list.getList();
 		Integer number = list.getTotalCount();
@@ -156,7 +173,7 @@ public class CategoryController extends Controller{
 			return ok(views.xml.categories.render(categories)).withHeader("X-Count", number.toString());
 		}
 
-		return Results.status(415);//tipo de medio no soportado
+		return Results.status(415,new ErrorObject("2", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
 		
 	}
 	
@@ -167,9 +184,11 @@ public class CategoryController extends Controller{
 	 */
 	public Result retrieveRecipesByCategory(Long id) {
 		
+		messages = Http.Context.current().messages();
+		
 		Category c = Category.findByCategoryId(id);
 		if(c == null) {
-			return Results.notFound("La categoría introducida no existe");
+			return Results.notFound(messages.at("category.notExist"));
 		}
 		else {
 			if(request().accepts("application/json")) {
@@ -179,8 +198,7 @@ public class CategoryController extends Controller{
 				return ok(views.xml.recipes.render(c.relatedRecipes));
 			}
 
-			return Results.status(415);
-
+			return Results.status(415,new ErrorObject("2", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
 		}
 		
 	}

@@ -42,7 +42,7 @@ public class UserController extends Controller {
         //TODO Crear formato de respuestas.
         //TODO Crear objeto respuestas
         //TODO Internacionalización de las respuestas
-        //Validación y guardado en caso de que el nick no exista. EN caso contrario se muestra el error correspondiente
+        //Validación y guardado en caso de que el nick no exista. En caso contrario se muestra el error correspondiente
         if (user.checkAndSave()) {
             //TODO Personalizar mensaje e internacionalización
             if (request().accepts("application/xml")) {
@@ -92,6 +92,7 @@ public class UserController extends Controller {
      * @return Indica si se ha realizado correctamente o no la operación
      */
     public Result retrieveUserByNick(String nick) {
+    	
         User user = User.findByNick(nick);
         //Si no existe ningún usuario con ese nick
         if (user == null) {
@@ -280,7 +281,6 @@ public class UserController extends Controller {
         }
         return Results.badRequest("No tienes permiso para realizar esta acción");
 
-
         //TODO Comprobar si el apiKey existe ejemplo en metodo de accion createUser
         //TODO Sólo pueden modificar los datos de un usuario el propio usuario o el administrador
     }
@@ -292,6 +292,7 @@ public class UserController extends Controller {
      * @return Indica si se ha realizado correctamente o no la operación
      */
     public Result deleteUser(Long id_user) {
+    	
         User user = User.findById(id_user);
         //Si el usuario existe
         if (user != null) {
@@ -347,6 +348,5 @@ public class UserController extends Controller {
         return status(415); //Unsupported media type
         //TODO Comprobar el idioma de la respuesta
     }
-
 
 }

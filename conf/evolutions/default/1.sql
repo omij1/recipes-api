@@ -6,49 +6,64 @@
 create table api_key (
   id                            bigint auto_increment not null,
   key                           varchar(255),
+  version                       bigint not null,
+  created                       timestamp not null,
+  updated                       timestamp not null,
   constraint pk_api_key primary key (id)
 );
 
 create table category (
-  category_id                   bigint auto_increment not null,
+  id                            bigint auto_increment not null,
   category_name                 varchar(255),
-  constraint pk_category primary key (category_id)
+  version                       bigint not null,
+  created                       timestamp not null,
+  updated                       timestamp not null,
+  constraint pk_category primary key (id)
 );
 
 create table ingredient (
-  ingredient_id                 bigint auto_increment not null,
+  id                            bigint auto_increment not null,
   ingredient_name               varchar(255),
   units                         varchar(255),
-  constraint pk_ingredient primary key (ingredient_id)
+  version                       bigint not null,
+  created                       timestamp not null,
+  updated                       timestamp not null,
+  constraint pk_ingredient primary key (id)
 );
 
 create table recipe (
-  recipe_id                     bigint auto_increment not null,
+  id                            bigint auto_increment not null,
   title                         varchar(255),
   steps                         varchar(255),
   time                          varchar(255),
   difficulty                    varchar(11),
   category_category_id          bigint,
   user_id_user                  bigint,
+  version                       bigint not null,
+  created                       timestamp not null,
+  updated                       timestamp not null,
   constraint ck_recipe_difficulty check ( difficulty in ('Fácil','Muy fácil','Difícil','Muy difícil','Intermedia')),
-  constraint pk_recipe primary key (recipe_id)
+  constraint pk_recipe primary key (id)
 );
 
 create table recipe_ingredient (
-  recipe_recipe_id              bigint not null,
-  ingredient_ingredient_id      bigint not null,
-  constraint pk_recipe_ingredient primary key (recipe_recipe_id,ingredient_ingredient_id)
+  recipe_id                     bigint not null,
+  ingredient_id                 bigint not null,
+  constraint pk_recipe_ingredient primary key (recipe_id,ingredient_id)
 );
 
 create table user (
-  id_user                       bigint auto_increment not null,
+  id	                       bigint auto_increment not null,
   nick                          varchar(255),
   name                          varchar(255),
   surname                       varchar(255),
   city                          varchar(255),
   api_key_id                    bigint,
+  version                       bigint not null,
+  created                       timestamp not null,
+  updated                       timestamp not null,
   constraint uq_user_api_key_id unique (api_key_id),
-  constraint pk_user primary key (id_user)
+  constraint pk_user primary key (id)
 );
 
 alter table recipe add constraint fk_recipe_category_category_id foreign key (category_category_id) references category (category_id) on delete restrict on update restrict;

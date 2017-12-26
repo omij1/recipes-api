@@ -17,13 +17,7 @@ import java.util.List;
  */
 
 @Entity
-public class User extends Model {
-
-    /**
-     * Identificador de usuario
-     */
-    @Id
-    Long id_user;
+public class User extends BaseModel {
 
     /**
      * Nick del usuario
@@ -204,14 +198,6 @@ public class User extends Model {
     }
 
     //Getter y Setters
-
-    public Long getId_user() {
-        return id_user;
-    }
-
-    public void setId_user(Long id_user) {
-        this.id_user = id_user;
-    }
 
     public String getNick() {
         return nick;

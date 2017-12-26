@@ -12,13 +12,7 @@ import javax.persistence.OneToOne;
  * Modelo que representa la tabla ApiKeys de la base de datos
  */
 @Entity
-public class ApiKey extends Model {
-
-    /**
-     * Identificador de la clave usuario
-     */
-    @Id
-    private Long id;
+public class ApiKey extends BaseModel {
 
     /**
      * Clave usuario
@@ -36,6 +30,10 @@ public class ApiKey extends Model {
      */
     public static final Finder<Long, ApiKey> find = new Finder<>(ApiKey.class);
 
+    
+    /**
+     * Constructor de la clase ApiKey
+     */
     public ApiKey() {
         super();
     }
@@ -50,25 +48,27 @@ public class ApiKey extends Model {
         this.setKey(stringBuilder.toString());
     }
 
+    /**
+     * Método que permite buscar un aapikey en la base de datos
+     * @param key La clave que se desea buscar
+     * @return Un objeto con los datos de la clave
+     */
     public static ApiKey findBykey(String key) {
         return find.query().where().isNotNull("key").eq("key", key).findOne();
     }
 
-
-    //Getter y setters
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
+    /**
+     * Getter de key
+     * @return La clave del usuario
+     */
     public String getKey() {
         return key;
     }
 
+    /**
+     * Setter de key
+     * @param key Clave del usuario
+     */
     public void setKey(String key) {
         this.key = key;
     }

@@ -16,8 +16,10 @@ import models.Recipe;
 import models.User;
 import play.data.Form;
 import play.data.FormFactory;
+import play.i18n.Messages;
 import play.libs.Json;
 import play.mvc.Controller;
+import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.Results;
 
@@ -34,7 +36,13 @@ public class RecipeController extends Controller{
 	 */
 	@Inject
 	FormFactory formFactory;
+	
+	/**
+	 * Variable para presentar los mensajes al usuario según el idioma
+	 */
+	private Messages messages;
 
+	
 	/**
 	 * Método que permite crear una nueva receta. Corresponde con un POST
 	 * @return Indica si la receta se creó satisfactoriamente o si por el contrario hubo algún error
@@ -42,6 +50,9 @@ public class RecipeController extends Controller{
 	public Result createRecipe() {
 
 		String apiKey = request().getQueryString("apiKey");
+		
+		messages = Http.Context.current().messages();//le asigno el contexto actual del método de acción
+
 		Form<Recipe> f = formFactory.form(Recipe.class).bindFromRequest(); 
 		if(f.hasErrors()) {
 			return Results.status(409, f.errorsAsJson());
@@ -60,14 +71,14 @@ public class RecipeController extends Controller{
 		r.setUser(u);
 		if(r.checkCategory()) {
 			if(r.checkRecipe()) {
-				return Results.ok("Receta creada correctamente");
+				return Results.ok(messages.at("recipe.created"));
 			}
 			else {
-				return Results.status(409, new ErrorObject("2","Ya existe una receta con ese nombre").convertToJson()).as("application/json");
+				return Results.status(409, new ErrorObject("3",messages.at("recipe.alreadyExist")).convertToJson()).as("application/json");
 			}
 		}
 		else {
-			return Results.notFound("La categoría introducida no existe");
+			return Results.notFound(messages.at("category.notExist"));
 		}
 		
 	}
@@ -80,9 +91,11 @@ public class RecipeController extends Controller{
 	public Result retrieveRecipe(Long id) {
 		
 		//TODO Poner cache
+		messages = Http.Context.current().messages();
+		
 		Recipe recipe = Recipe.findById(id);
 		if(recipe == null) {
-			return Results.notFound("No existe ninguna receta con ese identificador");
+			return Results.notFound(messages.at("recipe.wrongId"));
 		}
 		else {
 			if(request().accepts("application/json")) {
@@ -92,7 +105,7 @@ public class RecipeController extends Controller{
 				return ok(views.xml._recipe.render(recipe));
 			}
 			
-			return Results.status(415);
+			return Results.status(415,new ErrorObject("2", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
 		}
 		
 	}
@@ -105,15 +118,17 @@ public class RecipeController extends Controller{
 	public Result updateRecipe(Long id) {
 		//TODO Comprobar si el apiKey existe ejemplo en metodo de accion createUser
 		//TODO Solo puede actualizar una receta el admin o el creador
-
 		String apiKey = request().getQueryString("apiKey");
+
+		messages = Http.Context.current().messages();
+		
 		if(!request().hasBody()) {
-			return Results.badRequest("Parámetros obligatorios");
+			return Results.badRequest(messages.at("emptyParams"));
 		}
 		
 		Recipe r = Recipe.findById(id);
 		if(r == null) {
-			return Results.notFound("No existe ninguna receta con ese identificador");
+			return Results.notFound(messages.at("recipe.wrongId"));
 		}
 		else {
 			Form<Recipe> f = formFactory.form(Recipe.class).bindFromRequest();
@@ -121,10 +136,10 @@ public class RecipeController extends Controller{
 				return Results.ok(f.errorsAsJson());
 			}
 			if(updateFields(r,f)) {
-				return ok("Receta actualizada correctamente");
+				return ok(messages.at("recipe.updated"));
 			}
 			else {
-				return Results.notFound("La categoría introducida no existe");
+				return Results.notFound(messages.at("category.notExist"));
 			}
 		}
 		
@@ -164,13 +179,16 @@ public class RecipeController extends Controller{
 		//TODO Comprobar si el apiKey existe ejemplo en metodo de accion createUser
 		// TODO Comprobar que el usuario que quiere borrar la receta es el admin o el creador
 		String apiKey = request().getQueryString("apiKey");
+
+		messages = Http.Context.current().messages();
+		
 		Recipe r = Recipe.findById(id);
 		if(r == null) {
-			return Results.notFound("No existe ninguna receta con ese identificador");
+			return Results.notFound(messages.at("recipe.wrongId"));
 		}
 		else {
 			if(r.delete()) {
-				return ok("Receta eliminada satisfactoriamente");
+				return ok(messages.at("recipe.deleted"));
 			}
 			else {
 				return internalServerError();
@@ -184,6 +202,8 @@ public class RecipeController extends Controller{
 	 * @return Respuesta que muestra todas las recetas existentes
 	 */
 	public Result retrieveRecipeCollection() {
+		
+		messages = Http.Context.current().messages();
 
 		Integer page = Integer.parseInt(request().getQueryString("page"));
 		PagedList<Recipe> list = Recipe.findPage(page);
@@ -198,7 +218,7 @@ public class RecipeController extends Controller{
 			return ok(views.xml.recipes.render(recipes)).withHeader("X-Count", number.toString());
 		}
 		
-		return Results.status(415);//tipo de medio no soportado
+		return Results.status(415,new ErrorObject("2", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
 		
 	}
 	
@@ -207,11 +227,13 @@ public class RecipeController extends Controller{
 	 * @return Respuesta que muestra la receta o error
 	 */
 	public Result searchRecipe() {
+		
+		messages = Http.Context.current().messages();
 
 		String title = request().getQueryString("title");
 		Recipe recipe = Recipe.findByName(title.toUpperCase());
 		if(recipe == null){
-			return Results.notFound("No existe ninguna receta con ese nombre");
+			return Results.notFound(messages.at("recipe.wrongName"));
 		}
 		
 		if(request().accepts("application/json")) {
@@ -221,7 +243,7 @@ public class RecipeController extends Controller{
 			return ok(views.xml._recipe.render(recipe));
 		}
 		
-		return Results.status(415);//tipo de medio no soportado
+		return Results.status(415,new ErrorObject("2", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
 		
 	}
 	

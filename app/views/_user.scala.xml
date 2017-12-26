@@ -1,8 +1,11 @@
 @(user: User)
 <user>
-    <id_user>@user.getId_user()</id_user>
+    <id_user>@user.getId()</id_user>
     <nick>@user.getNick()</nick>
     <name>@user.getName()</name>
     <surname>@user.getSurname()</surname>
     <city>@user.getCity()</city>
+    <version>@user.getVersion()</version>
+    <created>@user.getCreated()</created>
+    <updated>@user.getUpdated()</updated>
 </user>
