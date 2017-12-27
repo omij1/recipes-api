@@ -17,3 +17,10 @@ recipe.wrongId = There is no recipe with that identifier
 recipe.updated = Recipe updated
 recipe.deleted = Recipe deleted
 recipe.wrongName = There id no recipe with that name
+recipe.emptyName = You must enter the name of a recipe
+
+
+
+validation.difficulty = The difficulty values are: MUY_FACIL, FACIL, INTERMEDIA, DIFICIL, MUY_DIFICIL
+validation.required = This field is required
+validation.blank = This field can not be blank

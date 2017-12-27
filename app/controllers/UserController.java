@@ -275,7 +275,7 @@ public class UserController extends Controller {
 
         //Si existe el usuario y su apiKey coincide con el apiKey suministrado, ejecutamos la actualización
         if (user.getApiKey().getKey().matches(apiKey)) {
-            updateUser.setId_user(user.getId_user());
+            updateUser.setId(user.getId());
             updateUser.update();
             return ok();
         }

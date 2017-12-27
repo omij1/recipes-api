@@ -4,13 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.*;
+import javax.validation.Valid;
+
+import org.hibernate.validator.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import io.ebean.Ebean;
 import io.ebean.Finder;
-import io.ebean.Model;
 import io.ebean.PagedList;
 import play.data.validation.Constraints.Required;
 
@@ -31,13 +33,15 @@ public class Recipe extends BaseModel {
     /**
      * Nombre de la receta
      */
-    @Required
+    @Required(message="validation.required")
+    @NotBlank(message="validation.blank")
     String title;
 
     /**
      * Lista de ingredientes de una receta
      */
     @Required
+    @Valid
     @JsonManagedReference
     @ManyToMany(cascade = CascadeType.ALL)
     public List<Ingredient> ingredients = new ArrayList<Ingredient>();
@@ -45,20 +49,22 @@ public class Recipe extends BaseModel {
     /**
      * Pasos para elaborar la receta
      */
-    @Required
+    @Required(message="validation.required")
+    @NotBlank(message="validation.blank")
     String steps;
 
     /**
      * Unidad de tiempo necesario para elaborar la receta. Pueden ser minutos u horas
      */
-    @Required
+    @Required(message="validation.required")
+    @NotBlank(message="validation.blank")
     String time;
 
     /**
      * Valor de dificultad de la receta
      */
     @Enumerated(EnumType.STRING)
-    @Required
+    @Required(message="validation.difficulty")
     public Difficulty difficulty;
 
     /**

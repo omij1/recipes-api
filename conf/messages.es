@@ -17,3 +17,10 @@ recipe.wrongId = No existe ninguna receta con ese identificador
 recipe.updated = Receta actualizada correctamente
 recipe.deleted = Receta eliminada satisfactoriamente
 recipe.wrongName = No existe ninguna receta con ese nombre
+recipe.emptyName = Debe introducir el nombre de una receta
+
+
+
+validation.difficulty = Los valores de dificultad son: MUY_FACIL, FACIL, INTERMEDIA, DIFICIL, MUY_DIFICIL
+validation.required = Este campo es obligatorio
+validation.blank = Este campo no puede estar en blanco

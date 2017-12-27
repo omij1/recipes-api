@@ -1,5 +1,7 @@
 package controllers;
 
+import play.data.Form;
+import play.data.FormFactory;
 import play.i18n.Messages;
 import play.libs.Json;
 import play.mvc.Controller;
@@ -11,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -26,6 +30,12 @@ import models.Recipe;
  */
 
 public class CategoryController extends Controller{
+	
+	/**
+	 * Variable formulario
+	 */
+	@Inject
+	FormFactory formFactory;
 	
 	/**
 	 * Variable para presentar los mensajes al usuario según el idioma
@@ -44,18 +54,13 @@ public class CategoryController extends Controller{
 
 		messages = Http.Context.current().messages();//le asigno el contexto actual del método de acción
 		
-		JsonNode jn = request().body().asJson();
-		if(!request().hasBody() || jn == null) {
-			return Results.badRequest(messages.at("emptyParams"));
+		Form<Category> f = formFactory.form(Category.class).bindFromRequest(); 
+		if(f.hasErrors()) {
+			return Results.status(409, f.errorsAsJson());
 		}
 		
-		String categoryName = jn.get("categoryName").asText();
-		if(categoryName == null || categoryName == "") {
-			return Results.badRequest(messages.at("category.wrongFormat"));
-		}
-		
-		Category categoria = new Category(categoryName.toUpperCase());
-		if(!categoria.checkCategory()) {
+		Category c = f.get();
+		if(!c.checkCategory()) {
 			return Results.created(messages.at("category.created"));
 		}
 		else {

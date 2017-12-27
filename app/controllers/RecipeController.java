@@ -88,11 +88,11 @@ public class RecipeController extends Controller{
 	 * @param id Id de la receta que se desea visualizar
 	 * @return Respuesta que muestra la receta o error si se produjo alguno
 	 */
-	public Result retrieveRecipe(Long id) {
-		
+	public Result retrieveRecipe(Long id) {	
 		//TODO Poner cache
 		messages = Http.Context.current().messages();
 		
+		//Miramos a ver si la receta solicitada existe
 		Recipe recipe = Recipe.findById(id);
 		if(recipe == null) {
 			return Results.notFound(messages.at("recipe.wrongId"));
@@ -126,6 +126,7 @@ public class RecipeController extends Controller{
 			return Results.badRequest(messages.at("emptyParams"));
 		}
 		
+		//Miramos a ver si la receta que se quiere actualizar existe
 		Recipe r = Recipe.findById(id);
 		if(r == null) {
 			return Results.notFound(messages.at("recipe.wrongId"));
@@ -182,6 +183,7 @@ public class RecipeController extends Controller{
 
 		messages = Http.Context.current().messages();
 		
+		//Miramos a ver si la receta que se quiere eliminar existe
 		Recipe r = Recipe.findById(id);
 		if(r == null) {
 			return Results.notFound(messages.at("recipe.wrongId"));
@@ -210,6 +212,7 @@ public class RecipeController extends Controller{
 		List<Recipe> recipes = list.getList();
 		Integer number = list.getTotalCount();
 		
+		//Se ordenan las recetas alfabéticamente y se devuelven al usuario
 		sortAlphabetically(recipes);
 		if(request().accepts("application/json")) {
 			return ok(Json.prettyPrint(Json.toJson(recipes))).withHeader("X-Count", number.toString());
@@ -230,14 +233,21 @@ public class RecipeController extends Controller{
 		
 		messages = Http.Context.current().messages();
 
+		//Miramos a ver si el usuario ha introducido el nombre de una receta
 		String title = request().getQueryString("title");
+		if(title == null) {
+			return Results.badRequest(messages.at("recipe.emptyName"));
+		}
+		
+		//Miramos si la receta solicitada existe
 		Recipe recipe = Recipe.findByName(title.toUpperCase());
 		if(recipe == null){
 			return Results.notFound(messages.at("recipe.wrongName"));
 		}
 		
+		//Se devuelve la receta al usuario
 		if(request().accepts("application/json")) {
-			return ok(Json.toJson(recipe));
+			return ok(Json.prettyPrint(Json.toJson(recipe)));
 		}
 		else if(request().accepts("application/xml")) {
 			return ok(views.xml._recipe.render(recipe));

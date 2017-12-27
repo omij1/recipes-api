@@ -5,14 +5,14 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
+
+import org.hibernate.validator.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import io.ebean.Ebean;
 import io.ebean.Finder;
-import io.ebean.Model;
 import io.ebean.PagedList;
 import play.data.validation.Constraints.Required;
 
@@ -33,7 +33,8 @@ public class Category extends BaseModel{
 	/**
 	 * Nombre de la categoría de receta
 	 */
-	@Required
+	@Required(message="validation.required")
+	@NotBlank(message="validation.blank")
 	String categoryName;
 
 	/**
@@ -92,15 +93,16 @@ public class Category extends BaseModel{
 	 */
 	public boolean checkCategory() {
 		
-		if(Category.findByCategoryName(this.categoryName) == null) {
+		if(Category.findByCategoryName(this.categoryName.toUpperCase()) == null) {
 			
+			this.categoryName = this.categoryName.toUpperCase();
 			Ebean.beginTransaction();
 			this.save();
 			Ebean.commitTransaction();
 			Ebean.endTransaction();
 			return false;
-			
 		}
+		
 		return true;
 	}
 

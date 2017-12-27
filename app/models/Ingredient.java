@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import io.ebean.Finder;
@@ -30,13 +32,15 @@ public class Ingredient extends BaseModel {
 	/**
 	 * Nombre del ingrediente
 	 */
-	@Required
+	@Required(message="validation.required")
+	@NotBlank(message="validation.blank")
 	String ingredientName;
 
 	/**
 	 * Unidades del ingrediente.
 	 */
-	@Required
+	@Required(message="validation.required")
+	@NotBlank(message="validation.blank")
 	String units;
 	
 	/**
