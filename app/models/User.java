@@ -7,6 +7,8 @@ import io.ebean.Ebean;
 import io.ebean.Finder;
 import io.ebean.Model;
 import io.ebean.PagedList;
+import org.hibernate.validator.constraints.NotBlank;
+import play.data.validation.Constraints.Required;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -22,18 +24,26 @@ public class User extends BaseModel {
     /**
      * Nick del usuario
      */
+    @Required(message = "validation.required")
+    @NotBlank(message = "validation.blank")
     private String nick;
     /**
      * Nombre del usuario
      */
+    @Required(message = "validation.required")
+    @NotBlank(message = "validation.blank")
     private String name;
     /**
      * Apellido del usuario
      */
+    @Required(message = "validation.required")
+    @NotBlank(message = "validation.blank")
     private String surname;
     /**
      * Ciudad del usuario
      */
+    @Required(message = "validation.required")
+    @NotBlank(message = "validation.blank")
     private String city;
     /**
      * Se asigna una apiKey al usuario

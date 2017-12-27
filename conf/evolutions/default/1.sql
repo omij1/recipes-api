@@ -37,8 +37,8 @@ create table recipe (
   steps                         varchar(255),
   time                          varchar(255),
   difficulty                    varchar(11),
-  category_category_id          bigint,
-  user_id_user                  bigint,
+  category_id                   bigint,
+  user_id                       bigint,
   version                       bigint not null,
   created                       timestamp not null,
   updated                       timestamp not null,
@@ -53,11 +53,11 @@ create table recipe_ingredient (
 );
 
 create table user (
-  id	                       bigint auto_increment not null,
-  nick                          varchar(255),
-  name                          varchar(255),
-  surname                       varchar(255),
-  city                          varchar(255),
+  id                            bigint auto_increment not null,
+  nick                          varchar(255) not null,
+  name                          varchar(255) not null,
+  surname                       varchar(255) not null,
+  city                          varchar(255) not null,
   api_key_id                    bigint,
   version                       bigint not null,
   created                       timestamp not null,
@@ -66,28 +66,28 @@ create table user (
   constraint pk_user primary key (id)
 );
 
-alter table recipe add constraint fk_recipe_category_category_id foreign key (category_category_id) references category (category_id) on delete restrict on update restrict;
-create index ix_recipe_category_category_id on recipe (category_category_id);
+alter table recipe add constraint fk_recipe_category_id foreign key (category_id) references category (id) on delete restrict on update restrict;
+create index ix_recipe_category_id on recipe (category_id);
 
-alter table recipe add constraint fk_recipe_user_id_user foreign key (user_id_user) references user (id_user) on delete restrict on update restrict;
-create index ix_recipe_user_id_user on recipe (user_id_user);
+alter table recipe add constraint fk_recipe_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
+create index ix_recipe_user_id on recipe (user_id);
 
-alter table recipe_ingredient add constraint fk_recipe_ingredient_recipe foreign key (recipe_recipe_id) references recipe (recipe_id) on delete restrict on update restrict;
-create index ix_recipe_ingredient_recipe on recipe_ingredient (recipe_recipe_id);
+alter table recipe_ingredient add constraint fk_recipe_ingredient_recipe foreign key (recipe_id) references recipe (id) on delete restrict on update restrict;
+create index ix_recipe_ingredient_recipe on recipe_ingredient (recipe_id);
 
-alter table recipe_ingredient add constraint fk_recipe_ingredient_ingredient foreign key (ingredient_ingredient_id) references ingredient (ingredient_id) on delete restrict on update restrict;
-create index ix_recipe_ingredient_ingredient on recipe_ingredient (ingredient_ingredient_id);
+alter table recipe_ingredient add constraint fk_recipe_ingredient_ingredient foreign key (ingredient_id) references ingredient (id) on delete restrict on update restrict;
+create index ix_recipe_ingredient_ingredient on recipe_ingredient (ingredient_id);
 
 alter table user add constraint fk_user_api_key_id foreign key (api_key_id) references api_key (id) on delete restrict on update restrict;
 
 
 # --- !Downs
 
-alter table recipe drop constraint if exists fk_recipe_category_category_id;
-drop index if exists ix_recipe_category_category_id;
+alter table recipe drop constraint if exists fk_recipe_category_id;
+drop index if exists ix_recipe_category_id;
 
-alter table recipe drop constraint if exists fk_recipe_user_id_user;
-drop index if exists ix_recipe_user_id_user;
+alter table recipe drop constraint if exists fk_recipe_user_id;
+drop index if exists ix_recipe_user_id;
 
 alter table recipe_ingredient drop constraint if exists fk_recipe_ingredient_recipe;
 drop index if exists ix_recipe_ingredient_recipe;
