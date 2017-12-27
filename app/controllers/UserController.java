@@ -33,8 +33,7 @@ public class UserController extends Controller {
 
         Form<User> f = formFactory.form(User.class).bindFromRequest(); //Creación de objeto Form para obtener los datos de la petición
         if (f.hasErrors()) {         //Comprobar si hay errores
-            //TODO Crear objeto Error
-            return ok(f.errorsAsJson());
+            return Results.status(409, f.errorsAsJson());
         }
         User user = f.get();  //Objeto User donde se guarda la información de la petición
 
@@ -257,8 +256,7 @@ public class UserController extends Controller {
         Form<User> f = formFactory.form(User.class).bindFromRequest();
         //Comprobar si hay errores
         if (f.hasErrors()) {
-            //TODO Crear objeto Error
-            return ok(f.errorsAsJson());
+            return Results.status(409, f.errorsAsJson());
         }
 
         //Se obtiene el apiKey de la cadena
@@ -275,7 +273,7 @@ public class UserController extends Controller {
 
         //Si existe el usuario y su apiKey coincide con el apiKey suministrado, ejecutamos la actualización
         if (user.getApiKey().getKey().matches(apiKey)) {
-            updateUser.setId_user(user.getId_user());
+            updateUser.setId(user.getId());
             updateUser.update();
             return ok();
         }

@@ -11,7 +11,7 @@
 		<time>@recipe.getTime()</time>
 		<difficulty>@recipe.getDifficulty()</difficulty>
 			@_category(recipe.getCategory())
-		<userId>@recipe.getUser().getId_user()</userId>
+		<userId>@recipe.getUser().getId()</userId>
 		<nick>@recipe.getUser().getNick()</nick>
 		<name>@recipe.getUser().getName()</name>
 		<surname>@recipe.getUser().getSurname()</surname>
