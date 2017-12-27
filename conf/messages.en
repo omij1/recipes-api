@@ -12,8 +12,19 @@ category.deleted = Category deleted
 
 
 recipe.created = Recipe created
-recipe.alreadyExist = Recipe already exist
+recipe.alreadyExist = Recipe already exists
 recipe.wrongId = There is no recipe with that identifier
 recipe.updated = Recipe updated
 recipe.deleted = Recipe deleted
-recipe.wrongName = There id no recipe with that name
+recipe.wrongName = There is no recipe with that name
+
+
+
+user.created = User created
+user.alreadyExist = User already exists
+user.wrongId = There is no user with that identifier
+user.updated = User updated
+user.deleted = User deleted
+user.wrongName = There is no User with that name
+user.wrongSurname = There is no User with that surname
+user.wrongCity = There is no User from that city

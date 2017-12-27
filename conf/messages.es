@@ -17,3 +17,14 @@ recipe.wrongId = No existe ninguna receta con ese identificador
 recipe.updated = Receta actualizada correctamente
 recipe.deleted = Receta eliminada satisfactoriamente
 recipe.wrongName = No existe ninguna receta con ese nombre
+
+
+
+user.created = Usuario creado correctamente
+user.alreadyExist = Ya existe un usuario con ese nombre
+user.wrongId = No existe ningún usuario con ese identificador
+user.updated = Usuario actualizado correctamente
+user.deleted = Usuario eliminado satisfactoriamente
+user.wrongName = No existe ningún usuario con ese nombre
+user.wrongSurname = No existe ningún usuario con ese apellido
+user.wrongCity = No existe ningún usuario de esa ciudad
