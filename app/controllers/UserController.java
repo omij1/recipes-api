@@ -4,6 +4,7 @@ package controllers;
 import io.ebean.PagedList;
 import models.ApiKey;
 import models.User;
+import play.cache.SyncCacheApi;
 import play.data.Form;
 import play.data.FormFactory;
 import play.i18n.Messages;
@@ -21,6 +22,9 @@ public class UserController extends Controller {
 
     @Inject
     FormFactory formFactory;
+
+    @Inject
+    private SyncCacheApi cache;
 
     /**
      * Método para crear un usuario nuevo
@@ -65,7 +69,14 @@ public class UserController extends Controller {
 
         Messages messages = Http.Context.current().messages();
 
-        User user = User.findById(id_user);
+        //Comprobamos si el usuario está en caché
+        String key = "user-" + id_user;
+        User user = cache.get(key);
+        //Si no lo tenemos en caché, lo buscamos y lo guardamos
+        if (user == null) {
+            user = User.findById(id_user);
+            cache.set(key, user);
+        }
 
         //Si el Id no existe, se devuelve un error
         if (user == null) {
@@ -92,7 +103,15 @@ public class UserController extends Controller {
 
         Messages messages = Http.Context.current().messages();
 
-        User user = User.findByNick(nick);
+        //Comprobamos si el usuario está en caché
+        String key = "user-" + nick;
+        User user = cache.get(key);
+        //Si no lo tenemos en caché, lo buscamos y lo guardamos
+        if (user == null) {
+            user = User.findByNick(nick);
+            cache.set(key, user);
+        }
+
         //Si no existe ningún usuario con ese nick
         if (user == null) {
             return Results.notFound(messages.at("user.wrongNick"));
@@ -118,8 +137,15 @@ public class UserController extends Controller {
         Messages messages = Http.Context.current().messages();
         //Obtenemos la página
         Integer page = Integer.parseInt(request().getQueryString("page"));
-        //Creamos un objeto de la clase PagedList para obtener la lista
-        PagedList<User> list = User.findByName(name, page);
+
+        //Comprobamos si la lista está en caché
+        String key = "listByName-" + name;
+        PagedList<User> list = cache.get(key);
+        //Si no lo tenemos en caché, lo buscamos y lo guardamos
+        if (list == null) {
+            list = User.findByName(name, page);
+            cache.set(key, list);
+        }
         List<User> usersList = list.getList();
 
         //Si la lista está vacía
@@ -152,8 +178,15 @@ public class UserController extends Controller {
         Messages messages = Http.Context.current().messages();
         //Obtenemos la página
         Integer page = Integer.parseInt(request().getQueryString("page"));
-        //Creamos un objeto de la clase PagedList para obtener la lista
-        PagedList<User> list = User.findBySurname(surname, page);
+
+        //Comprobamos si la lista está en caché
+        String key = "listBySurname-" + surname;
+        PagedList<User> list = cache.get(key);
+        //Si no lo tenemos en caché, lo buscamos y lo guardamos
+        if (list == null) {
+            list = User.findBySurname(surname, page);
+            cache.set(key, list);
+        }
         List<User> usersList = list.getList();
 
         //Si la lista está vacía
@@ -187,12 +220,19 @@ public class UserController extends Controller {
         Messages messages = Http.Context.current().messages();
         //Obtenemos la página
         Integer page = Integer.parseInt(request().getQueryString("page"));
-        //Creamos un objeto de la clase PagedList para obtener la lista
-        PagedList<User> list = User.findByFullName(name, surname, page);
-        List<User> userList = list.getList();
+
+        //Comprobamos si la lista está en caché
+        String key = "listByFullName-" + name + surname;
+        PagedList<User> list = cache.get(key);
+        //Si no lo tenemos en caché, lo buscamos y lo guardamos
+        if (list == null) {
+            list = User.findByFullName(name, surname, page);
+            cache.set(key, list);
+        }
+        List<User> usersList = list.getList();
 
         //Si la lista está vacía
-        if (userList.isEmpty()) {
+        if (usersList.isEmpty()) {
             if (request().accepts("application/xml")) {
                 return Results.notFound(messages.at("user.wrongFullName"));
             } else if (request().accepts("application/json")) {
@@ -203,9 +243,9 @@ public class UserController extends Controller {
 
         //Si la lista no está vacía
         if (request().accepts("application/xml")) {
-            return ok(views.xml.users.render(userList));
+            return ok(views.xml.users.render(usersList));
         } else if (request().accepts("application/json")) {
-            return ok(Json.prettyPrint(Json.toJson(userList)));
+            return ok(Json.prettyPrint(Json.toJson(usersList)));
         }
         return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
 
@@ -223,12 +263,19 @@ public class UserController extends Controller {
         Messages messages = Http.Context.current().messages();
         //Obtenemos la página
         Integer page = Integer.parseInt(request().getQueryString("page"));
-        //Creamos un objeto de la clase PagedList para obtener la lista
-        PagedList<User> list = User.findByCity(city, page);
-        List<User> userList = list.getList();
+
+        //Comprobamos si la lista está en caché
+        String key = "listByCity-" + city;
+        PagedList<User> list = cache.get(key);
+        //Si no lo tenemos en caché, lo buscamos y lo guardamos
+        if (list == null) {
+            list = User.findByCity(city, page);
+            cache.set(key, list);
+        }
+        List<User> usersList = list.getList();
 
         //Si la lista está vacía
-        if (userList.isEmpty()) {
+        if (usersList.isEmpty()) {
             if (request().accepts("application/xml")) {
                 return Results.notFound(messages.at("user.wrongCity"));
             } else if (request().accepts("application/json")) {
@@ -239,9 +286,9 @@ public class UserController extends Controller {
 
         //Si la lista no está vacía
         if (request().accepts("application/xml")) {
-            return ok(views.xml.users.render(userList));
+            return ok(views.xml.users.render(usersList));
         } else if (request().accepts("application/json")) {
-            return ok(Json.prettyPrint(Json.toJson(userList)));
+            return ok(Json.prettyPrint(Json.toJson(usersList)));
         }
         return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
 
@@ -332,8 +379,14 @@ public class UserController extends Controller {
 
         //Obtenemos la página
         Integer page = Integer.parseInt(request().getQueryString("page"));
-        //Creamos un objeto de la clase PagedList para obtener la lista
-        PagedList<User> list = User.findAll(page);
+
+        //Comprobamos si la lista está en caché
+        PagedList<User> list = cache.get("list");
+        //Si no lo tenemos en caché, lo buscamos y lo guardamos
+        if (list == null) {
+            list = User.findAll(page);
+            cache.set("list", list);
+        }
         List<User> usersList = list.getList();
 
         //Si la lista está vacía
