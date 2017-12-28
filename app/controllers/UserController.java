@@ -6,8 +6,10 @@ import models.ApiKey;
 import models.User;
 import play.data.Form;
 import play.data.FormFactory;
+import play.i18n.Messages;
 import play.libs.Json;
 import play.mvc.Controller;
+import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.Results;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -31,19 +33,16 @@ public class UserController extends Controller {
      */
     public Result createUser() {
 
+        Messages messages = Http.Context.current().messages();
+
         Form<User> f = formFactory.form(User.class).bindFromRequest(); //Creación de objeto Form para obtener los datos de la petición
         if (f.hasErrors()) {         //Comprobar si hay errores
             return Results.status(409, f.errorsAsJson());
         }
         User user = f.get();  //Objeto User donde se guarda la información de la petición
 
-
-        //TODO Crear formato de respuestas.
-        //TODO Crear objeto respuestas
-        //TODO Internacionalización de las respuestas
         //Validación y guardado en caso de que el nick no exista. En caso contrario se muestra el error correspondiente
         if (user.checkAndSave()) {
-            //TODO Personalizar mensaje e internacionalización
             if (request().accepts("application/xml")) {
                 return Results.created(views.xml.apiKey.render(user));
             } else if (request().accepts("application/json")) {
@@ -52,9 +51,7 @@ public class UserController extends Controller {
                 return Results.created(Json.prettyPrint(apiKey));
             }
         }
-        //TODO Crear objeto Error
-        return Results.status(409, "{\"Error:\": \"usuario repetido\"}");
-
+        return Results.status(409, new ErrorObject("X", messages.at("user.alreadyExist")).convertToJson()).as("application/json");
 
     }
 
@@ -66,11 +63,13 @@ public class UserController extends Controller {
      */
     public Result retrieveUser(Long id_user) {
 
+        Messages messages = Http.Context.current().messages();
+
         User user = User.findById(id_user);
 
         //Si el Id no existe, se devuelve un error
         if (user == null) {
-            return Results.notFound(); //TODO cambiar cuando se implemente el objeto error
+            return Results.notFound(messages.at("user.wrongId"));
         }
 
         //Formato de respuesta dependiendo de lo que acepte la petición
@@ -79,9 +78,8 @@ public class UserController extends Controller {
         } else if (request().accepts("application/json")) {
             return ok(Json.prettyPrint(Json.toJson(user)));
         }
-        //TODO cambiar cuando se implemente el objeto Error
-        return status(415); //Unsupported media type
-        //TODO idioma de la respuesta
+        return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
+
     }
 
     /**
@@ -91,11 +89,13 @@ public class UserController extends Controller {
      * @return Indica si se ha realizado correctamente o no la operación
      */
     public Result retrieveUserByNick(String nick) {
-    	
+
+        Messages messages = Http.Context.current().messages();
+
         User user = User.findByNick(nick);
         //Si no existe ningún usuario con ese nick
         if (user == null) {
-            return Results.notFound(); //TODO Cambiar cuando se implemente el objeto error
+            return Results.notFound(messages.at("user.wrongNick"));
         }
         //Formato de respuesta dependiendo de lo que acepte la petición
         if (request().accepts("application/xml")) {
@@ -103,7 +103,7 @@ public class UserController extends Controller {
         } else if (request().accepts("application/json")) {
             return ok(Json.prettyPrint(Json.toJson(user)));
         }
-        return status(415); //Unsupported media type
+        return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
     }
 
 
@@ -115,6 +115,7 @@ public class UserController extends Controller {
      */
     public Result retrieveUserByName(String name) {
 
+        Messages messages = Http.Context.current().messages();
         //Obtenemos la página
         Integer page = Integer.parseInt(request().getQueryString("page"));
         //Creamos un objeto de la clase PagedList para obtener la lista
@@ -122,13 +123,13 @@ public class UserController extends Controller {
         List<User> usersList = list.getList();
 
         //Si la lista está vacía
-        if (usersList.isEmpty()) { //TODO devuelve cadenas vacías o error???
+        if (usersList.isEmpty()) {
             if (request().accepts("application/xml")) {
-                return Results.notFound(); //TODO Cambiar cuando se implemente el objeto Errores
+                return Results.notFound(messages.at("user.wrongName"));
             } else if (request().accepts("application/json")) {
-                return Results.notFound(); //TODO Cambiar cuando se implemente el objeto Errores
+                return Results.notFound(messages.at("user.wrongName"));
             }
-            return status(415);  //Unsupported media type
+            return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
         }
 
         //Si la lista no está vacía
@@ -137,7 +138,7 @@ public class UserController extends Controller {
         } else if (request().accepts("application/json")) {
             return ok(Json.prettyPrint(Json.toJson(usersList)));
         }
-        return status(415); //Unsupported media type
+        return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
     }
 
     /**
@@ -148,6 +149,7 @@ public class UserController extends Controller {
      */
     public Result retrieveUserBySurname(String surname) {
 
+        Messages messages = Http.Context.current().messages();
         //Obtenemos la página
         Integer page = Integer.parseInt(request().getQueryString("page"));
         //Creamos un objeto de la clase PagedList para obtener la lista
@@ -157,11 +159,11 @@ public class UserController extends Controller {
         //Si la lista está vacía
         if (usersList.isEmpty()) {
             if (request().accepts("application/xml")) {
-                return Results.notFound(); //TODO Cambiar cuando se implemente el objeto Errores
+                return Results.notFound(messages.at("user.wrongSurname"));
             } else if (request().accepts("application/json")) {
-                return Results.notFound(); //TODO Cambiar cuando se implemente el objeto Errores
+                return Results.notFound(messages.at("user.wrongSurname"));
             }
-            return status(415);   //Unsupported media type
+            return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
         }
 
         //Si la lista no está vacía
@@ -170,7 +172,7 @@ public class UserController extends Controller {
         } else if (request().accepts("application/json")) {
             return ok(Json.prettyPrint(Json.toJson(usersList)));
         }
-        return status(415);  //Unsupported media type
+        return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
     }
 
     /**
@@ -182,6 +184,7 @@ public class UserController extends Controller {
      */
     public Result retrieveUserByFullName(String name, String surname) {
 
+        Messages messages = Http.Context.current().messages();
         //Obtenemos la página
         Integer page = Integer.parseInt(request().getQueryString("page"));
         //Creamos un objeto de la clase PagedList para obtener la lista
@@ -191,11 +194,11 @@ public class UserController extends Controller {
         //Si la lista está vacía
         if (userList.isEmpty()) {
             if (request().accepts("application/xml")) {
-                return Results.notFound(); //TODO Cambiar cuando se implemente el objeto Errores
+                return Results.notFound(messages.at("user.wrongFullName"));
             } else if (request().accepts("application/json")) {
-                return Results.notFound(); //TODO Cambiar cuando se implemente el objeto Errores
+                return Results.notFound(messages.at("user.wrongFullName"));
             }
-            return status(415);  //Usupported media type
+            return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
         }
 
         //Si la lista no está vacía
@@ -204,7 +207,7 @@ public class UserController extends Controller {
         } else if (request().accepts("application/json")) {
             return ok(Json.prettyPrint(Json.toJson(userList)));
         }
-        return status(415); //Unsupported media type
+        return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
 
     }
 
@@ -217,6 +220,7 @@ public class UserController extends Controller {
      */
     public Result retrieveUserByCity(String city) {
 
+        Messages messages = Http.Context.current().messages();
         //Obtenemos la página
         Integer page = Integer.parseInt(request().getQueryString("page"));
         //Creamos un objeto de la clase PagedList para obtener la lista
@@ -226,11 +230,11 @@ public class UserController extends Controller {
         //Si la lista está vacía
         if (userList.isEmpty()) {
             if (request().accepts("application/xml")) {
-                return Results.notFound(); //TODO Cambiar cuando se implemente el objeto Errores
+                return Results.notFound(messages.at("user.wrongCity"));
             } else if (request().accepts("application/json")) {
-                return Results.notFound(); //TODO Cambiar cuando se implemente el objeto Errores
+                return Results.notFound(messages.at("user.wrongCity"));
             }
-            return status(415);  //Unsupported media type
+            return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
         }
 
         //Si la lista no está vacía
@@ -239,7 +243,7 @@ public class UserController extends Controller {
         } else if (request().accepts("application/json")) {
             return ok(Json.prettyPrint(Json.toJson(userList)));
         }
-        return status(415);  //Unsupported media type
+        return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
 
     }
 
@@ -251,6 +255,8 @@ public class UserController extends Controller {
      * @return Indica si se ha realizado correctamente o no la operación
      */
     public Result updateUser(Long id_user) {
+
+        Messages messages = Http.Context.current().messages();
 
         //Creación de objeto Form para obtener los datos de la petición
         Form<User> f = formFactory.form(User.class).bindFromRequest();
@@ -268,16 +274,16 @@ public class UserController extends Controller {
 
         //Comprobar si existe el usuario con el Id indicado
         if (user == null) {
-            return Results.notFound();
+            return Results.notFound(messages.at("user.wrongId"));
         }
 
         //Si existe el usuario y su apiKey coincide con el apiKey suministrado, ejecutamos la actualización
         if (user.getApiKey().getKey().matches(apiKey)) {
             updateUser.setId(user.getId());
             updateUser.update();
-            return ok();
+            return ok(messages.at("user.updated"));
         }
-        return Results.badRequest("No tienes permiso para realizar esta acción");
+        return Results.badRequest(messages.at("user.authorization"));
 
         //TODO Comprobar si el apiKey existe ejemplo en metodo de accion createUser
         //TODO Sólo pueden modificar los datos de un usuario el propio usuario o el administrador
@@ -290,7 +296,8 @@ public class UserController extends Controller {
      * @return Indica si se ha realizado correctamente o no la operación
      */
     public Result deleteUser(Long id_user) {
-    	
+
+        Messages messages = Http.Context.current().messages();
         User user = User.findById(id_user);
         //Si el usuario existe
         if (user != null) {
@@ -299,15 +306,15 @@ public class UserController extends Controller {
             //Si el apiKey del usuario con el id indicado coincide con el apiKey suministrado ejecutamos la operación
             if (user.getApiKey().getKey().matches(apiKey)) {
                 if (user.delete()) {
-                    return ok("Usuario borrado correctamente");
+                    return ok(messages.at("user.deleted"));
                 } else {
-                    return Results.internalServerError("Error al eliminar usuario"); //TODO cambiar cuando se implemente el objeto Error
+                    return Results.internalServerError(messages.at("user.deletedFailed"));
                 }
             }
-            return Results.badRequest("No tiene permiso para realizar esta acción"); //TODO cambiar cuando se implemente el objeto Error
+            return Results.badRequest(messages.at("user.authorization"));
         }
         //Por idempotencia, aunque no exista el usuario, la respuesta debe ser correcta.
-        return ok("Usuario borrado correctamente");
+        return ok(messages.at("user.deleted"));
 
         //TODO Comprobar si el apiKey existe ejemplo en metodo de accion createUser
         //TODO Sólo pueden borrar un usuario el propio usuario y el administrador
@@ -321,6 +328,8 @@ public class UserController extends Controller {
      */
     public Result retrieveUserCollection() {
 
+        Messages messages = Http.Context.current().messages();
+
         //Obtenemos la página
         Integer page = Integer.parseInt(request().getQueryString("page"));
         //Creamos un objeto de la clase PagedList para obtener la lista
@@ -330,9 +339,9 @@ public class UserController extends Controller {
         //Si la lista está vacía
         if (usersList.isEmpty()) {
             if (request().accepts("application/xml")) {
-                return Results.notFound("No hay usuarios registrados"); //TODO Cambiar cuando se implemente el objeto Errores
+                return Results.notFound(messages.at("user.listEmpty"));
             } else if (request().accepts("application/json")) {
-                return Results.notFound("No hay usuarios registrados"); //TODO Cambiar cuando se implemente el objeto Errores
+                return Results.notFound(messages.at("user.listEmpty"));
             }
             return status(415); //Unsupported media type
         }
@@ -343,8 +352,7 @@ public class UserController extends Controller {
         } else if (request().accepts("application/json")) {
             return ok(Json.prettyPrint(Json.toJson(usersList)));
         }
-        return status(415); //Unsupported media type
-        //TODO Comprobar el idioma de la respuesta
+        return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
     }
 
 }
