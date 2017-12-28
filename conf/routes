@@ -6,48 +6,48 @@
 # User resource
 #
 
-POST          /user                             controllers.UserController.createUser
-GET           /user/:id_user                    controllers.UserController.retrieveUser(id_user: Long)
-PUT           /user/:id_user                    controllers.UserController.updateUser(id_user: Long)
-DELETE        /user/:id_user                    controllers.UserController.deleteUser(id_user: Long)
-GET           /user/nick/:nick                  controllers.UserController.retrieveUserByNick(nick: String)
-GET           /users                            controllers.UserController.retrieveUserCollection()
-GET           /users/name/:name                 controllers.UserController.retrieveUserByName(name: String)
-GET           /users/surname/:surname           controllers.UserController.retrieveUserBySurname(surname: String)
-GET           /users/fullname/:name             controllers.UserController.retrieveUserByFullName(name: String, surname: String)
-GET           /users/city/:city                 controllers.UserController.retrieveUserByCity(city: String)
+POST          /user                                 controllers.UserController.createUser
+GET           /user/:id_user                        controllers.UserController.retrieveUser(id_user: Long)
+PUT           /user/:id_user                        controllers.UserController.updateUser(id_user: Long)
+DELETE        /user/:id_user                        controllers.UserController.deleteUser(id_user: Long)
+GET           /user/nick/:nick                      controllers.UserController.retrieveUserByNick(nick: String)
+GET           /users                                controllers.UserController.retrieveUserCollection()
+GET           /users/name/:name                     controllers.UserController.retrieveUserByName(name: String)
+GET           /users/surname/:surname               controllers.UserController.retrieveUserBySurname(surname: String)
+GET           /users/fullname/:name/:surname        controllers.UserController.retrieveUserByFullName(name: String, surname: String)
+GET           /users/city/:city                     controllers.UserController.retrieveUserByCity(city: String)
 
 # An example controller showing a sample home page
-GET           /                                 controllers.HomeController.index
+GET           /                                     controllers.HomeController.index
 # An example controller showing how to use dependency injection
-GET           /count                            controllers.CountController.count
+GET           /count                                controllers.CountController.count
 # An example controller showing how to write asynchronous code
-GET           /message                          controllers.AsyncController.message
+GET           /message                              controllers.AsyncController.message
 
 # Map static resources from the /public folder to the /assets URL path
-GET           /assets/*file                     controllers.Assets.versioned(path="/public", file: Asset)
+GET           /assets/*file                         controllers.Assets.versioned(path="/public", file: Asset)
 
 # Rutas de recetas
 
-POST          /recipe                           controllers.RecipeController.createRecipe()
-GET           /recipe/:id                       controllers.RecipeController.retrieveRecipe(id: Long)
-PUT           /recipe/:id                       controllers.RecipeController.updateRecipe(id: Long)
-DELETE        /recipe/:id                       controllers.RecipeController.deleteRecipe(id: Long)
+POST          /recipe                               controllers.RecipeController.createRecipe()
+GET           /recipe/:id                           controllers.RecipeController.retrieveRecipe(id: Long)
+PUT           /recipe/:id                           controllers.RecipeController.updateRecipe(id: Long)
+DELETE        /recipe/:id                           controllers.RecipeController.deleteRecipe(id: Long)
 
-GET           /recipes                          controllers.RecipeController.retrieveRecipeCollection()
+GET           /recipes                              controllers.RecipeController.retrieveRecipeCollection()
 
 # Buscar una receta por su título
-GET           /recipes/search                   controllers.RecipeController.searchRecipe()
+GET           /recipes/search                       controllers.RecipeController.searchRecipe()
 
 # Rutas de categoría
 
-POST          /category                         controllers.CategoryController.createCategory()
-GET           /category/:id                     controllers.CategoryController.retrieveCategory(id: Long)
-PUT           /category/:id                     controllers.CategoryController.updateCategory(id: Long)
-DELETE        /category/:id                     controllers.CategoryController.deleteCategory(id: Long)
+POST          /category                             controllers.CategoryController.createCategory()
+GET           /category/:id                         controllers.CategoryController.retrieveCategory(id: Long)
+PUT           /category/:id                         controllers.CategoryController.updateCategory(id: Long)
+DELETE        /category/:id                         controllers.CategoryController.deleteCategory(id: Long)
 
 # Obtener las categorías de recetas
-GET           /categories                       controllers.CategoryController.retrieveCategoryCollection()
+GET           /categories                           controllers.CategoryController.retrieveCategoryCollection()
 
 # Obtener las recetas de una categoría
-GET           /category/:id/recipes/list        controllers.CategoryController.retrieveRecipesByCategory(id: Long)
+GET           /category/:id/recipes/list            controllers.CategoryController.retrieveRecipesByCategory(id: Long)

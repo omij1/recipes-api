@@ -12,11 +12,11 @@ category.deleted = Category deleted
 
 
 recipe.created = Recipe created
-recipe.alreadyExist = Recipe already exist
+recipe.alreadyExist = Recipe already exists
 recipe.wrongId = There is no recipe with that identifier
 recipe.updated = Recipe updated
 recipe.deleted = Recipe deleted
-recipe.wrongName = There id no recipe with that name
+recipe.wrongName = There is no recipe with that name
 recipe.emptyName = You must enter the name of a recipe
 
 
@@ -24,3 +24,19 @@ recipe.emptyName = You must enter the name of a recipe
 validation.difficulty = The difficulty values are: MUY_FACIL, FACIL, INTERMEDIA, DIFICIL, MUY_DIFICIL
 validation.required = This field is required
 validation.blank = This field can not be blank
+
+
+
+user.created = User created
+user.alreadyExist = User already exists
+user.wrongId = There is no user with that identifier
+user.updated = User updated
+user.deleted = User deleted
+user.deletedFailed = An error has occured deleting the user
+user.wrongName = There is no user with that name
+user.wrongNick = There is no user with that nick
+user.wrongSurname = There is no user with that surname
+user.wrongFullName = There is no user with that name and surname
+user.wrongCity = There is no user from that city
+user.authorization = You have no authorization to do this action
+user.listEmpty = The list is empty

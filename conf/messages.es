@@ -24,3 +24,19 @@ recipe.emptyName = Debe introducir el nombre de una receta
 validation.difficulty = Los valores de dificultad son: MUY_FACIL, FACIL, INTERMEDIA, DIFICIL, MUY_DIFICIL
 validation.required = Este campo es obligatorio
 validation.blank = Este campo no puede estar en blanco
+
+
+
+user.created = Usuario creado correctamente
+user.alreadyExist = Ya existe un usuario con ese nombre
+user.wrongId = No existe ningún usuario con ese identificador
+user.updated = Usuario actualizado correctamente
+user.deleted = Usuario eliminado satisfactoriamente
+user.deletedFailed = Ha habido un error borrando al usuario
+user.wrongNick = No existe ningún usuario con ese nick
+user.wrongName = No existe ningún usuario con ese nombre
+user.wrongSurname = No existe ningún usuario con ese apellido
+user.wrongFullName = No existe ningún usuario con ese nombre y apellido
+user.wrongCity = No existe ningún usuario de esa ciudad
+user.authorization = No tienes autorización para realizar esta acción
+user.listEmpty = La lista está vacía

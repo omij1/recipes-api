@@ -54,10 +54,10 @@ create table recipe_ingredient (
 
 create table user (
   id                            bigint auto_increment not null,
-  nick                          varchar(255),
-  name                          varchar(255),
-  surname                       varchar(255),
-  city                          varchar(255),
+  nick                          varchar(255) not null,
+  name                          varchar(255) not null,
+  surname                       varchar(255) not null,
+  city                          varchar(255) not null,
   api_key_id                    bigint,
   version                       bigint not null,
   created                       timestamp not null,
