@@ -20,3 +20,5 @@ testOptions in Test := Seq(Tests.Argument(TestFrameworks.JUnit, "-a", "-v"))
 
 enablePlugins(PlayEbean)
 libraryDependencies += evolutions
+
+libraryDependencies ++= Seq(ehcache)
