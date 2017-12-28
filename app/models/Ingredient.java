@@ -32,22 +32,22 @@ public class Ingredient extends BaseModel {
 	/**
 	 * Nombre del ingrediente
 	 */
-	@Required(message="validation.required")
-	@NotBlank(message="validation.blank")
+	@Required(message = "validation.required")
+	@NotBlank(message = "validation.blank")
 	String ingredientName;
 
 	/**
 	 * Unidades del ingrediente.
 	 */
-	@Required(message="validation.required")
-	@NotBlank(message="validation.blank")
+	@Required(message = "validation.required")
+	@NotBlank(message = "validation.blank")
 	String units;
 	
 	/**
 	 * Recetas en las que se encuentra el ingrediente
 	 */
 	@JsonBackReference
-	@ManyToMany(mappedBy="ingredients")
+	@ManyToMany(mappedBy = "ingredients")
 	public Set<Recipe> recipes;
 
 	

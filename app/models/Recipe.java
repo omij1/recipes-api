@@ -33,8 +33,8 @@ public class Recipe extends BaseModel {
     /**
      * Nombre de la receta
      */
-    @Required(message="validation.required")
-    @NotBlank(message="validation.blank")
+    @Required(message = "validation.required")
+    @NotBlank(message = "validation.blank")
     String title;
 
     /**
@@ -49,22 +49,22 @@ public class Recipe extends BaseModel {
     /**
      * Pasos para elaborar la receta
      */
-    @Required(message="validation.required")
-    @NotBlank(message="validation.blank")
+    @Required(message = "validation.required")
+    @NotBlank(message = "validation.blank")
     String steps;
 
     /**
      * Unidad de tiempo necesario para elaborar la receta. Pueden ser minutos u horas
      */
-    @Required(message="validation.required")
-    @NotBlank(message="validation.blank")
+    @Required(message = "validation.required")
+    @NotBlank(message = "validation.blank")
     String time;
 
     /**
      * Valor de dificultad de la receta
      */
     @Enumerated(EnumType.STRING)
-    @Required(message="validation.difficulty")
+    @Required(message = "validation.difficulty")
     public Difficulty difficulty;
 
     /**

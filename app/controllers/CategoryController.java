@@ -49,22 +49,26 @@ public class CategoryController extends Controller{
 	 */
 	public Result createCategory() {
 		//TODO solo puede crear una categoria el admin
-		//TODO Comprobar si el apiKey existe ejemplo en metodo de accion createUser
+		//TODO Comprobar si el apiKey existe 
 		String apiKey = request().getQueryString("apiKey");
 
-		messages = Http.Context.current().messages();//le asigno el contexto actual del método de acción
+		//Le asigno el contexto actual del método de acción
+		messages = Http.Context.current().messages();
 		
+		//Formulario para obtener los datos de la petición
 		Form<Category> f = formFactory.form(Category.class).bindFromRequest(); 
 		if(f.hasErrors()) {
 			return Results.status(409, f.errorsAsJson());
 		}
 		
+		//Objeto Category donde se guardan los datos de la petición
 		Category c = f.get();
+		
+		//Comprobación de la existencia de la categoría y guardado en caso de que no exista
 		if(!c.checkCategory()) {
 			return Results.created(messages.at("category.created"));
 		}
 		else {
-			//TODO todos los mensajes deberían estar guardados en algún sitio para no ponerlos directamente aqui
 			return Results.status(409, new ErrorObject("1",messages.at("category.alreadyExist")).convertToJson()).as("application/json");
 		}
 	}
@@ -76,8 +80,10 @@ public class CategoryController extends Controller{
 	 */
 	public Result retrieveCategory(Long id) {
 		
-		messages = Http.Context.current().messages();//le asigno el contexto actual del método de acción
+		//Le asigno el contexto actual del método de acción
+		messages = Http.Context.current().messages();
 		
+		//Se busca la categoría solicitada y en caso de encontrarla se muestra al usuario
 		Category c = Category.findByCategoryId(id);
 		if(c == null) {
 			return Results.notFound(messages.at("category.notExist"));
@@ -100,30 +106,31 @@ public class CategoryController extends Controller{
 	 * @param id Id de la categoría de recetas que se desea actualizar
 	 * @return Respuesta indicativa del éxito o fracaso de la operación 
 	 */
-	public Result updateCategory(Long id) { // Referencia a https://stackoverflow.com/questions/7543391/how-to-update-an-object-in-play-framework
+	public Result updateCategory(Long id) {
 		//TODO solo el admin puede hacerlo
-		//TODO Comprobar si el apiKey existe ejemplo en metodo de accion createUser
+		//TODO Comprobar si el apiKey existe
 		String apiKey = request().getQueryString("apiKey");
 
 		messages = Http.Context.current().messages();
 		
-		JsonNode jn = request().body().asJson();
-		if(!request().hasBody() || jn == null) {
-			return Results.badRequest(messages.at("emptyParams"));
+		//Formulario para obtener los datos de la petición
+		Form<Category> f = formFactory.form(Category.class).bindFromRequest(); 
+		if(f.hasErrors()) {
+			return Results.status(409, f.errorsAsJson());
 		}
 		
-		String newCategory = jn.get("categoryName").asText();
-		if(newCategory == null || newCategory == "") {
-			return Results.badRequest(messages.at("category.wrongFormat"));
-		}
-		
+		//Objeto Category donde se guardan los datos de la petición
+		Category updateCategory = f.get();
 		Category c = Category.findByCategoryId(id);
+		
+		//Se busca la categoría que se quiere actualizar y se actualiza
 		if(c == null) {
 			return Results.notFound(messages.at("category.notExist"));
 		}
 		else {
-			c.setCategoryName(newCategory.toUpperCase());
-			c.save();
+			updateCategory.setId(c.getId());
+			updateCategory.setCategoryName(updateCategory.getCategoryName().toUpperCase());
+			updateCategory.update();
 			return ok(messages.at("category.updated"));
 		}		
 		
@@ -136,11 +143,12 @@ public class CategoryController extends Controller{
 	 */
 	public Result deleteCategory(Long id) {
 		//TODO solo el admin puede borrar una categoria. 
-		//TODO Comprobar si el apiKey existe ejemplo en metodo de accion createUser
+		//TODO Comprobar si el apiKey existe
 		String apiKey = request().getQueryString("apiKey");
 
 		messages = Http.Context.current().messages();
 		
+		//Se busca la categoría que se desea borrar y se elimina en caso de que exista
 		Category c = Category.findByCategoryId(id);
 		if(c == null) {
 			return Results.notFound(messages.at("category.notExist"));
@@ -166,10 +174,12 @@ public class CategoryController extends Controller{
 		
 		messages = Http.Context.current().messages();	
 
+		//Se obtienen las categorías de recetas de forma paginada
 		PagedList<Category> list = Category.findPage(page);
 		List<Category> categories = list.getList();
 		Integer number = list.getTotalCount();
 
+		//Se ordenan las categorías de recetas alfabéticamente y se muestran al usuario
 		sortAlphabetically(categories);
 		if(request().accepts("application/json")) {
 			return ok(Json.prettyPrint(Json.toJson(categories))).withHeader("X-Count", number.toString());
@@ -191,6 +201,7 @@ public class CategoryController extends Controller{
 		
 		messages = Http.Context.current().messages();
 		
+		//Se obtienen las recetas de la categoría elegida y se muestran al usuario
 		Category c = Category.findByCategoryId(id);
 		if(c == null) {
 			return Results.notFound(messages.at("category.notExist"));

@@ -53,11 +53,13 @@ public class RecipeController extends Controller{
 		
 		messages = Http.Context.current().messages();//le asigno el contexto actual del método de acción
 
+		//Formulario para obtener los datos de la petición
 		Form<Recipe> f = formFactory.form(Recipe.class).bindFromRequest(); 
 		if(f.hasErrors()) {
 			return Results.status(409, f.errorsAsJson());
 		}
 		
+		//Objeto Recipe donde se guardan los datos de la petición
 		Recipe r = f.get();
 		
 		//Usuario que sube la receta
@@ -92,7 +94,7 @@ public class RecipeController extends Controller{
 		//TODO Poner cache
 		messages = Http.Context.current().messages();
 		
-		//Miramos a ver si la receta solicitada existe
+		//Miramos a ver si la receta solicitada existe y en caso afirmativo se muestra al usuario
 		Recipe recipe = Recipe.findById(id);
 		if(recipe == null) {
 			return Results.notFound(messages.at("recipe.wrongId"));
@@ -116,7 +118,7 @@ public class RecipeController extends Controller{
 	 * @return Respuesta que indica el resultado de la operación
 	 */
 	public Result updateRecipe(Long id) {
-		//TODO Comprobar si el apiKey existe ejemplo en metodo de accion createUser
+		//TODO Comprobar si el apiKey existe 
 		//TODO Solo puede actualizar una receta el admin o el creador
 		String apiKey = request().getQueryString("apiKey");
 
@@ -126,7 +128,7 @@ public class RecipeController extends Controller{
 			return Results.badRequest(messages.at("emptyParams"));
 		}
 		
-		//Miramos a ver si la receta que se quiere actualizar existe
+		//Miramos a ver si la receta que se quiere actualizar existe y se actualiza en caso afirmativo
 		Recipe r = Recipe.findById(id);
 		if(r == null) {
 			return Results.notFound(messages.at("recipe.wrongId"));
@@ -177,7 +179,7 @@ public class RecipeController extends Controller{
 	 * @return Respuesta que indica si la receta se borró o si se produjo un error
 	 */
 	public Result deleteRecipe(Long id) {
-		//TODO Comprobar si el apiKey existe ejemplo en metodo de accion createUser
+		//TODO Comprobar si el apiKey existe
 		// TODO Comprobar que el usuario que quiere borrar la receta es el admin o el creador
 		String apiKey = request().getQueryString("apiKey");
 
@@ -207,6 +209,7 @@ public class RecipeController extends Controller{
 		
 		messages = Http.Context.current().messages();
 
+		//Se obtienen las recetas de forma paginada
 		Integer page = Integer.parseInt(request().getQueryString("page"));
 		PagedList<Recipe> list = Recipe.findPage(page);
 		List<Recipe> recipes = list.getList();

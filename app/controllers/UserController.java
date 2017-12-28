@@ -19,6 +19,9 @@ import java.util.List;
 
 public class UserController extends Controller {
 
+	/**
+	 * Variable formulario
+	 */
     @Inject
     FormFactory formFactory;
 
@@ -39,6 +42,7 @@ public class UserController extends Controller {
         if (f.hasErrors()) {         //Comprobar si hay errores
             return Results.status(409, f.errorsAsJson());
         }
+        
         User user = f.get();  //Objeto User donde se guarda la información de la petición
 
         //Validación y guardado en caso de que el nick no exista. En caso contrario se muestra el error correspondiente

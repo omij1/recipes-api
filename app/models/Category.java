@@ -33,15 +33,15 @@ public class Category extends BaseModel{
 	/**
 	 * Nombre de la categoría de receta
 	 */
-	@Required(message="validation.required")
-	@NotBlank(message="validation.blank")
+	@Required(message = "validation.required")
+	@NotBlank(message = "validation.blank")
 	String categoryName;
 
 	/**
 	 * Lista de recetas pertenecientes a una categoría
 	 */
 	@JsonBackReference
-	@OneToMany(cascade=CascadeType.ALL,mappedBy="category")
+	@OneToMany(cascade=CascadeType.ALL,mappedBy = "category")
 	public List<Recipe> relatedRecipes = new ArrayList<Recipe>();
 	
 	
