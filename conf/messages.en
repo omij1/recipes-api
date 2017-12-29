@@ -22,7 +22,6 @@ recipe.emptyName = You must enter the name of a recipe
 
 
 validation.difficulty = The difficulty values are: MUY_FACIL, FACIL, INTERMEDIA, DIFICIL, MUY_DIFICIL
-validation.required = This field is required
 validation.blank = This field can not be blank
 validation.minLength = Nick must have at least 4 characters
 validation.maxLength = Nick must have a maximum of 15 characters

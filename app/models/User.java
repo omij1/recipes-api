@@ -25,7 +25,6 @@ public class User extends BaseModel {
     /**
      * Nick del usuario
      */
-    @Required(message = "validation.required")
     @NotBlank(message = "validation.blank")
     @MinLength(value = 4, message = "validation.minLength")
     @MaxLength(value = 15, message = "validation.maxLength")
@@ -33,19 +32,16 @@ public class User extends BaseModel {
     /**
      * Nombre del usuario
      */
-    @Required(message = "validation.required")
     @NotBlank(message = "validation.blank")
     private String name;
     /**
      * Apellido del usuario
      */
-    @Required(message = "validation.required")
     @NotBlank(message = "validation.blank")
     private String surname;
     /**
      * Ciudad del usuario
      */
-    @Required(message = "validation.required")
     @NotBlank(message = "validation.blank")
     private String city;
     /**
@@ -71,7 +67,11 @@ public class User extends BaseModel {
      * @param surname Apellido del usuario
      * @param city    Dirección del usuario
      */
-    public User(String nick, String name, String surname, String city) {
+    public User(@MinLength(value = 4, message = "validation.minLength")
+                @MaxLength(value = 15, message = "validation.maxLength") String nick,
+                String name,
+                String surname,
+                String city) {
         this.nick = nick;
         this.name = name;
         this.surname = surname;
@@ -93,7 +93,7 @@ public class User extends BaseModel {
      * @return <p>Devuelve el usuario con el id indicado</p>
      */
     public static User findById(Long id) {
-    	
+
         return find.byId(id);
     }
 
@@ -106,12 +106,12 @@ public class User extends BaseModel {
      */
     public static User findByApiKey(String apikey) {
 
-    		ApiKey key = ApiKey.findBykey(apikey);
-    		if(key != null) {
-    			Long apiKeyId = key.getId();
-    			return find.query().where().isNotNull("api_key_id").eq("api_key_id", apiKeyId).findOne();
-    		}
-    		return null;
+        ApiKey key = ApiKey.findBykey(apikey);
+        if (key != null) {
+            Long apiKeyId = key.getId();
+            return find.query().where().isNotNull("api_key_id").eq("api_key_id", apiKeyId).findOne();
+        }
+        return null;
     }
 
     /**
@@ -121,7 +121,7 @@ public class User extends BaseModel {
      * @return <p>Devuelve el usuario con el nick indicado</p>
      */
     public static User findByNick(String nick) {
-    	
+
         return find.query().where().isNotNull("nick").eq("nick", nick).findOne();
     }
 
@@ -132,7 +132,7 @@ public class User extends BaseModel {
      * @return <p>Devuelve el usuario o usuarios con el nombre indicado</p>
      */
     public static PagedList<User> findByName(String name, Integer page) {
-    	
+
         return find.query().where().isNotNull("name").eq("name", name).setMaxRows(25)
                 .setFirstRow(25 * page).findPagedList();
     }
@@ -144,7 +144,7 @@ public class User extends BaseModel {
      * @return <p>Devuelve el usuario o usuarios con el apellido indicado</p>
      */
     public static PagedList<User> findBySurname(String surname, Integer page) {
-    	
+
         return find.query().where().isNotNull("surname").eq("surname", surname).setMaxRows(25)
                 .setFirstRow(25 * page).findPagedList();
     }
@@ -157,7 +157,7 @@ public class User extends BaseModel {
      * @return <p>Devuelve el usuario o usuarios con el nombre y apellido indicados</p>
      */
     public static PagedList<User> findByFullName(String name, String surname, Integer page) {
-    	
+
         return find.query().where().isNotNull("name").eq("name", name).and().isNotNull("surname")
                 .eq("surname", surname).setMaxRows(25).setFirstRow(25 * page).findPagedList();
     }
@@ -169,7 +169,7 @@ public class User extends BaseModel {
      * @return <p>Devuelve el usuario o usuarios que vivan en la ciudad indicada</p>
      */
     public static PagedList<User> findByCity(String city, Integer page) {
-    	
+
         return find.query().where().isNotNull("city").eq("city", city).setMaxRows(25)
                 .setFirstRow(25 * page).findPagedList();
     }
@@ -181,7 +181,7 @@ public class User extends BaseModel {
      * @return <p>Devuelve el listado de usuarios</p>
      */
     public static PagedList<User> findAll(Integer page) {
-    	
+
         return find.query().setMaxRows(25).setFirstRow(25 * page).findPagedList();
     }
 
@@ -213,8 +213,8 @@ public class User extends BaseModel {
      * Método que genera una clave API
      */
     public void generateApiKey() {
-       this.apiKey = new ApiKey();
-       this.apiKey.generateRandomKey();
+        this.apiKey = new ApiKey();
+        this.apiKey.generateRandomKey();
     }
 
     //Getter y Setters
