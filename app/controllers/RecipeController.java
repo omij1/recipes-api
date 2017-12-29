@@ -48,7 +48,7 @@ public class RecipeController extends Controller{
 	 * @return Indica si la receta se creó satisfactoriamente o si por el contrario hubo algún error
 	 */
 	public Result createRecipe() {
-
+		//TODO Comprobar si el apiKey existe y si se ha introducido
 		String apiKey = request().getQueryString("apiKey");
 		
 		messages = Http.Context.current().messages();//le asigno el contexto actual del método de acción
@@ -179,7 +179,7 @@ public class RecipeController extends Controller{
 	 * @return Respuesta que indica si la receta se borró o si se produjo un error
 	 */
 	public Result deleteRecipe(Long id) {
-		//TODO Comprobar si el apiKey existe
+		//TODO Comprobar si el apiKey existe y si se ha introducido
 		// TODO Comprobar que el usuario que quiere borrar la receta es el admin o el creador
 		String apiKey = request().getQueryString("apiKey");
 

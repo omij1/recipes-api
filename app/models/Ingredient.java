@@ -2,9 +2,7 @@ package models;
 
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
 import org.hibernate.validator.constraints.NotBlank;
@@ -12,8 +10,6 @@ import org.hibernate.validator.constraints.NotBlank;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import io.ebean.Finder;
-import io.ebean.Model;
-import play.data.validation.Constraints.Required;
 
 /**
  * Clase modelo que representa la tabla Ingredient donde se guardan los ingredientes de las recetas.
@@ -32,14 +28,12 @@ public class Ingredient extends BaseModel {
 	/**
 	 * Nombre del ingrediente
 	 */
-	@Required(message = "validation.required")
 	@NotBlank(message = "validation.blank")
 	String ingredientName;
 
 	/**
 	 * Unidades del ingrediente.
 	 */
-	@Required(message = "validation.required")
 	@NotBlank(message = "validation.blank")
 	String units;
 	
@@ -56,7 +50,7 @@ public class Ingredient extends BaseModel {
 	 * @param ingredientName Nombre del ingrediente
 	 * @param units Unidades del ingrediente
 	 */
-	public Ingredient(@Required String ingredientName, @Required String units) {
+	public Ingredient(@NotBlank String ingredientName, @NotBlank String units) {
 		
 		super();
 		this.ingredientName = ingredientName;

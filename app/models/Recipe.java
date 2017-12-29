@@ -33,14 +33,13 @@ public class Recipe extends BaseModel {
     /**
      * Nombre de la receta
      */
-    @Required(message = "validation.required")
     @NotBlank(message = "validation.blank")
     String title;
 
     /**
      * Lista de ingredientes de una receta
      */
-    @Required
+    @Required(message = "validation.blank")
     @Valid
     @JsonManagedReference
     @ManyToMany(cascade = CascadeType.ALL)
@@ -49,14 +48,12 @@ public class Recipe extends BaseModel {
     /**
      * Pasos para elaborar la receta
      */
-    @Required(message = "validation.required")
     @NotBlank(message = "validation.blank")
     String steps;
 
     /**
      * Unidad de tiempo necesario para elaborar la receta. Pueden ser minutos u horas
      */
-    @Required(message = "validation.required")
     @NotBlank(message = "validation.blank")
     String time;
 
@@ -64,13 +61,13 @@ public class Recipe extends BaseModel {
      * Valor de dificultad de la receta
      */
     @Enumerated(EnumType.STRING)
-    @Required(message = "validation.difficulty")
+    @Required(message = "validation.blank")
     public Difficulty difficulty;
 
     /**
      * Categoría de la receta
      */
-    @Required
+    @Required(message = "validation.blank")
     @JsonManagedReference
     @ManyToOne
     public Category category;
@@ -93,7 +90,7 @@ public class Recipe extends BaseModel {
      * @param difficulty  Dificultad de la receta
      * @param category    Categoría de la receta
      */
-    public Recipe(@Required String title, @Required List<Ingredient> ingredients, @Required String steps, @Required String time, @Required Difficulty difficulty,
+    public Recipe(@NotBlank String title, @NotBlank List<Ingredient> ingredients, @NotBlank String steps, @NotBlank String time, @NotBlank Difficulty difficulty,
                   Category category) {
 
         super();
@@ -161,14 +158,21 @@ public class Recipe extends BaseModel {
     public boolean checkRecipe() {
 
         if (Recipe.findByName(this.title.toUpperCase()) == null) {
+        	
             this.title = this.title.toUpperCase();
             this.checkIngredients(this.ingredients);
+            
             Ebean.beginTransaction();
-            this.save();
-            Ebean.commitTransaction();
-            Ebean.endTransaction();
+            try {
+            		this.save();
+                Ebean.commitTransaction();
+            }
+            finally {
+            		Ebean.endTransaction();
+            }
             return true;
         }
+        
         return false;
     }
 

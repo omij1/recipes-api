@@ -14,7 +14,6 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import io.ebean.Ebean;
 import io.ebean.Finder;
 import io.ebean.PagedList;
-import play.data.validation.Constraints.Required;
 
 /**
  * Clase modelo que representa la tabla Category de la base de datos en la que se almacena información de las categorías de recetas.
@@ -33,7 +32,6 @@ public class Category extends BaseModel{
 	/**
 	 * Nombre de la categoría de receta
 	 */
-	@Required(message = "validation.required")
 	@NotBlank(message = "validation.blank")
 	String categoryName;
 
@@ -51,7 +49,7 @@ public class Category extends BaseModel{
 	 * @param id_categoria Identificador de la categoría de recetas
 	 * @param nombre_categoria Nombre de la categoría de recetas
 	 */
-	public Category(@Required String categoryName) {
+	public Category(@NotBlank String categoryName) {
 		
 		super();
 		this.categoryName = categoryName;
@@ -96,10 +94,15 @@ public class Category extends BaseModel{
 		if(Category.findByCategoryName(this.categoryName.toUpperCase()) == null) {
 			
 			this.categoryName = this.categoryName.toUpperCase();
+			
 			Ebean.beginTransaction();
-			this.save();
-			Ebean.commitTransaction();
-			Ebean.endTransaction();
+			try {
+				this.save();
+				Ebean.commitTransaction();
+			}
+			finally {
+				Ebean.endTransaction();
+			}
 			return false;
 		}
 		

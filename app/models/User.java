@@ -5,10 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.ebean.Ebean;
 import io.ebean.Finder;
-import io.ebean.Model;
 import io.ebean.PagedList;
 import org.hibernate.validator.constraints.NotBlank;
-import play.data.validation.Constraints.Required;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -24,27 +22,27 @@ public class User extends BaseModel {
     /**
      * Nick del usuario
      */
-    @Required(message = "validation.required")
     @NotBlank(message = "validation.blank")
     private String nick;
+    
     /**
      * Nombre del usuario
      */
-    @Required(message = "validation.required")
     @NotBlank(message = "validation.blank")
     private String name;
+    
     /**
      * Apellido del usuario
      */
-    @Required(message = "validation.required")
     @NotBlank(message = "validation.blank")
     private String surname;
+    
     /**
      * Ciudad del usuario
      */
-    @Required(message = "validation.required")
     @NotBlank(message = "validation.blank")
     private String city;
+    
     /**
      * Se asigna una apiKey al usuario
      */
@@ -193,6 +191,7 @@ public class User extends BaseModel {
      */
     public boolean checkAndSave() {
         if (User.findByNick(this.nick) == null) {
+        	
             Ebean.beginTransaction();
             try {
                 this.generateApiKey();
@@ -202,6 +201,7 @@ public class User extends BaseModel {
                 Ebean.endTransaction();
             }
             return true;
+            
         }
         return false;
     }
@@ -210,6 +210,7 @@ public class User extends BaseModel {
      * Método que genera una clave API
      */
     public void generateApiKey() {
+    	
        this.apiKey = new ApiKey();
        this.apiKey.generateRandomKey();
     }

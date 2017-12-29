@@ -49,7 +49,7 @@ public class CategoryController extends Controller{
 	 */
 	public Result createCategory() {
 		//TODO solo puede crear una categoria el admin
-		//TODO Comprobar si el apiKey existe 
+		//TODO Comprobar si el apiKey existe y si se ha introducido
 		String apiKey = request().getQueryString("apiKey");
 
 		//Le asigno el contexto actual del método de acción
@@ -108,7 +108,7 @@ public class CategoryController extends Controller{
 	 */
 	public Result updateCategory(Long id) {
 		//TODO solo el admin puede hacerlo
-		//TODO Comprobar si el apiKey existe
+		//TODO Comprobar si el apiKey existe y si se ha introducido
 		String apiKey = request().getQueryString("apiKey");
 
 		messages = Http.Context.current().messages();
@@ -143,7 +143,7 @@ public class CategoryController extends Controller{
 	 */
 	public Result deleteCategory(Long id) {
 		//TODO solo el admin puede borrar una categoria. 
-		//TODO Comprobar si el apiKey existe
+		//TODO Comprobar si el apiKey existe y si se ha introducido
 		String apiKey = request().getQueryString("apiKey");
 
 		messages = Http.Context.current().messages();

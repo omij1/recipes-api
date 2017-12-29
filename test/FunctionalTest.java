@@ -20,14 +20,6 @@ import java.util.Map;
  * Clase que contiene los test funcionales del API de recetas de cocina
  */
 public class FunctionalTest extends WithApplication {
-
-    @Test
-    public void renderTemplate() {
-
-        Content html = views.html.index.render("Your new application is ready.");
-        assertThat("text/html").isEqualTo(html.contentType());
-        assertThat(html.body()).contains("Your new application is ready.");
-    }
     
     @Test
     public void testGetCategoryWrongFormat() {
@@ -69,12 +61,12 @@ public class FunctionalTest extends WithApplication {
     		data.put("difficulty", "INTERMEDIA");
     		
     		JsonObject category = new JsonObject();
-    		category.addProperty("categoryId", 1);
+    		category.addProperty("id", 1);
     		data.put("category", category.toString());
     		
 		RequestBuilder req = Helpers.fakeRequest()
     				.method("POST")
-    				.uri("/recipe")
+    				.uri("/recipe?apiKey=20vzaBgEkhHqp8mfPjpTic2kAnkAWC")
     				.header("Content-Type", "application/json")
     				.bodyForm(data);
     		Result r = Helpers.route(app,req);
