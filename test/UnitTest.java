@@ -1,52 +1,22 @@
-import akka.actor.ActorSystem;
-import controllers.AsyncController;
-import controllers.CountController;
-import org.junit.Test;
-import play.mvc.Result;
-import scala.concurrent.ExecutionContextExecutor;
 
-import java.util.concurrent.CompletionStage;
+import models.User;
+import org.junit.Test;
+
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
-import static play.test.Helpers.contentAsString;
+
 
 /**
  * Clase que contiene los test unitarios del API de recetas de cocina
  */
 public class UnitTest {
 
+    //Test para comprobar que se genera correctamente el apiKey con una longitud de 30 caracteres
     @Test
-    public void simpleCheck() {
-        int a = 1 + 1;
-        assertThat(a).isEqualTo(2);
-    }
-
-    @Test
-    public void testCount() {
-        final CountController controller = new CountController(() -> 49);
-        Result result = controller.count();
-        assertThat(contentAsString(result)).isEqualTo("49");
-    }
-
-    // Unit test a controller with async return
-    @Test
-    public void testAsync() {
-        final ActorSystem actorSystem = ActorSystem.create("test");
-        try {
-            final ExecutionContextExecutor ec = actorSystem.dispatcher();
-            final AsyncController controller = new AsyncController(actorSystem, ec);
-            final CompletionStage<Result> future = controller.message();
-
-            // Block until the result is completed
-            await().until(() -> {
-                assertThat(future.toCompletableFuture()).isCompletedWithValueMatching(result -> {
-                    return contentAsString(result).equals("Hi!");
-                });
-            });
-        } finally {
-            actorSystem.terminate();
-        }
+    public void testApiKeyLength() {
+        User user = new User("nick", "name", "surname", "city");
+        user.generateApiKey();
+        assertThat(user.getApiKey().getKey().length()).isEqualTo(30);
     }
 
 }
