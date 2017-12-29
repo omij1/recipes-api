@@ -5,9 +5,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.ebean.Ebean;
 import io.ebean.Finder;
-import io.ebean.Model;
 import io.ebean.PagedList;
 import org.hibernate.validator.constraints.NotBlank;
+import play.data.validation.Constraints.MaxLength;
+import play.data.validation.Constraints.MinLength;
 import play.data.validation.Constraints.Required;
 
 import javax.persistence.*;
@@ -26,6 +27,8 @@ public class User extends BaseModel {
      */
     @Required(message = "validation.required")
     @NotBlank(message = "validation.blank")
+    @MinLength(value = 4, message = "validation.minLength")
+    @MaxLength(value = 15, message = "validation.maxLength")
     private String nick;
     /**
      * Nombre del usuario
