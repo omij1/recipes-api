@@ -23,6 +23,9 @@ recipe.emptyName = Debe introducir el nombre de una receta
 
 validation.difficulty = Los valores de dificultad son: MUY_FACIL, FACIL, INTERMEDIA, DIFICIL, MUY_DIFICIL
 validation.blank = Este campo no puede estar en blanco
+validation.minLength = El nick debe tener al menos 4 caracteres
+validation.maxLength = El nick debe tener como máximo 15 caracteres
+validation.capitalLetter = La primera letra debe ser mayúscula y el resto minúsculas
 
 
 
