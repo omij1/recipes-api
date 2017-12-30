@@ -2,8 +2,8 @@ package controllers;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.ebean.Ebean;
 import io.ebean.PagedList;
-import models.ApiKey;
 import models.User;
 import play.cache.SyncCacheApi;
 import play.data.Form;
@@ -156,12 +156,12 @@ public class UserController extends Controller {
         Integer page = Integer.parseInt(request().getQueryString("page"));
 
         //Comprobamos si la lista está en caché
-        String key = "listByName-" + name;
+        String key = "listByName-" + name + page;
         PagedList<User> list = cache.get(key);
         //Si no lo tenemos en caché, lo buscamos y lo guardamos
         if (list == null) {
             list = User.findByName(name, page);
-            cache.set(key, list);
+            cache.set(key, list, 60*2);
         }
         List<User> usersList = list.getList();
 
@@ -180,12 +180,12 @@ public class UserController extends Controller {
             return ok(views.xml.users.render(usersList));
         } else if (request().accepts("application/json")) {
             //Buscamos la respuesta en caché
-            key = "users-" + name + "-json";
+            key = "listByName-" + name + page + "-json";
             JsonNode json = cache.get(key);
             //Si no está, la creamos y la guardamos en caché
             if (json == null) {
                 json = Json.toJson(usersList);
-                cache.set(key, json);
+                cache.set(key, json, 60*2);
             }
             return ok(Json.prettyPrint(json));
         }
@@ -205,12 +205,12 @@ public class UserController extends Controller {
         Integer page = Integer.parseInt(request().getQueryString("page"));
 
         //Comprobamos si la lista está en caché
-        String key = "listBySurname-" + surname;
+        String key = "listBySurname-" + surname + page;
         PagedList<User> list = cache.get(key);
         //Si no lo tenemos en caché, lo buscamos y lo guardamos
         if (list == null) {
             list = User.findBySurname(surname, page);
-            cache.set(key, list);
+            cache.set(key, list, 60*2);
         }
         List<User> usersList = list.getList();
 
@@ -229,12 +229,12 @@ public class UserController extends Controller {
             return ok(views.xml.users.render(usersList));
         } else if (request().accepts("application/json")) {
             //Buscamos la respuesta en caché
-            key = "users-" + surname + "-json";
+            key = "listBySurname-" + surname + page + "-json";
             JsonNode json = cache.get(key);
             //Si no está, la creamos y la guardamos en caché
             if (json == null) {
                 json = Json.toJson(usersList);
-                cache.set(key, json);
+                cache.set(key, json, 60*2);
             }
             return ok(Json.prettyPrint(json));
         }
@@ -255,12 +255,12 @@ public class UserController extends Controller {
         Integer page = Integer.parseInt(request().getQueryString("page"));
 
         //Comprobamos si la lista está en caché
-        String key = "listByFullName-" + name + surname;
+        String key = "listByFullName-" + name + surname + page;
         PagedList<User> list = cache.get(key);
         //Si no lo tenemos en caché, lo buscamos y lo guardamos
         if (list == null) {
             list = User.findByFullName(name, surname, page);
-            cache.set(key, list);
+            cache.set(key, list, 60*2);
         }
         List<User> usersList = list.getList();
 
@@ -279,12 +279,12 @@ public class UserController extends Controller {
             return ok(views.xml.users.render(usersList));
         } else if (request().accepts("application/json")) {
             //Buscamos la respuesta en caché
-            key = "users-" + name + surname + "-json";
+            key = "listByFullName-" + name + surname + page + "-json";
             JsonNode json = cache.get(key);
             //Si no está, la creamos y la guardamos en caché
             if (json == null) {
                 json = Json.toJson(usersList);
-                cache.set(key, json);
+                cache.set(key, json, 60*2);
             }
             return ok(Json.prettyPrint(json));
         }
@@ -306,12 +306,12 @@ public class UserController extends Controller {
         Integer page = Integer.parseInt(request().getQueryString("page"));
 
         //Comprobamos si la lista está en caché
-        String key = "listByCity-" + city;
+        String key = "listByCity-" + city + page;
         PagedList<User> list = cache.get(key);
         //Si no lo tenemos en caché, lo buscamos y lo guardamos
         if (list == null) {
             list = User.findByCity(city, page);
-            cache.set(key, list);
+            cache.set(key, list, 60*2);
         }
         List<User> usersList = list.getList();
 
@@ -330,12 +330,12 @@ public class UserController extends Controller {
             return ok(views.xml.users.render(usersList));
         } else if (request().accepts("application/json")) {
             //Buscamos la respuesta en caché
-            key = "users-" + city + "-json";
+            key = "listByCity-" + city + page + "-json";
             JsonNode json = cache.get(key);
             //Si no está, la creamos y la guardamos en caché
             if (json == null) {
                 json = Json.toJson(usersList);
-                cache.set(key, json);
+                cache.set(key, json, 60*2);
             }
             return ok(Json.prettyPrint(json));
         }
@@ -375,8 +375,22 @@ public class UserController extends Controller {
 
         //Si existe el usuario y su apiKey coincide con el apiKey suministrado, ejecutamos la actualización
         if (user.getApiKey().getKey().matches(apiKey)) {
-            updateUser.setId(user.getId());
-            updateUser.update();
+            Ebean.beginTransaction();
+            try {
+                String key = "user-" + id_user;
+                cache.remove(key);
+                key = "user-" + user.getNick();
+                cache.remove(key);
+                key = "user-" + id_user + "-json";
+                cache.remove(key);
+                key = "user-" + user.getNick()+ "-json";
+                cache.remove(key);
+                updateUser.setId(user.getId());
+                updateUser.update();
+                Ebean.commitTransaction();
+            } finally {
+                Ebean.endTransaction();
+            }
             return ok(messages.at("user.updated"));
         }
         return Results.badRequest(messages.at("user.authorization"));
@@ -402,6 +416,16 @@ public class UserController extends Controller {
             //Si el apiKey del usuario con el id indicado coincide con el apiKey suministrado ejecutamos la operación
             if (user.getApiKey().getKey().matches(apiKey)) {
                 if (user.delete()) {
+                    //Se borran la caché de las peticiones de usuario único
+                    String key = "user-" + id_user;
+                    cache.remove(key);
+                    key = "user-" + user.getNick();
+                    cache.remove(key);
+                    //Se borran la caché de las respuestas
+                    key = "user-" + id_user + "-json";
+                    cache.remove(key);
+                    key = "user-" + user.getNick()+ "-json";
+                    cache.remove(key);
                     return ok(messages.at("user.deleted"));
                 } else {
                     return Results.internalServerError(messages.at("user.deletedFailed"));
@@ -435,7 +459,7 @@ public class UserController extends Controller {
         //Si no lo tenemos en caché, lo buscamos y lo guardamos
         if (list == null) {
             list = User.findAll(page);
-            cache.set(key, list);
+            cache.set(key, list, 60*2);
         }
         List<User> usersList = list.getList();
 
@@ -459,7 +483,7 @@ public class UserController extends Controller {
             //Si no está, la creamos y la guardamos en caché
             if (json == null) {
                 json = Json.toJson(usersList);
-                cache.set(key, json);
+                cache.set(key, json, 60*2);
             }
             return ok(Json.prettyPrint(json));
         }
