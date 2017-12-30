@@ -25,6 +25,8 @@ validation.difficulty = The difficulty values are: MUY_FACIL, FACIL, INTERMEDIA,
 validation.blank = This field can not be blank
 validation.minLength = Nick must have at least 4 characters
 validation.maxLength = Nick must have a maximum of 15 characters
+validation.capitalLetter = The first letter must be capital letter and the rest lowercase letters
+
 
 
 user.created = User created

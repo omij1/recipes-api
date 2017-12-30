@@ -25,6 +25,7 @@ validation.difficulty = Los valores de dificultad son: MUY_FACIL, FACIL, INTERME
 validation.blank = Este campo no puede estar en blanco
 validation.minLength = El nick debe tener al menos 4 caracteres
 validation.maxLength = El nick debe tener como máximo 15 caracteres
+validation.capitalLetter = La primera letra debe ser mayúscula y el resto minúsculas
 
 
 

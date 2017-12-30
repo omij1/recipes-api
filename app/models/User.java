@@ -9,7 +9,8 @@ import io.ebean.PagedList;
 import org.hibernate.validator.constraints.NotBlank;
 import play.data.validation.Constraints.MaxLength;
 import play.data.validation.Constraints.MinLength;
-import play.data.validation.Constraints.Required;
+import validators.FirstCapitalLetter;
+import validators.FirstCapitalLetterValidator;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -33,11 +34,13 @@ public class User extends BaseModel {
      * Nombre del usuario
      */
     @NotBlank(message = "validation.blank")
+    @FirstCapitalLetter(message = "validation.capitalLetter")
     private String name;
     /**
      * Apellido del usuario
      */
     @NotBlank(message = "validation.blank")
+    @FirstCapitalLetter(message = "validation.capitalLetter")
     private String surname;
     /**
      * Ciudad del usuario
