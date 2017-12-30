@@ -17,7 +17,7 @@ public class FirstCapitalLetterValidator
     public boolean isValid(String string) {
         if (Character.isUpperCase(string.charAt(0))) {
             for (int i = 1; i < string.length(); i++) {
-                if (Character.isUpperCase(string.charAt(i))) {
+                if (Character.isUpperCase(string.charAt(i)) && Character.isLetter(string.charAt(i - 1))) {
                     return false;
                 }
             }

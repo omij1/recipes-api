@@ -49,6 +49,7 @@ public class User extends BaseModel {
      * Ciudad del usuario
      */
     @NotBlank(message = "validation.blank")
+    @FirstCapitalLetter(message = "validation.capitalLetter")
     private String city;
 
     /**
