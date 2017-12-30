@@ -143,6 +143,7 @@ public class UserController extends Controller {
             }
             return ok(Json.prettyPrint(json));
         }
+        
         return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
     }
 

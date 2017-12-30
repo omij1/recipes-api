@@ -27,8 +27,8 @@ public class User extends BaseModel {
      * Nick del usuario
      */
     @NotBlank(message = "validation.blank")
-    @MinLength(value = 4, message = "validation.minLength")
-    @MaxLength(value = 15, message = "validation.maxLength")
+    @MinLength(value = 4, message = "validation.nickMinLength")
+    @MaxLength(value = 15, message = "validation.nickMaxLength")
     private String nick;
 
     /**
@@ -65,6 +65,7 @@ public class User extends BaseModel {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     public List<Recipe> userRecipes = new ArrayList<>();
 
+    
 
     /**
      * Constructor del modelo User
@@ -228,50 +229,98 @@ public class User extends BaseModel {
 
     //Getter y Setters
 
+    /**
+     * Getter de nick
+     * @return Devuelve el nick del usuario
+     */
     public String getNick() {
         return nick;
     }
 
+    /**
+     * Setter de nick
+     * @param nick Nick del usuario
+     */
     public void setNick(String nick) {
         this.nick = nick;
     }
 
+    /**
+     * Getter de name
+     * @return Devuelve el nombre del usuario
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Setter de name
+     * @param name Nombre del usuario
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Getter de surname
+     * @return Devuelve el apellido del usuario
+     */
     public String getSurname() {
         return surname;
     }
 
+    /**
+     * Setter de surname
+     * @param surname Apellido del usuario
+     */
     public void setSurname(String surname) {
         this.surname = surname;
     }
 
+    /**
+     * Getter de city
+     * @return Devuelve la ciudad del usuario
+     */
     public String getCity() {
         return city;
     }
 
+    /**
+     * Setter de city
+     * @param city Ciudad del usuario
+     */
     public void setCity(String city) {
         this.city = city;
     }
 
+    /**
+     * Getter de apiKey
+     * @return Devuelve la clave del usuario
+     */
     public ApiKey getApiKey() {
         return apiKey;
     }
 
+    /**
+     * Setter de apiKey
+     * @param apiKey Clave del usuario
+     */
     public void setApiKey(ApiKey apiKey) {
         this.apiKey = apiKey;
     }
 
+    /**
+     * Getter de userRecipes
+     * @return Devuelve las recetas de un usuario
+     */
     public List<Recipe> getUserRecipes() {
         return userRecipes;
     }
 
+    /**
+     * Setter de userRecipes
+     * @param userRecipes Lista de recetas de un usuario
+     */
     public void setUserRecipes(List<Recipe> userRecipes) {
         this.userRecipes = userRecipes;
     }

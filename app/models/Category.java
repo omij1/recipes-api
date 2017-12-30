@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import io.ebean.Ebean;
 import io.ebean.Finder;
 import io.ebean.PagedList;
+import validators.FirstCapitalLetter;
 
 /**
  * Clase modelo que representa la tabla Category de la base de datos en la que se almacena información de las categorías de recetas.
@@ -33,6 +34,7 @@ public class Category extends BaseModel{
 	 * Nombre de la categoría de receta
 	 */
 	@NotBlank(message = "validation.blank")
+	@FirstCapitalLetter(message = "validation.capitalLetter")
 	String categoryName;
 
 	/**

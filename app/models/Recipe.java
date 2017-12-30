@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.ebean.Ebean;
 import io.ebean.Finder;
 import io.ebean.PagedList;
+import play.data.validation.Constraints.MaxLength;
 import play.data.validation.Constraints.Required;
 
 /**
@@ -34,6 +35,7 @@ public class Recipe extends BaseModel {
      * Nombre de la receta
      */
     @NotBlank(message = "validation.blank")
+    @MaxLength(value = 40, message = "validation.titleMaxLength")
     String title;
 
     /**

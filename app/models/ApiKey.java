@@ -29,6 +29,7 @@ public class ApiKey extends BaseModel {
     public static final Finder<Long, ApiKey> find = new Finder<>(ApiKey.class);
 
     
+    
     /**
      * Constructor de la clase ApiKey
      */

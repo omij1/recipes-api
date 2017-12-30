@@ -10,6 +10,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import io.ebean.Finder;
+import validators.FirstCapitalLetter;
 
 /**
  * Clase modelo que representa la tabla Ingredient donde se guardan los ingredientes de las recetas.
@@ -29,6 +30,7 @@ public class Ingredient extends BaseModel {
 	 * Nombre del ingrediente
 	 */
 	@NotBlank(message = "validation.blank")
+	@FirstCapitalLetter(message = "validation.capitalLetter")
 	String ingredientName;
 
 	/**
