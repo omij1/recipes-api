@@ -21,9 +21,9 @@ import java.util.List;
 
 public class UserController extends Controller {
 
-	/**
-	 * Variable formulario
-	 */
+    /**
+     * Variable formulario
+     */
     @Inject
     FormFactory formFactory;
 
@@ -47,18 +47,17 @@ public class UserController extends Controller {
         if (f.hasErrors()) {         //Comprobar si hay errores
             return Results.status(409, f.errorsAsJson());
         }
-        
+
         User user = f.get();  //Objeto User donde se guarda la información de la petición
 
         //Validación y guardado en caso de que el nick no exista. En caso contrario se muestra el error correspondiente
         if (user.checkAndSave()) {
             if (request().accepts("application/xml")) {
                 return Results.created(views.xml.apiKey.render(user));
-            } else if (request().accepts("application/json")) {
-                ObjectNode apiKey = Json.newObject();
-                apiKey.put("apiKey", user.getApiKey().getKey());
-                return Results.created(Json.prettyPrint(apiKey));
-            }
+            } //Si acepta json, no indica el formato o el formato indicado es incorrecto, se envía en json
+            ObjectNode apiKey = Json.newObject();
+            apiKey.put("apiKey", user.getApiKey().getKey());
+            return Results.created(Json.prettyPrint(apiKey));
         }
         return Results.status(409, new ErrorObject("X", messages.at("user.alreadyExist")).convertToJson()).as("application/json");
 
@@ -165,7 +164,7 @@ public class UserController extends Controller {
         //Si no lo tenemos en caché, lo buscamos y lo guardamos
         if (list == null) {
             list = User.findByName(name, page);
-            cache.set(key, list, 60*2);
+            cache.set(key, list, 60 * 2);
         }
         List<User> usersList = list.getList();
 
@@ -189,7 +188,7 @@ public class UserController extends Controller {
             //Si no está, la creamos y la guardamos en caché
             if (json == null) {
                 json = Json.toJson(usersList);
-                cache.set(key, json, 60*2);
+                cache.set(key, json, 60 * 2);
             }
             return ok(Json.prettyPrint(json));
         }
@@ -214,7 +213,7 @@ public class UserController extends Controller {
         //Si no lo tenemos en caché, lo buscamos y lo guardamos
         if (list == null) {
             list = User.findBySurname(surname, page);
-            cache.set(key, list, 60*2);
+            cache.set(key, list, 60 * 2);
         }
         List<User> usersList = list.getList();
 
@@ -238,7 +237,7 @@ public class UserController extends Controller {
             //Si no está, la creamos y la guardamos en caché
             if (json == null) {
                 json = Json.toJson(usersList);
-                cache.set(key, json, 60*2);
+                cache.set(key, json, 60 * 2);
             }
             return ok(Json.prettyPrint(json));
         }
@@ -264,7 +263,7 @@ public class UserController extends Controller {
         //Si no lo tenemos en caché, lo buscamos y lo guardamos
         if (list == null) {
             list = User.findByFullName(name, surname, page);
-            cache.set(key, list, 60*2);
+            cache.set(key, list, 60 * 2);
         }
         List<User> usersList = list.getList();
 
@@ -288,7 +287,7 @@ public class UserController extends Controller {
             //Si no está, la creamos y la guardamos en caché
             if (json == null) {
                 json = Json.toJson(usersList);
-                cache.set(key, json, 60*2);
+                cache.set(key, json, 60 * 2);
             }
             return ok(Json.prettyPrint(json));
         }
@@ -315,7 +314,7 @@ public class UserController extends Controller {
         //Si no lo tenemos en caché, lo buscamos y lo guardamos
         if (list == null) {
             list = User.findByCity(city, page);
-            cache.set(key, list, 60*2);
+            cache.set(key, list, 60 * 2);
         }
         List<User> usersList = list.getList();
 
@@ -339,7 +338,7 @@ public class UserController extends Controller {
             //Si no está, la creamos y la guardamos en caché
             if (json == null) {
                 json = Json.toJson(usersList);
-                cache.set(key, json, 60*2);
+                cache.set(key, json, 60 * 2);
             }
             return ok(Json.prettyPrint(json));
         }
@@ -387,7 +386,7 @@ public class UserController extends Controller {
                 cache.remove(key);
                 key = "user-" + id_user + "-json";
                 cache.remove(key);
-                key = "user-" + user.getNick()+ "-json";
+                key = "user-" + user.getNick() + "-json";
                 cache.remove(key);
                 updateUser.setId(user.getId());
                 updateUser.update();
@@ -428,7 +427,7 @@ public class UserController extends Controller {
                     //Se borran la caché de las respuestas
                     key = "user-" + id_user + "-json";
                     cache.remove(key);
-                    key = "user-" + user.getNick()+ "-json";
+                    key = "user-" + user.getNick() + "-json";
                     cache.remove(key);
                     return ok(messages.at("user.deleted"));
                 } else {
@@ -463,7 +462,7 @@ public class UserController extends Controller {
         //Si no lo tenemos en caché, lo buscamos y lo guardamos
         if (list == null) {
             list = User.findAll(page);
-            cache.set(key, list, 60*2);
+            cache.set(key, list, 60 * 2);
         }
         List<User> usersList = list.getList();
 
@@ -487,7 +486,7 @@ public class UserController extends Controller {
             //Si no está, la creamos y la guardamos en caché
             if (json == null) {
                 json = Json.toJson(usersList);
-                cache.set(key, json, 60*2);
+                cache.set(key, json, 60 * 2);
             }
             return ok(Json.prettyPrint(json));
         }

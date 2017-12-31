@@ -224,7 +224,9 @@ public class User extends BaseModel {
      */
     public void generateApiKey() {
         this.apiKey = new ApiKey();
-        this.apiKey.generateRandomKey();
+        do {
+            this.apiKey.generateRandomKey();
+        } while (ApiKey.findBykey(this.apiKey.getKey()) != null) ;
     }
 
     //Getter y Setters
