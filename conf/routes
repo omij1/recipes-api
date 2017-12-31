@@ -11,6 +11,8 @@ GET           /user/:id_user                        controllers.UserController.r
 PUT           /user/:id_user                        controllers.UserController.updateUser(id_user: Long)
 DELETE        /user/:id_user                        controllers.UserController.deleteUser(id_user: Long)
 GET           /user/nick/:nick                      controllers.UserController.retrieveUserByNick(nick: String)
+GET			  /user/:id_user/recipes_created		   controllers.UserController.retrieveUserRecipes(id_user: Long)
+
 GET           /users                                controllers.UserController.retrieveUserCollection()
 GET           /users/name/:name                     controllers.UserController.retrieveUserByName(name: String)
 GET           /users/surname/:surname               controllers.UserController.retrieveUserBySurname(surname: String)
@@ -34,6 +36,7 @@ GET           /recipe/:id                           controllers.RecipeController
 PUT           /recipe/:id                           controllers.RecipeController.updateRecipe(id: Long)
 DELETE        /recipe/:id                           controllers.RecipeController.deleteRecipe(id: Long)
 
+# Ver todas las recetas existentes en el API ordenadas alfabéticamente
 GET           /recipes                              controllers.RecipeController.retrieveRecipeCollection()
 
 # Buscar una receta por su título
@@ -46,7 +49,7 @@ GET           /category/:id                         controllers.CategoryControll
 PUT           /category/:id                         controllers.CategoryController.updateCategory(id: Long)
 DELETE        /category/:id                         controllers.CategoryController.deleteCategory(id: Long)
 
-# Obtener las categorías de recetas
+# Obtener las categorías de recetas ordenadas alfabéticamente
 GET           /categories                           controllers.CategoryController.retrieveCategoryCollection()
 
 # Obtener las recetas de una categoría

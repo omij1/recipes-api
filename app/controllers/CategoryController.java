@@ -88,17 +88,16 @@ public class CategoryController extends Controller{
 		if(c == null) {
 			return Results.notFound(messages.at("category.notExist"));
 		}
-		else {
-			if(request().accepts("application/json")) {
-				return ok(Json.prettyPrint(Json.toJson(c)));
-			}
-			else if(request().accepts("application/xml")) {
-				return ok(views.xml._category.render(c));
-			}
 
-			return Results.status(415, new ErrorObject("2", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
+		if(request().accepts("application/json")) {
+			return ok(Json.prettyPrint(Json.toJson(c)));
 		}
-		
+		else if(request().accepts("application/xml")) {
+			return ok(views.xml._category.render(c));
+		}
+
+		return Results.status(415, new ErrorObject("2", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
+	
 	}
 	
 	/**
@@ -206,17 +205,16 @@ public class CategoryController extends Controller{
 		if(c == null) {
 			return Results.notFound(messages.at("category.notExist"));
 		}
-		else {
-			if(request().accepts("application/json")) {
-				return ok(Json.prettyPrint(Json.toJson(c.relatedRecipes)));
-			}
-			else if(request().accepts("application/xml")) {
-				return ok(views.xml.recipes.render(c.relatedRecipes));
-			}
 
-			return Results.status(415,new ErrorObject("2", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
+		if(request().accepts("application/json")) {
+			return ok(Json.prettyPrint(Json.toJson(c.relatedRecipes)));
 		}
-		
+		else if(request().accepts("application/xml")) {
+			return ok(views.xml.recipes.render(c.relatedRecipes));
+		}
+
+		return Results.status(415,new ErrorObject("2", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
+	
 	}
 	
 	/**

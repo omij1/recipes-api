@@ -15,8 +15,5 @@
 		<nick>@recipe.getUser().getNick()</nick>
 		<name>@recipe.getUser().getName()</name>
 		<surname>@recipe.getUser().getSurname()</surname>
-		<city>@recipe.getUser().getCity()</city>
-		<version>@recipe.getVersion()</version>
-		<created>@recipe.getCreated()</created>
-		<updated>@recipe.getUpdated()</updated>	
+		<city>@recipe.getUser().getCity()</city>	
 	</recipe>

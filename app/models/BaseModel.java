@@ -6,6 +6,8 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import io.ebean.Model;
 import io.ebean.annotation.CreatedTimestamp;
 import io.ebean.annotation.UpdatedTimestamp;
@@ -29,18 +31,21 @@ public class BaseModel extends Model{
 	 * Versión del elemento
 	 */
 	@Version
+	@JsonIgnore
 	Long version;
 	
 	/**
 	 * Fecha de creación del elemento
 	 */
 	@CreatedTimestamp
+	@JsonIgnore
 	Timestamp created;
 	
 	/**
 	 * Fecha de la última actualización del elemento
 	 */
 	@UpdatedTimestamp
+	@JsonIgnore
 	Timestamp updated;
 
 	/**

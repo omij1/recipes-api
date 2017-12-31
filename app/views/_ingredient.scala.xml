@@ -3,7 +3,4 @@
 				<id>@ingredient.getId()</id>
 				<name>@ingredient.getIngredientName()</name>
 				<units>@ingredient.getUnits()</units>
-				<version>@ingredient.getVersion()</version>
-				<created>@ingredient.getCreated()</created>
-				<updated>@ingredient.getUpdated()</updated>
 			</ingredient>

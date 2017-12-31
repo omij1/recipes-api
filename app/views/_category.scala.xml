@@ -2,8 +2,5 @@
 		<category>
 			<id>@category.getId()</id>
 			<name>@category.getCategoryName()</name>
-			<version>@category.getVersion()</version>
-			<created>@category.getCreated()</created>
-			<updated>@category.getUpdated()</updated>
 		</category>
 		

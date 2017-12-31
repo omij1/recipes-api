@@ -27,8 +27,17 @@ public class UserController extends Controller {
     @Inject
     FormFactory formFactory;
 
+    /**
+     * Variable caché
+     */
     @Inject
     private SyncCacheApi cache;
+    
+    /**
+	 * Variable para presentar los mensajes al usuario según el idioma
+	 */
+	private Messages messages;
+	
 
     /**
      * Método para crear un usuario nuevo
@@ -41,7 +50,7 @@ public class UserController extends Controller {
      */
     public Result createUser() {
 
-        Messages messages = Http.Context.current().messages();
+        messages = Http.Context.current().messages();
 
         Form<User> f = formFactory.form(User.class).bindFromRequest(); //Creación de objeto Form para obtener los datos de la petición
         if (f.hasErrors()) {         //Comprobar si hay errores
@@ -72,7 +81,7 @@ public class UserController extends Controller {
      */
     public Result retrieveUser(Long id_user) {
 
-        Messages messages = Http.Context.current().messages();
+        messages = Http.Context.current().messages();
 
         //Comprobamos si el usuario está en caché
         String key = "user-" + id_user;
@@ -114,7 +123,7 @@ public class UserController extends Controller {
      */
     public Result retrieveUserByNick(String nick) {
 
-        Messages messages = Http.Context.current().messages();
+        messages = Http.Context.current().messages();
 
         //Comprobamos si el usuario está en caché
         String key = "user-" + nick;
@@ -146,6 +155,38 @@ public class UserController extends Controller {
         
         return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
     }
+    
+    /**
+     * Método que permite obtener las recetas creadas por un usuario
+     * @param id Identificador del usuario del que se desean ver sus recetas
+     * @return Devuelve las recetas creadas por el usuario seleccionado o error
+     */
+    public Result retrieveUserRecipes(Long id) {
+    		//TODO Añadir cache
+    		messages = Http.Context.current().messages();
+    		
+    		//Comprobamos si el id introducido corresponde a un usuario
+    		User u = User.findById(id);
+    		if(u == null) {
+    			return Results.notFound(messages.at("user.wrongId"));
+    		}
+    		
+    		//Miramos si el usuario tiene recetas publicadas
+    		if(u.getUserRecipes().size() > 0) {
+    			
+    			if(request().accepts("application/json")) {
+    				return ok(Json.prettyPrint(Json.toJson(u.getUserRecipes())));
+    			}
+    			else if(request().accepts("application/xml")) {
+    				return ok(views.xml.recipes.render(u.getUserRecipes()));
+    			}	
+    		}
+    		else {
+    			return Results.ok(messages.at("user.listEmpty"));
+    		}
+    		//TODO Codigo de errores de ErrorObject
+    		return Results.status(415, new ErrorObject("2", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
+    }
 
 
     /**
@@ -156,7 +197,7 @@ public class UserController extends Controller {
      */
     public Result retrieveUserByName(String name) {
 
-        Messages messages = Http.Context.current().messages();
+        messages = Http.Context.current().messages();
         //Obtenemos la página
         Integer page = Integer.parseInt(request().getQueryString("page"));
 
@@ -205,7 +246,7 @@ public class UserController extends Controller {
      */
     public Result retrieveUserBySurname(String surname) {
 
-        Messages messages = Http.Context.current().messages();
+        messages = Http.Context.current().messages();
         //Obtenemos la página
         Integer page = Integer.parseInt(request().getQueryString("page"));
 
@@ -255,7 +296,7 @@ public class UserController extends Controller {
      */
     public Result retrieveUserByFullName(String name, String surname) {
 
-        Messages messages = Http.Context.current().messages();
+        messages = Http.Context.current().messages();
         //Obtenemos la página
         Integer page = Integer.parseInt(request().getQueryString("page"));
 
@@ -306,7 +347,7 @@ public class UserController extends Controller {
      */
     public Result retrieveUserByCity(String city) {
 
-        Messages messages = Http.Context.current().messages();
+        messages = Http.Context.current().messages();
         //Obtenemos la página
         Integer page = Integer.parseInt(request().getQueryString("page"));
 
@@ -357,7 +398,7 @@ public class UserController extends Controller {
      */
     public Result updateUser(Long id_user) {
 
-        Messages messages = Http.Context.current().messages();
+        messages = Http.Context.current().messages();
 
         //Creación de objeto Form para obtener los datos de la petición
         Form<User> f = formFactory.form(User.class).bindFromRequest();
@@ -398,9 +439,9 @@ public class UserController extends Controller {
             }
             return ok(messages.at("user.updated"));
         }
-        return Results.badRequest(messages.at("user.authorization"));
+        return Results.status(401, messages.at("user.authorization"));
 
-        //TODO Comprobar si el apiKey existe ejemplo en metodo de accion createUser
+        //TODO Comprobar si el apiKey existe y si se ha introducido
         //TODO Sólo pueden modificar los datos de un usuario el propio usuario o el administrador
     }
 
@@ -412,7 +453,7 @@ public class UserController extends Controller {
      */
     public Result deleteUser(Long id_user) {
 
-        Messages messages = Http.Context.current().messages();
+        messages = Http.Context.current().messages();
         User user = User.findById(id_user);
         //Si el usuario existe
         if (user != null) {
@@ -436,7 +477,7 @@ public class UserController extends Controller {
                     return Results.internalServerError(messages.at("user.deletedFailed"));
                 }
             }
-            return Results.badRequest(messages.at("user.authorization"));
+            return Results.status(401, messages.at("user.authorization"));
         }
         //Por idempotencia, aunque no exista el usuario, la respuesta debe ser correcta.
         return ok(messages.at("user.deleted"));
@@ -453,7 +494,7 @@ public class UserController extends Controller {
      */
     public Result retrieveUserCollection() {
 
-        Messages messages = Http.Context.current().messages();
+        messages = Http.Context.current().messages();
 
         //Obtenemos la página
         Integer page = Integer.parseInt(request().getQueryString("page"));
@@ -475,7 +516,7 @@ public class UserController extends Controller {
             } else if (request().accepts("application/json")) {
                 return Results.notFound(messages.at("user.listEmpty"));
             }
-            return status(415); //Unsupported media type
+            return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json"); //Unsupported media type
         }
 
         //Si la lista tiene usuarios

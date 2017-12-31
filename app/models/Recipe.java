@@ -188,7 +188,7 @@ public class Recipe extends BaseModel {
 
         Ingredient ing;
         for (int j = 0; j < i.size(); j++) {
-            i.get(j).setIngredientName(i.get(j).getIngredientName().toLowerCase());
+            i.get(j).setIngredientName(i.get(j).getIngredientName());
             i.get(j).setUnits(i.get(j).getUnits().toLowerCase());
             ing = Ingredient.findIngredientByNameAndUnit(i.get(j).getIngredientName(), i.get(j).getUnits());
             if (ing != null) {
@@ -209,7 +209,7 @@ public class Recipe extends BaseModel {
         Ingredient ing;
         this.ingredients.clear();
         for (int j = 0; j < i.size(); j++) {
-            i.get(j).setIngredientName(i.get(j).getIngredientName().toLowerCase());
+            i.get(j).setIngredientName(i.get(j).getIngredientName());
             i.get(j).setUnits(i.get(j).getUnits().toLowerCase());
             ing = Ingredient.findIngredientByNameAndUnit(i.get(j).getIngredientName(), i.get(j).getUnits());
             if (ing == null) {
