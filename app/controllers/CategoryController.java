@@ -68,7 +68,7 @@ public class CategoryController extends Controller{
 		if(!c.checkCategory()) {
 			return Results.created(messages.at("category.created"));
 		}
-		else {
+		else {//TODO Revisar codigos de errores del ErrorObject
 			return Results.status(409, new ErrorObject("1",messages.at("category.alreadyExist")).convertToJson()).as("application/json");
 		}
 	}
@@ -95,7 +95,7 @@ public class CategoryController extends Controller{
 		else if(request().accepts("application/xml")) {
 			return ok(views.xml._category.render(c));
 		}
-
+		//TODO Revisar codigos de errores del ErrorObject
 		return Results.status(415, new ErrorObject("2", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
 	
 	}
@@ -186,7 +186,7 @@ public class CategoryController extends Controller{
 		else if(request().accepts("application/xml")) {
 			return ok(views.xml.categories.render(categories)).withHeader("X-Count", number.toString());
 		}
-
+		//TODO Revisar codigos de errores del ErrorObject
 		return Results.status(415,new ErrorObject("2", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
 		
 	}
@@ -212,7 +212,7 @@ public class CategoryController extends Controller{
 		else if(request().accepts("application/xml")) {
 			return ok(views.xml.recipes.render(c.relatedRecipes));
 		}
-
+		//TODO Revisar codigos de errores del ErrorObject
 		return Results.status(415,new ErrorObject("2", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
 	
 	}

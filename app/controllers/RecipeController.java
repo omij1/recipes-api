@@ -75,7 +75,7 @@ public class RecipeController extends Controller{
 			if(r.checkRecipe()) {
 				return Results.ok(messages.at("recipe.created"));
 			}
-			else {
+			else {//TODO Revisar codigos de errores del ErrorObject
 				return Results.status(409, new ErrorObject("3",messages.at("recipe.alreadyExist")).convertToJson()).as("application/json");
 			}
 		}
@@ -106,7 +106,7 @@ public class RecipeController extends Controller{
 			else if(request().accepts("application/xml")) {
 				return ok(views.xml._recipe.render(recipe));
 			}
-			
+			//TODO Revisar codigos de errores del ErrorObject
 			return Results.status(415,new ErrorObject("2", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
 		}
 		
@@ -223,7 +223,7 @@ public class RecipeController extends Controller{
 		else if(request().accepts("application/xml")) {
 			return ok(views.xml.recipes.render(recipes)).withHeader("X-Count", number.toString());
 		}
-		
+		//TODO Revisar codigos de errores del ErrorObject
 		return Results.status(415,new ErrorObject("2", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
 		
 	}
@@ -255,7 +255,7 @@ public class RecipeController extends Controller{
 		else if(request().accepts("application/xml")) {
 			return ok(views.xml._recipe.render(recipe));
 		}
-		
+		//TODO Revisar codigos de errores del ErrorObject
 		return Results.status(415,new ErrorObject("2", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
 		
 	}

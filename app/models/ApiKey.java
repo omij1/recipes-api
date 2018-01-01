@@ -7,7 +7,7 @@ import javax.persistence.OneToOne;
 
 
 /**
- * Modelo que representa la tabla ApiKeys de la base de datos
+ * Modelo que representa la tabla ApiKey de la base de datos
  */
 @Entity
 public class ApiKey extends BaseModel {
@@ -37,6 +37,9 @@ public class ApiKey extends BaseModel {
         super();
     }
 
+    /**
+     * Método que genera un apiKey para un usuario
+     */
     //Código modificado del de la página "https://stackoverflow.com/questions/20536566/creating-a-random-string-with-a-z-and-0-9-in-java"
     protected void generateRandomKey() {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

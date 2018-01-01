@@ -69,6 +69,7 @@ public class UserController extends Controller {
                 return Results.created(Json.prettyPrint(apiKey));
             }
         }
+        //TODO Revisar codigos de errores del ErrorObject
         return Results.status(409, new ErrorObject("X", messages.at("user.alreadyExist")).convertToJson()).as("application/json");
 
     }
@@ -111,6 +112,7 @@ public class UserController extends Controller {
             }
             return ok(Json.prettyPrint(json));
         }
+        //TODO Revisar codigos de errores del ErrorObject
         return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
 
     }
@@ -152,7 +154,7 @@ public class UserController extends Controller {
             }
             return ok(Json.prettyPrint(json));
         }
-        
+      //TODO Revisar codigos de errores del ErrorObject
         return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
     }
     
@@ -187,7 +189,6 @@ public class UserController extends Controller {
     		//TODO Codigo de errores de ErrorObject
     		return Results.status(415, new ErrorObject("2", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
     }
-
 
     /**
      * Método para buscar a todos los usuarios que tengan el nombre proporcionado como parámetro
@@ -235,6 +236,7 @@ public class UserController extends Controller {
             }
             return ok(Json.prettyPrint(json));
         }
+        //TODO Revisar codigos de errores del ErrorObject
         return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
     }
 
@@ -267,6 +269,7 @@ public class UserController extends Controller {
             } else if (request().accepts("application/json")) {
                 return Results.notFound(messages.at("user.wrongSurname"));
             }
+            //TODO Revisar codigos de errores del ErrorObject
             return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
         }
 
@@ -284,6 +287,7 @@ public class UserController extends Controller {
             }
             return ok(Json.prettyPrint(json));
         }
+      //TODO Revisar codigos de errores del ErrorObject
         return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
     }
 
@@ -334,6 +338,7 @@ public class UserController extends Controller {
             }
             return ok(Json.prettyPrint(json));
         }
+      //TODO Revisar codigos de errores del ErrorObject
         return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
 
     }
@@ -385,6 +390,7 @@ public class UserController extends Controller {
             }
             return ok(Json.prettyPrint(json));
         }
+      //TODO Revisar codigos de errores del ErrorObject
         return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
 
     }
@@ -439,6 +445,7 @@ public class UserController extends Controller {
             }
             return ok(messages.at("user.updated"));
         }
+        
         return Results.status(401, messages.at("user.authorization"));
 
         //TODO Comprobar si el apiKey existe y si se ha introducido
@@ -533,6 +540,7 @@ public class UserController extends Controller {
             }
             return ok(Json.prettyPrint(json));
         }
+      //TODO Revisar codigos de errores del ErrorObject
         return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
     }
 
