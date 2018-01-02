@@ -81,6 +81,11 @@ public class RecipeController extends Controller {
         r.setUser(u);
         if (r.checkCategory()) {
             if (r.checkRecipe()) {
+                //Borramos el caché
+                String key = "userRecipes-" + r.getUser().getId();
+                cache.remove(key);
+                key = "userRecipes-" + r.getUser().getId() + "-json";
+                cache.remove(key);
                 return Results.ok(messages.at("recipe.created"));
             } else {
                 return Results.status(409, new ErrorObject("3", messages.at("recipe.alreadyExist")).convertToJson()).as("application/json");

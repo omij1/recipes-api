@@ -32,12 +32,12 @@ public class UserController extends Controller {
      */
     @Inject
     private SyncCacheApi cache;
-    
+
     /**
-	 * Variable para presentar los mensajes al usuario según el idioma
-	 */
-	private Messages messages;
-	
+     * Variable para presentar los mensajes al usuario según el idioma
+     */
+    private Messages messages;
+
 
     /**
      * Método para crear un usuario nuevo
@@ -153,40 +153,53 @@ public class UserController extends Controller {
             }
             return ok(Json.prettyPrint(json));
         }
-      //TODO Revisar codigos de errores del ErrorObject
+        //TODO Revisar codigos de errores del ErrorObject
         return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
     }
-    
+
     /**
      * Método que permite obtener las recetas creadas por un usuario
+     *
      * @param id Identificador del usuario del que se desean ver sus recetas
      * @return Devuelve las recetas creadas por el usuario seleccionado o error
      */
     public Result retrieveUserRecipes(Long id) {
-    		//TODO Añadir cache
-    		messages = Http.Context.current().messages();
-    		
-    		//Comprobamos si el id introducido corresponde a un usuario
-    		User u = User.findById(id);
-    		if(u == null) {
-    			return Results.notFound(messages.at("user.wrongId"));
-    		}
-    		
-    		//Miramos si el usuario tiene recetas publicadas
-    		if(u.getUserRecipes().size() > 0) {
-    			
-    			if(request().accepts("application/json")) {
-    				return ok(Json.prettyPrint(Json.toJson(u.getUserRecipes())));
-    			}
-    			else if(request().accepts("application/xml")) {
-    				return ok(views.xml.recipes.render(u.getUserRecipes()));
-    			}	
-    		}
-    		else {
-    			return Results.ok(messages.at("user.listEmpty"));
-    		}
-    		//TODO Codigo de errores de ErrorObject
-    		return Results.status(415, new ErrorObject("2", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
+
+        messages = Http.Context.current().messages();
+
+        //Comprobamos si el usuario está en caché
+        String key = "userRecipes-" + id;
+        User user = cache.get(key);
+        //Si no lo tenemos en caché, lo buscamos y lo guardamos
+        if (user == null) {
+            user = User.findById(id);
+            cache.set(key, user);
+        }
+
+        //Comprobamos si el id introducido corresponde a un usuario
+        if (user == null) {
+            return Results.notFound(messages.at("user.wrongId"));
+        }
+
+        //Miramos si el usuario tiene recetas publicadas
+        if (user.getUserRecipes().size() > 0) {
+            if (request().accepts("application/json")) {
+                //Buscamos la respuesta en caché
+                key = "userRecipes-" + id + "-json";
+                JsonNode json = cache.get(key);
+                //Si no está, la creamos y la guardamos en caché
+                if (json == null) {
+                    json = Json.toJson(user.getUserRecipes());
+                    cache.set(key, json);
+                }
+                return ok(Json.prettyPrint(json));
+            } else if (request().accepts("application/xml")) {
+                return ok(views.xml.recipes.render(user.getUserRecipes()));
+            }
+            //TODO Codigo de errores de ErrorObject
+            return Results.status(415, new ErrorObject("2", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
+        }
+        return Results.ok(messages.at("user.listEmpty"));
     }
 
     /**
@@ -294,7 +307,7 @@ public class UserController extends Controller {
             }
             return ok(Json.prettyPrint(json));
         }
-      //TODO Revisar codigos de errores del ErrorObject
+        //TODO Revisar codigos de errores del ErrorObject
         return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
     }
 
@@ -349,7 +362,7 @@ public class UserController extends Controller {
             }
             return ok(Json.prettyPrint(json));
         }
-      //TODO Revisar codigos de errores del ErrorObject
+        //TODO Revisar codigos de errores del ErrorObject
         return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
 
     }
@@ -405,7 +418,7 @@ public class UserController extends Controller {
             }
             return ok(Json.prettyPrint(json));
         }
-      //TODO Revisar codigos de errores del ErrorObject
+        //TODO Revisar codigos de errores del ErrorObject
         return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
 
     }
@@ -460,7 +473,7 @@ public class UserController extends Controller {
             }
             return ok(messages.at("user.updated"));
         }
-        
+
         return Results.status(401, messages.at("user.authorization"));
 
         //TODO Comprobar si el apiKey existe y si se ha introducido
@@ -559,7 +572,7 @@ public class UserController extends Controller {
             }
             return ok(Json.prettyPrint(json));
         }
-      //TODO Revisar codigos de errores del ErrorObject
+        //TODO Revisar codigos de errores del ErrorObject
         return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
     }
 
