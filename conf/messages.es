@@ -43,3 +43,8 @@ user.wrongFullName = No existe ningún usuario con ese nombre y apellido
 user.wrongCity = No existe ningún usuario de esa ciudad
 user.authorization = No tienes autorización para realizar esta acción
 user.listEmpty = La lista está vacía
+user.notExists = El usuario no existe
+
+
+
+apiKey.null = Debes introducir el apikey del creador de la receta

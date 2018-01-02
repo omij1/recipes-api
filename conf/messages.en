@@ -43,3 +43,7 @@ user.wrongFullName = There is no user with that name and surname
 user.wrongCity = There is no user from that city
 user.authorization = You have no authorization to do this action
 user.listEmpty = The list is empty
+user.notExists = The user does not exist
+
+
+apiKey.null = You must enter the recipe creator apikey
