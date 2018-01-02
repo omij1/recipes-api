@@ -2,7 +2,6 @@ package controllers;
 
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -10,10 +9,9 @@ import javax.inject.Inject;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import io.ebean.PagedList;
-import models.Category;
-import models.Difficulty;
 import models.Recipe;
 import models.User;
+import play.cache.SyncCacheApi;
 import play.data.Form;
 import play.data.FormFactory;
 import play.i18n.Messages;
@@ -36,6 +34,12 @@ public class RecipeController extends Controller {
      */
     @Inject
     FormFactory formFactory;
+
+    /**
+     * Variable caché
+     */
+    @Inject
+    private SyncCacheApi cache;
 
     /**
      * Variable para presentar los mensajes al usuario según el idioma
@@ -94,22 +98,38 @@ public class RecipeController extends Controller {
      * @return Respuesta que muestra la receta o error si se produjo alguno
      */
     public Result retrieveRecipe(Long id) {
-        //TODO Poner cache
+
         messages = Http.Context.current().messages();
 
-        //Miramos a ver si la receta solicitada existe y en caso afirmativo se muestra al usuario
-        Recipe recipe = Recipe.findById(id);
+        //Comprobamos si la receta está en caché
+        String key = "recipe-" + id;
+        Recipe recipe = cache.get(key);
+        //Si no lo tenemos en caché, lo buscamos y lo guardamos
+        if (recipe == null) {
+            recipe = Recipe.findById(id);
+            cache.set(key, recipe);
+        }
+
+        //Si la receta no existe
         if (recipe == null) {
             return Results.notFound(messages.at("recipe.wrongId"));
-        } else {
-            if (request().accepts("application/json")) {
-                return ok(Json.prettyPrint(Json.toJson(recipe)));
-            } else if (request().accepts("application/xml")) {
-                return ok(views.xml._recipe.render(recipe));
-            }
-
-            return Results.status(415, new ErrorObject("2", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
         }
+
+        //Si la receta existe
+        if (request().accepts("application/json")) {
+            //Buscamos la respuesta en caché
+            key = "recipe-" + id + "-json";
+            JsonNode json = cache.get(key);
+            //Si no está, la creamos y la guardamos en caché
+            if (json == null) {
+                json = Json.toJson(recipe);
+                cache.set(key, json);
+            }
+            return ok(Json.prettyPrint(json));
+        } else if (request().accepts("application/xml")) {
+            return ok(views.xml._recipe.render(recipe));
+        }
+        return Results.status(415, new ErrorObject("2", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
 
     }
 
@@ -132,29 +152,25 @@ public class RecipeController extends Controller {
             return Results.badRequest(messages.at("emptyParams"));
         }
 
-        //Buscamos al usuario que coincide con la clave enviada y confirmamos que existe
-        User user = User.findById(id);
-        if (user == null) {
-            return Results.notFound(messages.at("user.wrongId"));
+        //Buscamos la receta
+        Recipe r = Recipe.findById(id);
+        if (r == null) {
+            return Results.notFound(messages.at("recipe.wrongId"));
         }
+
+        //Obtenemos el usuario de esa receta
+        User user = r.getUser();
 
         //Comprobamos que coinciden el apikey enviado con el user indicado
         if (user.getApiKey().getKey().matches(apiKey)) {
-            //Miramos a ver si la receta que se quiere actualizar existe y se actualiza en caso afirmativo
-            Recipe r = Recipe.findById(id);
-            if (r == null) {
-                return Results.notFound(messages.at("recipe.wrongId"));
-            } else {
-                Form<Recipe> f = formFactory.form(Recipe.class).bindFromRequest();
-                if (f.hasErrors()) {
-                    return Results.ok(f.errorsAsJson());
-                }
-                if (updateFields(r, f)) {
-                    return ok(messages.at("recipe.updated"));
-                } else {
-                    return Results.notFound(messages.at("category.notExist"));
-                }
+            Form<Recipe> f = formFactory.form(Recipe.class).bindFromRequest();
+            if (f.hasErrors()) {
+                return Results.ok(f.errorsAsJson());
             }
+            if (updateFields(r, f)) {
+                return ok(messages.at("recipe.updated"));
+            }
+            return Results.notFound(messages.at("category.notExist"));
         }
         return Results.status(401, messages.at("user.authorization"));
     }
@@ -181,6 +197,10 @@ public class RecipeController extends Controller {
         if (!r.checkCategory()) {
             return false;
         }
+        String key = "recipe-" + r.getId();
+        cache.remove(key);
+        key = "recipe-" + r.getId() + "-json";
+        cache.remove(key);
         r.save();
         return true;
     }
@@ -201,25 +221,25 @@ public class RecipeController extends Controller {
             return Results.status(409, messages.at("apiKey.null"));
         }
 
-        //Buscamos al usuario que coincide con la clave enviada y confirmamos que existe
-        User user = User.findById(id);
-        if (user == null) {
-            return Results.notFound(messages.at("user.wrongId"));
+        //Miramos a ver si la receta que se quiere eliminar existe
+        Recipe r = Recipe.findById(id);
+        if (r == null) {
+            return Results.notFound(messages.at("recipe.wrongId"));
         }
+
+        //Buscamos al usuario que hizo la receta
+        User user = r.getUser();
 
         //Comprobamos que coinciden el apikey enviado con el user indicado
         if (user.getApiKey().getKey().matches(apiKey)) {
-            //Miramos a ver si la receta que se quiere eliminar existe
-            Recipe r = Recipe.findById(id);
-            if (r == null) {
-                return Results.notFound(messages.at("recipe.wrongId"));
-            } else {
-                if (r.delete()) {
-                    return ok(messages.at("recipe.deleted"));
-                } else {
-                    return internalServerError();
-                }
+            if (r.delete()) {
+                String key = "recipe-" + r.getId();
+                cache.remove(key);
+                key = "recipe-" + r.getId() + "-json";
+                cache.remove(key);
+                return ok(messages.at("recipe.deleted"));
             }
+            return internalServerError();
         }
         return Results.status(401, messages.at("user.authorization"));
     }
@@ -229,20 +249,41 @@ public class RecipeController extends Controller {
      *
      * @return Respuesta que muestra todas las recetas existentes
      */
+
     public Result retrieveRecipeCollection() {
 
         messages = Http.Context.current().messages();
 
-        //Se obtienen las recetas de forma paginada
-        Integer page = Integer.parseInt(request().getQueryString("page"));
-        PagedList<Recipe> list = Recipe.findPage(page);
+        //Obtenemos la página
+        String pageString = request().getQueryString("page");
+        if (pageString == null) {
+            return Results.status(409, messages.at("page.null"));
+        }
+        Integer page = Integer.parseInt(pageString);
+
+        //Comprobamos si la receta está en caché
+        String key = "recipeList-" + page;
+        PagedList<Recipe> list = cache.get(key);
+        //Si no lo tenemos en caché, lo buscamos y lo guardamos
+        if (list == null) {
+            list = Recipe.findPage(page);
+            cache.set(key, list, 60 * 2);
+        }
         List<Recipe> recipes = list.getList();
         Integer number = list.getTotalCount();
 
         //Se ordenan las recetas alfabéticamente y se devuelven al usuario
         sortAlphabetically(recipes);
         if (request().accepts("application/json")) {
-            return ok(Json.prettyPrint(Json.toJson(recipes))).withHeader("X-Count", number.toString());
+            //Buscamos la respuesta en caché
+            key = "recipeList-" + page + "-json";
+            JsonNode json = cache.get(key);
+            //Si no está, la creamos y la guardamos en caché
+            if (json == null) {
+                json = Json.toJson(recipes);
+                cache.set(key, json, 60 * 2);
+            }
+            return ok(Json.prettyPrint(json)).withHeader("X-Count", number.toString());
         } else if (request().accepts("application/xml")) {
             return ok(views.xml.recipes.render(recipes)).withHeader("X-Count", number.toString());
         }
@@ -266,15 +307,31 @@ public class RecipeController extends Controller {
             return Results.badRequest(messages.at("recipe.emptyName"));
         }
 
+        //Comprobamos si la receta está en caché
+        String key = "recipe-" + title.toUpperCase();
+        Recipe recipe = cache.get(key);
+        //Si no lo tenemos en caché, lo buscamos y lo guardamos
+        if (recipe == null) {
+            recipe = Recipe.findByName(title.toUpperCase());
+            cache.set(key, recipe);
+        }
+
         //Miramos si la receta solicitada existe
-        Recipe recipe = Recipe.findByName(title.toUpperCase());
         if (recipe == null) {
             return Results.notFound(messages.at("recipe.wrongName"));
         }
 
         //Se devuelve la receta al usuario
         if (request().accepts("application/json")) {
-            return ok(Json.prettyPrint(Json.toJson(recipe)));
+            //Buscamos la respuesta en caché
+            key = "recipe-" + title.toUpperCase() + "-json";
+            JsonNode json = cache.get(key);
+            //Si no está, la creamos y la guardamos en caché
+            if (json == null) {
+                json = Json.toJson(recipe);
+                cache.set(key, json);
+            }
+            return ok(Json.prettyPrint(json));
         } else if (request().accepts("application/xml")) {
             return ok(views.xml._recipe.render(recipe));
         }
