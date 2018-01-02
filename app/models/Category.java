@@ -34,7 +34,6 @@ public class Category extends BaseModel{
 	 * Nombre de la categoría de receta
 	 */
 	@NotBlank(message = "validation.blank")
-	@FirstCapitalLetter(message = "validation.capitalLetter")
 	String categoryName;
 
 	/**
