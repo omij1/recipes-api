@@ -199,7 +199,11 @@ public class UserController extends Controller {
 
         messages = Http.Context.current().messages();
         //Obtenemos la página
-        Integer page = Integer.parseInt(request().getQueryString("page"));
+        String pageString = request().getQueryString("page");
+        if (pageString == null) {
+            return Results.status(409, messages.at("page.null"));
+        }
+        Integer page = Integer.parseInt(pageString);
 
         //Comprobamos si la lista está en caché
         String key = "listByName-" + name + page;
@@ -249,7 +253,11 @@ public class UserController extends Controller {
 
         messages = Http.Context.current().messages();
         //Obtenemos la página
-        Integer page = Integer.parseInt(request().getQueryString("page"));
+        String pageString = request().getQueryString("page");
+        if (pageString == null) {
+            return Results.status(409, messages.at("page.null"));
+        }
+        Integer page = Integer.parseInt(pageString);
 
         //Comprobamos si la lista está en caché
         String key = "listBySurname-" + surname + page;
@@ -301,7 +309,11 @@ public class UserController extends Controller {
 
         messages = Http.Context.current().messages();
         //Obtenemos la página
-        Integer page = Integer.parseInt(request().getQueryString("page"));
+        String pageString = request().getQueryString("page");
+        if (pageString == null) {
+            return Results.status(409, messages.at("page.null"));
+        }
+        Integer page = Integer.parseInt(pageString);
 
         //Comprobamos si la lista está en caché
         String key = "listByFullName-" + name + surname + page;
@@ -353,7 +365,11 @@ public class UserController extends Controller {
 
         messages = Http.Context.current().messages();
         //Obtenemos la página
-        Integer page = Integer.parseInt(request().getQueryString("page"));
+        String pageString = request().getQueryString("page");
+        if (pageString == null) {
+            return Results.status(409, messages.at("page.null"));
+        }
+        Integer page = Integer.parseInt(pageString);
 
         //Comprobamos si la lista está en caché
         String key = "listByCity-" + city + page;
@@ -503,7 +519,11 @@ public class UserController extends Controller {
         messages = Http.Context.current().messages();
 
         //Obtenemos la página
-        Integer page = Integer.parseInt(request().getQueryString("page"));
+        String pageString = request().getQueryString("page");
+        if (pageString == null) {
+            return Results.status(409, messages.at("page.null"));
+        }
+        Integer page = Integer.parseInt(pageString);
 
         //Comprobamos si la lista está en caché
         String key = "usersList-" + page;

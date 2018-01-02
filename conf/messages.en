@@ -47,3 +47,4 @@ user.notExists = The user does not exist
 
 
 apiKey.null = You must enter the recipe creator apikey
+page.null = You must enter the page requested
