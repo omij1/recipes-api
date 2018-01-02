@@ -79,7 +79,7 @@ public class RecipeController extends Controller {
             if (r.checkRecipe()) {
                 return Results.ok(messages.at("recipe.created"));
             } else {
-                return Results.status(409, new ErrorObject("3", messages.at("recipe.alreadyExist")).convertToJson()).as("application/json");
+                return Results.status(409, new ErrorObject("1", messages.at("recipe.alreadyExist")).convertToJson()).as("application/json");
             }
         } else {
             return Results.notFound(messages.at("category.notExist"));
@@ -108,7 +108,7 @@ public class RecipeController extends Controller {
                 return ok(views.xml._recipe.render(recipe));
             }
 
-            return Results.status(415, new ErrorObject("2", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
+            return Results.status(415, messages.at("wrongOutputFormat"));
         }
 
     }
@@ -125,7 +125,7 @@ public class RecipeController extends Controller {
         //TODO Solo puede actualizar una receta el admin o el creador (falta el admin)
         String apiKey = request().getQueryString("apiKey");
         if (apiKey == null) {
-            return Results.status(409, messages.at("apiKey.null"));
+            return Results.status(409, new ErrorObject("2", messages.at("apiKey.null")).convertToJson()).as("application/json");
         }
 
         if (!request().hasBody()) {
@@ -198,7 +198,7 @@ public class RecipeController extends Controller {
         // TODO Comprobar que el usuario que quiere borrar la receta es el admin o el creador (falta el admin)
         String apiKey = request().getQueryString("apiKey");
         if (apiKey == null) {
-            return Results.status(409, messages.at("apiKey.null"));
+            return Results.status(409, new ErrorObject("2", messages.at("apiKey.null")).convertToJson()).as("application/json");
         }
 
         //Buscamos al usuario que coincide con la clave enviada y confirmamos que existe
@@ -246,8 +246,8 @@ public class RecipeController extends Controller {
         } else if (request().accepts("application/xml")) {
             return ok(views.xml.recipes.render(recipes)).withHeader("X-Count", number.toString());
         }
-        //TODO Revisar códigos de errores del ErrorObject
-        return Results.status(415, new ErrorObject("2", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
+
+        return Results.status(415, messages.at("wrongOutputFormat"));
 
     }
 
@@ -278,8 +278,8 @@ public class RecipeController extends Controller {
         } else if (request().accepts("application/xml")) {
             return ok(views.xml._recipe.render(recipe));
         }
-        //TODO Revisar codigos de errores del ErrorObject
-        return Results.status(415, new ErrorObject("2", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
+
+        return Results.status(415, messages.at("wrongOutputFormat"));
 
     }
 

@@ -68,8 +68,8 @@ public class UserController extends Controller {
             apiKey.put("apiKey", user.getApiKey().getKey());
             return Results.created(Json.prettyPrint(apiKey));
         }
-        //TODO Revisar codigos de errores del ErrorObject
-        return Results.status(409, new ErrorObject("X", messages.at("user.alreadyExist")).convertToJson()).as("application/json");
+
+        return Results.status(409, new ErrorObject("3", messages.at("user.alreadyExist")).convertToJson()).as("application/json");
 
     }
 
@@ -111,8 +111,8 @@ public class UserController extends Controller {
             }
             return ok(Json.prettyPrint(json));
         }
-        //TODO Revisar codigos de errores del ErrorObject
-        return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
+
+        return Results.status(415, messages.at("wrongOutputFormat"));
 
     }
 
@@ -153,8 +153,8 @@ public class UserController extends Controller {
             }
             return ok(Json.prettyPrint(json));
         }
-      //TODO Revisar codigos de errores del ErrorObject
-        return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
+
+        return Results.status(415, messages.at("wrongOutputFormat"));
     }
     
     /**
@@ -185,8 +185,8 @@ public class UserController extends Controller {
     		else {
     			return Results.ok(messages.at("user.listEmpty"));
     		}
-    		//TODO Codigo de errores de ErrorObject
-    		return Results.status(415, new ErrorObject("2", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
+
+    		return Results.status(415, messages.at("wrongOutputFormat"));
     }
 
     /**
@@ -218,7 +218,8 @@ public class UserController extends Controller {
             } else if (request().accepts("application/json")) {
                 return Results.notFound(messages.at("user.wrongName"));
             }
-            return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
+            
+            return Results.status(415, messages.at("wrongOutputFormat"));
         }
 
         //Si la lista no está vacía
@@ -235,8 +236,8 @@ public class UserController extends Controller {
             }
             return ok(Json.prettyPrint(json));
         }
-        //TODO Revisar codigos de errores del ErrorObject
-        return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
+
+        return Results.status(415, messages.at("wrongOutputFormat"));
     }
 
     /**
@@ -268,8 +269,8 @@ public class UserController extends Controller {
             } else if (request().accepts("application/json")) {
                 return Results.notFound(messages.at("user.wrongSurname"));
             }
-            //TODO Revisar codigos de errores del ErrorObject
-            return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
+
+            return Results.status(415, messages.at("wrongOutputFormat"));
         }
 
         //Si la lista no está vacía
@@ -286,8 +287,8 @@ public class UserController extends Controller {
             }
             return ok(Json.prettyPrint(json));
         }
-      //TODO Revisar codigos de errores del ErrorObject
-        return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
+
+        return Results.status(415, messages.at("wrongOutputFormat"));
     }
 
     /**
@@ -320,7 +321,8 @@ public class UserController extends Controller {
             } else if (request().accepts("application/json")) {
                 return Results.notFound(messages.at("user.wrongFullName"));
             }
-            return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
+            
+            return Results.status(415, messages.at("wrongOutputFormat"));
         }
 
         //Si la lista no está vacía
@@ -337,8 +339,8 @@ public class UserController extends Controller {
             }
             return ok(Json.prettyPrint(json));
         }
-      //TODO Revisar codigos de errores del ErrorObject
-        return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
+
+        return Results.status(415, messages.at("wrongOutputFormat"));
 
     }
 
@@ -372,7 +374,8 @@ public class UserController extends Controller {
             } else if (request().accepts("application/json")) {
                 return Results.notFound(messages.at("user.wrongCity"));
             }
-            return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
+            
+            return Results.status(415, messages.at("wrongOutputFormat"));
         }
 
         //Si la lista no está vacía
@@ -389,8 +392,8 @@ public class UserController extends Controller {
             }
             return ok(Json.prettyPrint(json));
         }
-      //TODO Revisar codigos de errores del ErrorObject
-        return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
+
+        return Results.status(415, messages.at("wrongOutputFormat"));
 
     }
 
@@ -485,6 +488,7 @@ public class UserController extends Controller {
             }
             return Results.status(401, messages.at("user.authorization"));
         }
+        
         //Por idempotencia, aunque no exista el usuario, la respuesta debe ser correcta.
         return ok(messages.at("user.deleted"));
 
@@ -522,7 +526,8 @@ public class UserController extends Controller {
             } else if (request().accepts("application/json")) {
                 return Results.notFound(messages.at("user.listEmpty"));
             }
-            return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json"); //Unsupported media type
+            
+            return Results.status(415, messages.at("wrongOutputFormat")); //Unsupported media type
         }
 
         //Si la lista tiene usuarios
@@ -539,8 +544,8 @@ public class UserController extends Controller {
             }
             return ok(Json.prettyPrint(json));
         }
-      //TODO Revisar codigos de errores del ErrorObject
-        return Results.status(415, new ErrorObject("X", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
+
+        return Results.status(415, messages.at("wrongOutputFormat"));
     }
 
 }

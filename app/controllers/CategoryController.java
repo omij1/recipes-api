@@ -48,7 +48,7 @@ public class CategoryController extends Controller{
 	 * @return Respuesta que indica si la categoría se creó correctamente o si hubo algún problema
 	 */
 	public Result createCategory() {
-		//TODO solo puede crear una categoria el admin
+		//TODO solo puede crear una categoria el admin. Si el apiKey no es del admin error 401
 		//TODO Comprobar si el apiKey existe y si se ha introducido
 		String apiKey = request().getQueryString("apiKey");
 
@@ -68,8 +68,8 @@ public class CategoryController extends Controller{
 		if(!c.checkCategory()) {
 			return Results.created(messages.at("category.created"));
 		}
-		else {//TODO Revisar codigos de errores del ErrorObject
-			return Results.status(409, new ErrorObject("1",messages.at("category.alreadyExist")).convertToJson()).as("application/json");
+		else {
+			return Results.status(409, new ErrorObject("4",messages.at("category.alreadyExist")).convertToJson()).as("application/json");
 		}
 	}
 	
@@ -95,8 +95,8 @@ public class CategoryController extends Controller{
 		else if(request().accepts("application/xml")) {
 			return ok(views.xml._category.render(c));
 		}
-		//TODO Revisar codigos de errores del ErrorObject
-		return Results.status(415, new ErrorObject("2", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
+
+		return Results.status(415, messages.at("wrongOutputFormat"));
 	
 	}
 	
@@ -106,7 +106,7 @@ public class CategoryController extends Controller{
 	 * @return Respuesta indicativa del éxito o fracaso de la operación 
 	 */
 	public Result updateCategory(Long id) {
-		//TODO solo el admin puede hacerlo
+		//TODO solo el admin puede hacerlo. Si el apiKey no es del admin error 401
 		//TODO Comprobar si el apiKey existe y si se ha introducido
 		String apiKey = request().getQueryString("apiKey");
 
@@ -141,7 +141,7 @@ public class CategoryController extends Controller{
 	 * @return Respuesta indicativa del estado de la operación 
 	 */
 	public Result deleteCategory(Long id) {
-		//TODO solo el admin puede borrar una categoria. 
+		//TODO solo el admin puede borrar una categoria. Si el apiKey no es del admin error 401
 		//TODO Comprobar si el apiKey existe y si se ha introducido
 		String apiKey = request().getQueryString("apiKey");
 
@@ -186,8 +186,8 @@ public class CategoryController extends Controller{
 		else if(request().accepts("application/xml")) {
 			return ok(views.xml.categories.render(categories)).withHeader("X-Count", number.toString());
 		}
-		//TODO Revisar codigos de errores del ErrorObject
-		return Results.status(415,new ErrorObject("2", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
+
+		return Results.status(415, messages.at("wrongOutputFormat"));
 		
 	}
 	
@@ -212,8 +212,8 @@ public class CategoryController extends Controller{
 		else if(request().accepts("application/xml")) {
 			return ok(views.xml.recipes.render(c.relatedRecipes));
 		}
-		//TODO Revisar codigos de errores del ErrorObject
-		return Results.status(415,new ErrorObject("2", messages.at("wrongOutputFormat")).convertToJson()).as("application/json");
+
+		return Results.status(415, messages.at("wrongOutputFormat"));
 	
 	}
 	

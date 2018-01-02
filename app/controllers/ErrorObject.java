@@ -6,6 +6,12 @@ import play.libs.Json;
 
 /**
  * Clase que permite manejar los mensajes de error del API como objetos JSON
+ * Los códigos de errores son:
+ * 	 1 - Receta ya existente 
+ * 	 2 - El usuario no ha introducido el apiKey en la petición
+ *   3 - Se desea crear un nuevo usuario pero los datos introducidos coinciden con un usuario ya existente
+ *   4 - Categoría de recetas ya existente
+ *   
  * @author MIMO
  *
  */
