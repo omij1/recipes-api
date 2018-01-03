@@ -137,7 +137,6 @@ public class RecipeController extends Controller {
     public Result updateRecipe(Long id) {
 
         messages = Http.Context.current().messages();
-        //TODO Solo puede actualizar una receta el admin o el creador (falta el admin)
 
         //Obtenemos el usuario que quiere modificar la receta
         User loggedUser = (User) Http.Context.current().args.get("loggedUser");
@@ -156,7 +155,7 @@ public class RecipeController extends Controller {
         User user = r.getUser();
 
         //Comprobamos que coinciden el creador y el que la quiere modificar
-        if (user.getId() == loggedUser.getId()) {
+        if (user.getId() == loggedUser.getId() || loggedUser.getAdmin()) {
             Form<Recipe> f = formFactory.form(Recipe.class).bindFromRequest();
             if (f.hasErrors()) {
                 return Results.ok(f.errorsAsJson());
@@ -210,8 +209,6 @@ public class RecipeController extends Controller {
 
         messages = Http.Context.current().messages();
 
-        // TODO Comprobar que el usuario que quiere borrar la receta es el admin o el creador (falta el admin)
-
         //Obtenemos el usuario que quiere borrar la receta
         User loggedUser = (User) Http.Context.current().args.get("loggedUser");
 
@@ -225,7 +222,7 @@ public class RecipeController extends Controller {
         User user = r.getUser();
 
         //Comprobamos que coinciden
-        if (user.getId() == loggedUser.getId()) {
+        if (user.getId() == loggedUser.getId() || loggedUser.getAdmin()) {
             if (r.delete()) {
                 String key = "recipe-" + r.getId();
                 cache.remove(key);

@@ -55,6 +55,7 @@ public class UserController extends Controller {
         }
 
         User user = f.get();  //Objeto User donde se guarda la información de la petición
+        user.setAdmin(false);
 
         //Validación y guardado en caso de que el nick no exista. En caso contrario se muestra el error correspondiente
         if (user.checkAndSave()) {
@@ -452,7 +453,7 @@ public class UserController extends Controller {
             return Results.notFound(messages.at("user.wrongId"));
         }
 
-        if (user.getId() == loggedUser.getId()) {
+        if (user.getId() == loggedUser.getId() || loggedUser.getAdmin()) {
             Ebean.beginTransaction();
             try {
                 String key = "user-" + id_user;
@@ -473,7 +474,6 @@ public class UserController extends Controller {
         }
         return Results.status(401, messages.at("user.authorization"));
 
-        //TODO Sólo pueden modificar los datos de un usuario el propio usuario o el administrador (falta admin)
     }
 
     /**
@@ -493,7 +493,7 @@ public class UserController extends Controller {
             //Obtenemos el usuario de la cabecera Authorization
             User loggedUser = (User) Http.Context.current().args.get("loggedUser");
 
-            if (user.getId() == loggedUser.getId()) {
+            if (user.getId() == loggedUser.getId() || loggedUser.getAdmin() ) {
                 if (user.delete()) {
                     //Se borran la caché de las peticiones de usuario único
                     String key = "user-" + id_user;
@@ -515,7 +515,6 @@ public class UserController extends Controller {
         //Por idempotencia, aunque no exista el usuario, la respuesta debe ser correcta.
         return ok(messages.at("user.deleted"));
 
-        //TODO Sólo pueden borrar un usuario el propio usuario y el administrador (falta el admin)
     }
 
 

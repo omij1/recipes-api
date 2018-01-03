@@ -27,7 +27,7 @@ public class User extends BaseModel {
      * Rol del usuario
      */
     @JsonIgnore
-    private Boolean admin = false;
+    private Boolean admin;
 
     /**
      * Nick del usuario
