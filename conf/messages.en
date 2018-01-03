@@ -46,5 +46,5 @@ user.listEmpty = The list is empty
 user.notExists = The user does not exist
 
 
-apiKey.null = You must enter the recipe creator apikey
+apiKey.null = To do this action, you must enter the correct apikey in the "Authorization" header
 page.null = You must enter the page requested

@@ -47,6 +47,6 @@ user.notExists = El usuario no existe
 
 
 
-apiKey.null = Debes introducir el apikey del creador de la receta
+apiKey.null = Para realizar esta acción, debes introducir el apikey correcto en la cabecera "Authorization"
 page.null = Debes introducir la página solicitada
 
