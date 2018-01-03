@@ -16,10 +16,7 @@ import play.data.Form;
 import play.data.FormFactory;
 import play.i18n.Messages;
 import play.libs.Json;
-import play.mvc.Controller;
-import play.mvc.Http;
-import play.mvc.Result;
-import play.mvc.Results;
+import play.mvc.*;
 
 /**
  * Clase controladora de los métodos de acción del recurso recipe.
@@ -52,14 +49,13 @@ public class RecipeController extends Controller {
      *
      * @return Indica si la receta se creó satisfactoriamente o si por el contrario hubo algún error
      */
+    @Security.Authenticated(Authorization.class)
     public Result createRecipe() {
 
         messages = Http.Context.current().messages();//le asigno el contexto actual del método de acción
 
-        String apiKey = request().getQueryString("apiKey");
-        if (apiKey == null) {
-            return Results.status(409, messages.at("apiKey.null"));
-        }
+        //Obtenemos el usuario que crea la receta de la cabecera Authorization
+        User loggedUser = (User) Http.Context.current().args.get("loggedUser");
 
         //Formulario para obtener los datos de la petición
         Form<Recipe> f = formFactory.form(Recipe.class).bindFromRequest();
@@ -70,15 +66,8 @@ public class RecipeController extends Controller {
         //Objeto Recipe donde se guardan los datos de la petición
         Recipe r = f.get();
 
-        //Usuario que sube la receta
-        User u = User.findByApiKey(apiKey);
-
-        if (u == null) {
-            return Results.notFound(messages.at("user.notExists"));
-        }
-
         //Asignamos el creador de la receta
-        r.setUser(u);
+        r.setUser(loggedUser);
         if (r.checkCategory()) {
             if (r.checkRecipe()) {
                 //Borramos el caché
@@ -144,14 +133,14 @@ public class RecipeController extends Controller {
      * @param id Id de la receta que se desea actualizar
      * @return Respuesta que indica el resultado de la operación
      */
+    @Security.Authenticated(Authorization.class)
     public Result updateRecipe(Long id) {
 
         messages = Http.Context.current().messages();
         //TODO Solo puede actualizar una receta el admin o el creador (falta el admin)
-        String apiKey = request().getQueryString("apiKey");
-        if (apiKey == null) {
-            return Results.status(409, messages.at("apiKey.null"));
-        }
+
+        //Obtenemos el usuario que quiere modificar la receta
+        User loggedUser = (User) Http.Context.current().args.get("loggedUser");
 
         if (!request().hasBody()) {
             return Results.badRequest(messages.at("emptyParams"));
@@ -163,11 +152,11 @@ public class RecipeController extends Controller {
             return Results.notFound(messages.at("recipe.wrongId"));
         }
 
-        //Obtenemos el usuario de esa receta
+        //Obtenemos el usuario que ha creado esa receta
         User user = r.getUser();
 
-        //Comprobamos que coinciden el apikey enviado con el user indicado
-        if (user.getApiKey().getKey().matches(apiKey)) {
+        //Comprobamos que coinciden el creador y el que la quiere modificar
+        if (user.getId() == loggedUser.getId()) {
             Form<Recipe> f = formFactory.form(Recipe.class).bindFromRequest();
             if (f.hasErrors()) {
                 return Results.ok(f.errorsAsJson());
@@ -216,15 +205,14 @@ public class RecipeController extends Controller {
      * @param id Id de la receta que se desea eliminar
      * @return Respuesta que indica si la receta se borró o si se produjo un error
      */
+    @Security.Authenticated(Authorization.class)
     public Result deleteRecipe(Long id) {
 
         messages = Http.Context.current().messages();
 
         // TODO Comprobar que el usuario que quiere borrar la receta es el admin o el creador (falta el admin)
-        String apiKey = request().getQueryString("apiKey");
-        if (apiKey == null) {
-            return Results.status(409, messages.at("apiKey.null"));
-        }
+        //Obtenemos el usuario que quiere borrar la receta
+        User loggedUser = (User) Http.Context.current().args.get("loggedUser");
 
         //Miramos a ver si la receta que se quiere eliminar existe
         Recipe r = Recipe.findById(id);
@@ -235,8 +223,8 @@ public class RecipeController extends Controller {
         //Buscamos al usuario que hizo la receta
         User user = r.getUser();
 
-        //Comprobamos que coinciden el apikey enviado con el user indicado
-        if (user.getApiKey().getKey().matches(apiKey)) {
+        //Comprobamos que coinciden
+        if (user.getId() == loggedUser.getId()) {
             if (r.delete()) {
                 String key = "recipe-" + r.getId();
                 cache.remove(key);

@@ -10,10 +10,7 @@ import play.data.Form;
 import play.data.FormFactory;
 import play.i18n.Messages;
 import play.libs.Json;
-import play.mvc.Controller;
-import play.mvc.Http;
-import play.mvc.Result;
-import play.mvc.Results;
+import play.mvc.*;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import javax.inject.Inject;
@@ -430,6 +427,7 @@ public class UserController extends Controller {
      * @param id_user Id del usuario del que se quiere realizar una modificación de los datos
      * @return Indica si se ha realizado correctamente o no la operación
      */
+    @Security.Authenticated(Authorization.class)
     public Result updateUser(Long id_user) {
 
         messages = Http.Context.current().messages();
@@ -441,20 +439,19 @@ public class UserController extends Controller {
             return Results.status(409, f.errorsAsJson());
         }
 
-        //Se obtiene el apiKey de la cadena
-        String apiKey = request().getQueryString("apiKey");
+        //Obtenemos el usuario de la cabecera Authorization
+        User loggedUser = (User) Http.Context.current().args.get("loggedUser");
 
         //Objeto User donde se guarda la información de la petición
         User updateUser = f.get();
-        User user = User.findById(id_user);
 
-        //Comprobar si existe el usuario con el Id indicado
+        //User correspondiente al id enviado en la petición
+        User user = User.findById(id_user);
         if (user == null) {
             return Results.notFound(messages.at("user.wrongId"));
         }
 
-        //Si existe el usuario y su apiKey coincide con el apiKey suministrado, ejecutamos la actualización
-        if (user.getApiKey().getKey().matches(apiKey)) {
+        if (user.getId() == loggedUser.getId()) {
             Ebean.beginTransaction();
             try {
                 String key = "user-" + id_user;
@@ -473,11 +470,9 @@ public class UserController extends Controller {
             }
             return ok(messages.at("user.updated"));
         }
-
         return Results.status(401, messages.at("user.authorization"));
 
-        //TODO Comprobar si el apiKey existe y si se ha introducido
-        //TODO Sólo pueden modificar los datos de un usuario el propio usuario o el administrador
+        //TODO Sólo pueden modificar los datos de un usuario el propio usuario o el administrador (falta admin)
     }
 
     /**
@@ -486,16 +481,18 @@ public class UserController extends Controller {
      * @param id_user Id del usuario que se quiere borrar
      * @return Indica si se ha realizado correctamente o no la operación
      */
+    @Security.Authenticated(Authorization.class)
     public Result deleteUser(Long id_user) {
 
         messages = Http.Context.current().messages();
         User user = User.findById(id_user);
         //Si el usuario existe
         if (user != null) {
-            //Se obtiene el apiKey de la cadena
-            String apiKey = request().getQueryString("apiKey");
-            //Si el apiKey del usuario con el id indicado coincide con el apiKey suministrado ejecutamos la operación
-            if (user.getApiKey().getKey().matches(apiKey)) {
+
+            //Obtenemos el usuario de la cabecera Authorization
+            User loggedUser = (User) Http.Context.current().args.get("loggedUser");
+
+            if (user.getId() == loggedUser.getId()) {
                 if (user.delete()) {
                     //Se borran la caché de las peticiones de usuario único
                     String key = "user-" + id_user;
@@ -508,17 +505,15 @@ public class UserController extends Controller {
                     key = "user-" + user.getNick() + "-json";
                     cache.remove(key);
                     return ok(messages.at("user.deleted"));
-                } else {
-                    return Results.internalServerError(messages.at("user.deletedFailed"));
                 }
+                return Results.internalServerError(messages.at("user.deletedFailed"));
             }
             return Results.status(401, messages.at("user.authorization"));
         }
         //Por idempotencia, aunque no exista el usuario, la respuesta debe ser correcta.
         return ok(messages.at("user.deleted"));
 
-        //TODO Comprobar si el apiKey existe ejemplo en metodo de accion createUser
-        //TODO Sólo pueden borrar un usuario el propio usuario y el administrador
+        //TODO Sólo pueden borrar un usuario el propio usuario y el administrador (falta el admin)
     }
 
 
