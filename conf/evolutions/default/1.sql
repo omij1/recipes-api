@@ -54,6 +54,7 @@ create table recipe_ingredient (
 
 create table user (
   id                            bigint auto_increment not null,
+  admin                         boolean,
   nick                          varchar(255) not null,
   name                          varchar(255) not null,
   surname                       varchar(255) not null,

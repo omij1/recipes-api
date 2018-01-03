@@ -24,6 +24,12 @@ import java.util.List;
 public class User extends BaseModel {
 
     /**
+     * Rol del usuario
+     */
+    @JsonIgnore
+    private Boolean admin = false;
+
+    /**
      * Nick del usuario
      */
     @NotBlank(message = "validation.blank")
@@ -328,4 +334,19 @@ public class User extends BaseModel {
         this.userRecipes = userRecipes;
     }
 
+    /**
+     * Getter de admin
+     * @return Devuelve el estado de admin (true o false)
+     */
+    public Boolean getAdmin() {
+        return admin;
+    }
+
+    /**
+     * Setter de admin
+     * @param admin Rol del usuario
+     */
+    public void setAdmin(Boolean admin) {
+        this.admin = admin;
+    }
 }
