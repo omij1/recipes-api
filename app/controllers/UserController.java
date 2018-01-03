@@ -10,10 +10,7 @@ import play.data.Form;
 import play.data.FormFactory;
 import play.i18n.Messages;
 import play.libs.Json;
-import play.mvc.Controller;
-import play.mvc.Http;
-import play.mvc.Result;
-import play.mvc.Results;
+import play.mvc.*;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import javax.inject.Inject;
@@ -32,12 +29,12 @@ public class UserController extends Controller {
      */
     @Inject
     private SyncCacheApi cache;
-    
+
     /**
-	 * Variable para presentar los mensajes al usuario según el idioma
-	 */
-	private Messages messages;
-	
+     * Variable para presentar los mensajes al usuario según el idioma
+     */
+    private Messages messages;
+
 
     /**
      * Método para crear un usuario nuevo
@@ -153,40 +150,53 @@ public class UserController extends Controller {
             }
             return ok(Json.prettyPrint(json));
         }
-
         return Results.status(415, messages.at("wrongOutputFormat"));
+
     }
-    
+
     /**
      * Método que permite obtener las recetas creadas por un usuario
+     *
      * @param id Identificador del usuario del que se desean ver sus recetas
      * @return Devuelve las recetas creadas por el usuario seleccionado o error
      */
     public Result retrieveUserRecipes(Long id) {
-    		//TODO Añadir cache
-    		messages = Http.Context.current().messages();
-    		
-    		//Comprobamos si el id introducido corresponde a un usuario
-    		User u = User.findById(id);
-    		if(u == null) {
-    			return Results.notFound(messages.at("user.wrongId"));
-    		}
-    		
-    		//Miramos si el usuario tiene recetas publicadas
-    		if(u.getUserRecipes().size() > 0) {
-    			
-    			if(request().accepts("application/json")) {
-    				return ok(Json.prettyPrint(Json.toJson(u.getUserRecipes())));
-    			}
-    			else if(request().accepts("application/xml")) {
-    				return ok(views.xml.recipes.render(u.getUserRecipes()));
-    			}	
-    		}
-    		else {
-    			return Results.ok(messages.at("user.listEmpty"));
-    		}
 
-    		return Results.status(415, messages.at("wrongOutputFormat"));
+        messages = Http.Context.current().messages();
+
+        //Comprobamos si el usuario está en caché
+        String key = "userRecipes-" + id;
+        User user = cache.get(key);
+        //Si no lo tenemos en caché, lo buscamos y lo guardamos
+        if (user == null) {
+            user = User.findById(id);
+            cache.set(key, user);
+        }
+
+        //Comprobamos si el id introducido corresponde a un usuario
+        if (user == null) {
+            return Results.notFound(messages.at("user.wrongId"));
+        }
+
+        //Miramos si el usuario tiene recetas publicadas
+        if (user.getUserRecipes().size() > 0) {
+            if (request().accepts("application/json")) {
+                //Buscamos la respuesta en caché
+                key = "userRecipes-" + id + "-json";
+                JsonNode json = cache.get(key);
+                //Si no está, la creamos y la guardamos en caché
+                if (json == null) {
+                    json = Json.toJson(user.getUserRecipes());
+                    cache.set(key, json);
+                }
+                return ok(Json.prettyPrint(json));
+            } else if (request().accepts("application/xml")) {
+                return ok(views.xml.recipes.render(user.getUserRecipes()));
+            }
+        return Results.status(415, messages.at("wrongOutputFormat"));
+        }
+        return Results.ok(messages.at("user.listEmpty"));
+
     }
 
     /**
@@ -199,7 +209,11 @@ public class UserController extends Controller {
 
         messages = Http.Context.current().messages();
         //Obtenemos la página
-        Integer page = Integer.parseInt(request().getQueryString("page"));
+        String pageString = request().getQueryString("page");
+        if (pageString == null) {
+            return Results.status(409, messages.at("page.null"));
+        }
+        Integer page = Integer.parseInt(pageString);
 
         //Comprobamos si la lista está en caché
         String key = "listByName-" + name + page;
@@ -250,7 +264,11 @@ public class UserController extends Controller {
 
         messages = Http.Context.current().messages();
         //Obtenemos la página
-        Integer page = Integer.parseInt(request().getQueryString("page"));
+        String pageString = request().getQueryString("page");
+        if (pageString == null) {
+            return Results.status(409, messages.at("page.null"));
+        }
+        Integer page = Integer.parseInt(pageString);
 
         //Comprobamos si la lista está en caché
         String key = "listBySurname-" + surname + page;
@@ -287,8 +305,8 @@ public class UserController extends Controller {
             }
             return ok(Json.prettyPrint(json));
         }
-
         return Results.status(415, messages.at("wrongOutputFormat"));
+
     }
 
     /**
@@ -302,7 +320,11 @@ public class UserController extends Controller {
 
         messages = Http.Context.current().messages();
         //Obtenemos la página
-        Integer page = Integer.parseInt(request().getQueryString("page"));
+        String pageString = request().getQueryString("page");
+        if (pageString == null) {
+            return Results.status(409, messages.at("page.null"));
+        }
+        Integer page = Integer.parseInt(pageString);
 
         //Comprobamos si la lista está en caché
         String key = "listByFullName-" + name + surname + page;
@@ -339,7 +361,6 @@ public class UserController extends Controller {
             }
             return ok(Json.prettyPrint(json));
         }
-
         return Results.status(415, messages.at("wrongOutputFormat"));
 
     }
@@ -355,7 +376,11 @@ public class UserController extends Controller {
 
         messages = Http.Context.current().messages();
         //Obtenemos la página
-        Integer page = Integer.parseInt(request().getQueryString("page"));
+        String pageString = request().getQueryString("page");
+        if (pageString == null) {
+            return Results.status(409, messages.at("page.null"));
+        }
+        Integer page = Integer.parseInt(pageString);
 
         //Comprobamos si la lista está en caché
         String key = "listByCity-" + city + page;
@@ -392,7 +417,6 @@ public class UserController extends Controller {
             }
             return ok(Json.prettyPrint(json));
         }
-
         return Results.status(415, messages.at("wrongOutputFormat"));
 
     }
@@ -404,6 +428,7 @@ public class UserController extends Controller {
      * @param id_user Id del usuario del que se quiere realizar una modificación de los datos
      * @return Indica si se ha realizado correctamente o no la operación
      */
+    @Security.Authenticated(Authorization.class)
     public Result updateUser(Long id_user) {
 
         messages = Http.Context.current().messages();
@@ -415,20 +440,19 @@ public class UserController extends Controller {
             return Results.status(409, f.errorsAsJson());
         }
 
-        //Se obtiene el apiKey de la cadena
-        String apiKey = request().getQueryString("apiKey");
+        //Obtenemos el usuario de la cabecera Authorization
+        User loggedUser = (User) Http.Context.current().args.get("loggedUser");
 
         //Objeto User donde se guarda la información de la petición
         User updateUser = f.get();
-        User user = User.findById(id_user);
 
-        //Comprobar si existe el usuario con el Id indicado
+        //User correspondiente al id enviado en la petición
+        User user = User.findById(id_user);
         if (user == null) {
             return Results.notFound(messages.at("user.wrongId"));
         }
 
-        //Si existe el usuario y su apiKey coincide con el apiKey suministrado, ejecutamos la actualización
-        if (user.getApiKey().getKey().matches(apiKey)) {
+        if (user.getId() == loggedUser.getId()) {
             Ebean.beginTransaction();
             try {
                 String key = "user-" + id_user;
@@ -447,11 +471,9 @@ public class UserController extends Controller {
             }
             return ok(messages.at("user.updated"));
         }
-        
         return Results.status(401, messages.at("user.authorization"));
 
-        //TODO Comprobar si el apiKey existe y si se ha introducido
-        //TODO Sólo pueden modificar los datos de un usuario el propio usuario o el administrador
+        //TODO Sólo pueden modificar los datos de un usuario el propio usuario o el administrador (falta admin)
     }
 
     /**
@@ -460,16 +482,18 @@ public class UserController extends Controller {
      * @param id_user Id del usuario que se quiere borrar
      * @return Indica si se ha realizado correctamente o no la operación
      */
+    @Security.Authenticated(Authorization.class)
     public Result deleteUser(Long id_user) {
 
         messages = Http.Context.current().messages();
         User user = User.findById(id_user);
         //Si el usuario existe
         if (user != null) {
-            //Se obtiene el apiKey de la cadena
-            String apiKey = request().getQueryString("apiKey");
-            //Si el apiKey del usuario con el id indicado coincide con el apiKey suministrado ejecutamos la operación
-            if (user.getApiKey().getKey().matches(apiKey)) {
+
+            //Obtenemos el usuario de la cabecera Authorization
+            User loggedUser = (User) Http.Context.current().args.get("loggedUser");
+
+            if (user.getId() == loggedUser.getId()) {
                 if (user.delete()) {
                     //Se borran la caché de las peticiones de usuario único
                     String key = "user-" + id_user;
@@ -482,9 +506,8 @@ public class UserController extends Controller {
                     key = "user-" + user.getNick() + "-json";
                     cache.remove(key);
                     return ok(messages.at("user.deleted"));
-                } else {
-                    return Results.internalServerError(messages.at("user.deletedFailed"));
                 }
+                return Results.internalServerError(messages.at("user.deletedFailed"));
             }
             return Results.status(401, messages.at("user.authorization"));
         }
@@ -492,8 +515,7 @@ public class UserController extends Controller {
         //Por idempotencia, aunque no exista el usuario, la respuesta debe ser correcta.
         return ok(messages.at("user.deleted"));
 
-        //TODO Comprobar si el apiKey existe ejemplo en metodo de accion createUser
-        //TODO Sólo pueden borrar un usuario el propio usuario y el administrador
+        //TODO Sólo pueden borrar un usuario el propio usuario y el administrador (falta el admin)
     }
 
 
@@ -507,7 +529,11 @@ public class UserController extends Controller {
         messages = Http.Context.current().messages();
 
         //Obtenemos la página
-        Integer page = Integer.parseInt(request().getQueryString("page"));
+        String pageString = request().getQueryString("page");
+        if (pageString == null) {
+            return Results.status(409, messages.at("page.null"));
+        }
+        Integer page = Integer.parseInt(pageString);
 
         //Comprobamos si la lista está en caché
         String key = "usersList-" + page;
@@ -544,8 +570,8 @@ public class UserController extends Controller {
             }
             return ok(Json.prettyPrint(json));
         }
-
         return Results.status(415, messages.at("wrongOutputFormat"));
+
     }
 
 }
