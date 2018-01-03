@@ -72,7 +72,6 @@ public class User extends BaseModel {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     public List<Recipe> userRecipes = new ArrayList<>();
 
-    
 
     /**
      * Constructor del modelo User
@@ -214,7 +213,9 @@ public class User extends BaseModel {
 
             Ebean.beginTransaction();
             try {
-                this.generateApiKey();
+                do {
+                    this.generateApiKey();
+                } while (ApiKey.findBykey(this.apiKey.getKey()) != null);
                 this.save();
                 Ebean.commitTransaction();
             } finally {
@@ -231,15 +232,14 @@ public class User extends BaseModel {
      */
     public void generateApiKey() {
         this.apiKey = new ApiKey();
-        do {
-            this.apiKey.generateRandomKey();
-        } while (ApiKey.findBykey(this.apiKey.getKey()) != null) ;
+        this.apiKey.generateRandomKey();
     }
 
     //Getter y Setters
 
     /**
      * Getter de nick
+     *
      * @return Devuelve el nick del usuario
      */
     public String getNick() {
@@ -248,6 +248,7 @@ public class User extends BaseModel {
 
     /**
      * Setter de nick
+     *
      * @param nick Nick del usuario
      */
     public void setNick(String nick) {
@@ -256,6 +257,7 @@ public class User extends BaseModel {
 
     /**
      * Getter de name
+     *
      * @return Devuelve el nombre del usuario
      */
     public String getName() {
@@ -264,6 +266,7 @@ public class User extends BaseModel {
 
     /**
      * Setter de name
+     *
      * @param name Nombre del usuario
      */
     public void setName(String name) {
@@ -272,6 +275,7 @@ public class User extends BaseModel {
 
     /**
      * Getter de surname
+     *
      * @return Devuelve el apellido del usuario
      */
     public String getSurname() {
@@ -280,6 +284,7 @@ public class User extends BaseModel {
 
     /**
      * Setter de surname
+     *
      * @param surname Apellido del usuario
      */
     public void setSurname(String surname) {
@@ -288,6 +293,7 @@ public class User extends BaseModel {
 
     /**
      * Getter de city
+     *
      * @return Devuelve la ciudad del usuario
      */
     public String getCity() {
@@ -296,6 +302,7 @@ public class User extends BaseModel {
 
     /**
      * Setter de city
+     *
      * @param city Ciudad del usuario
      */
     public void setCity(String city) {
@@ -304,6 +311,7 @@ public class User extends BaseModel {
 
     /**
      * Getter de apiKey
+     *
      * @return Devuelve la clave del usuario
      */
     public ApiKey getApiKey() {
@@ -312,6 +320,7 @@ public class User extends BaseModel {
 
     /**
      * Setter de apiKey
+     *
      * @param apiKey Clave del usuario
      */
     public void setApiKey(ApiKey apiKey) {
@@ -320,6 +329,7 @@ public class User extends BaseModel {
 
     /**
      * Getter de userRecipes
+     *
      * @return Devuelve las recetas de un usuario
      */
     public List<Recipe> getUserRecipes() {
@@ -328,6 +338,7 @@ public class User extends BaseModel {
 
     /**
      * Setter de userRecipes
+     *
      * @param userRecipes Lista de recetas de un usuario
      */
     public void setUserRecipes(List<Recipe> userRecipes) {
@@ -336,6 +347,7 @@ public class User extends BaseModel {
 
     /**
      * Getter de admin
+     *
      * @return Devuelve el estado de admin (true o false)
      */
     public Boolean getAdmin() {
@@ -344,6 +356,7 @@ public class User extends BaseModel {
 
     /**
      * Setter de admin
+     *
      * @param admin Rol del usuario
      */
     public void setAdmin(Boolean admin) {
