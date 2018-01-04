@@ -138,6 +138,17 @@ public class Recipe extends BaseModel {
     }
 
     /**
+     * Método que muestra las recetas existentes en una categoría
+     *
+     * @param id Id de la categoría
+     * @param page Número de la página que se desea ver
+     * @return
+     */
+    public static PagedList<Recipe> findRecipesByCategory(Long id, Integer page) {
+        return find.query().where().eq("category_id", id).setMaxRows(10).setFirstRow(10*page).findPagedList();
+    }
+
+    /**
      * Método que comprueba si la categoría de la receta introducida existe
      *
      * @return Devuelve true si la categoría existe y false en caso contrario

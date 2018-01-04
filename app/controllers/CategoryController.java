@@ -207,6 +207,16 @@ public class CategoryController extends Controller {
         //TODO Devolver listado?
         messages = Http.Context.current().messages();
 
+        String pageString = request().getQueryString("page");
+        if (pageString == null) {
+            return Results.status(409, messages.at("page.null"));
+        }
+        Integer page = Integer.parseInt(pageString);
+
+        PagedList<Recipe> list = Recipe.findRecipesByCategory(id, page);
+        List<Recipe> recipes = list.getList();
+        Integer number = list.getTotalCount();
+
         //Se obtienen las recetas de la categoría elegida y se muestran al usuario
         Category c = Category.findByCategoryId(id);
         if (c == null) {
@@ -214,11 +224,10 @@ public class CategoryController extends Controller {
         }
 
         if (request().accepts("application/json")) {
-            return ok(Json.prettyPrint(Json.toJson(c.relatedRecipes)));
+            return ok(Json.prettyPrint(Json.toJson(recipes))).withHeader("X-Count", number.toString());
         } else if (request().accepts("application/xml")) {
-            return ok(views.xml.recipes.render(c.relatedRecipes));
+            return ok(views.xml.recipes.render(recipes)).withHeader("X-Count", number.toString());
         }
-
         return Results.status(415, messages.at("wrongOutputFormat"));
 
     }
