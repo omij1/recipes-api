@@ -225,6 +225,7 @@ public class UserController extends Controller {
             cache.set(key, list, 60 * 2);
         }
         List<User> usersList = list.getList();
+        Integer number = list.getTotalCount();
 
         //Si la lista está vacía
         if (usersList.isEmpty()) {
@@ -233,7 +234,7 @@ public class UserController extends Controller {
 
         //Si la lista no está vacía
         if (request().accepts("application/xml")) {
-            return ok(views.xml.users.render(usersList));
+            return ok(views.xml.users.render(usersList)).withHeader("X-Count", number.toString());
         } else if (request().accepts("application/json")) {
             //Buscamos la respuesta en caché
             key = "listByName-" + name + page + "-json";
@@ -243,7 +244,7 @@ public class UserController extends Controller {
                 json = Json.toJson(usersList);
                 cache.set(key, json, 60 * 2);
             }
-            return ok(Json.prettyPrint(json));
+            return ok(Json.prettyPrint(json)).withHeader("X-Count", number.toString());
         }
 
         return Results.status(415, messages.at("wrongOutputFormat"));
@@ -274,6 +275,7 @@ public class UserController extends Controller {
             cache.set(key, list, 60 * 2);
         }
         List<User> usersList = list.getList();
+        Integer number = list.getTotalCount();
 
         //Si la lista está vacía
         if (usersList.isEmpty()) {
@@ -282,7 +284,7 @@ public class UserController extends Controller {
 
         //Si la lista no está vacía
         if (request().accepts("application/xml")) {
-            return ok(views.xml.users.render(usersList));
+            return ok(views.xml.users.render(usersList)).withHeader("X-Count", number.toString());
         } else if (request().accepts("application/json")) {
             //Buscamos la respuesta en caché
             key = "listBySurname-" + surname + page + "-json";
@@ -292,7 +294,7 @@ public class UserController extends Controller {
                 json = Json.toJson(usersList);
                 cache.set(key, json, 60 * 2);
             }
-            return ok(Json.prettyPrint(json));
+            return ok(Json.prettyPrint(json)).withHeader("X-Count", number.toString());
         }
         return Results.status(415, messages.at("wrongOutputFormat"));
 
@@ -324,6 +326,7 @@ public class UserController extends Controller {
             cache.set(key, list, 60 * 2);
         }
         List<User> usersList = list.getList();
+        Integer number = list.getTotalCount();
 
         //Si la lista está vacía
         if (usersList.isEmpty()) {
@@ -332,7 +335,7 @@ public class UserController extends Controller {
 
         //Si la lista no está vacía
         if (request().accepts("application/xml")) {
-            return ok(views.xml.users.render(usersList));
+            return ok(views.xml.users.render(usersList)).withHeader("X-Count", number.toString());
         } else if (request().accepts("application/json")) {
             //Buscamos la respuesta en caché
             key = "listByFullName-" + name + surname + page + "-json";
@@ -342,7 +345,7 @@ public class UserController extends Controller {
                 json = Json.toJson(usersList);
                 cache.set(key, json, 60 * 2);
             }
-            return ok(Json.prettyPrint(json));
+            return ok(Json.prettyPrint(json)).withHeader("X-Count", number.toString());
         }
         return Results.status(415, messages.at("wrongOutputFormat"));
 
@@ -374,6 +377,7 @@ public class UserController extends Controller {
             cache.set(key, list, 60 * 2);
         }
         List<User> usersList = list.getList();
+        Integer number = list.getTotalCount();
 
         //Si la lista está vacía
         if (usersList.isEmpty()) {
@@ -382,7 +386,7 @@ public class UserController extends Controller {
 
         //Si la lista no está vacía
         if (request().accepts("application/xml")) {
-            return ok(views.xml.users.render(usersList));
+            return ok(views.xml.users.render(usersList)).withHeader("X-Count", number.toString());
         } else if (request().accepts("application/json")) {
             //Buscamos la respuesta en caché
             key = "listByCity-" + city + page + "-json";
@@ -392,7 +396,7 @@ public class UserController extends Controller {
                 json = Json.toJson(usersList);
                 cache.set(key, json, 60 * 2);
             }
-            return ok(Json.prettyPrint(json));
+            return ok(Json.prettyPrint(json)).withHeader("X-Count", number.toString());
         }
         return Results.status(415, messages.at("wrongOutputFormat"));
 
@@ -519,6 +523,7 @@ public class UserController extends Controller {
             cache.set(key, list, 60 * 2);
         }
         List<User> usersList = list.getList();
+        Integer number = list.getTotalCount();
 
         //Si la lista está vacía
         if (usersList.isEmpty()) {
@@ -527,7 +532,7 @@ public class UserController extends Controller {
 
         //Si la lista tiene usuarios
         if (request().accepts("application/xml")) {
-            return ok(views.xml.users.render(usersList));
+            return ok(views.xml.users.render(usersList)).withHeader("X-Count", number.toString());
         } else if (request().accepts("application/json")) {
             //Buscamos la respuesta en caché
             key = "usersList-" + page + "-json";
@@ -537,7 +542,7 @@ public class UserController extends Controller {
                 json = Json.toJson(usersList);
                 cache.set(key, json, 60 * 2);
             }
-            return ok(Json.prettyPrint(json));
+            return ok(Json.prettyPrint(json)).withHeader("X-Count", number.toString());
         }
         return Results.status(415, messages.at("wrongOutputFormat"));
 
