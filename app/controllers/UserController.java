@@ -194,7 +194,7 @@ public class UserController extends Controller {
             } else if (request().accepts("application/xml")) {
                 return ok(views.xml.recipes.render(user.getUserRecipes()));
             }
-        return Results.status(415, messages.at("wrongOutputFormat"));
+            return Results.status(415, messages.at("wrongOutputFormat"));
         }
         return Results.ok(messages.at("user.listEmpty"));
 
@@ -227,14 +227,8 @@ public class UserController extends Controller {
         List<User> usersList = list.getList();
 
         //Si la lista está vacía
-        if (usersList.isEmpty()) { //TODO se devuelve el error en xml??
-            if (request().accepts("application/xml")) {
-                return Results.notFound(messages.at("user.wrongName"));
-            } else if (request().accepts("application/json")) {
-                return Results.notFound(messages.at("user.wrongName"));
-            }
-            
-            return Results.status(415, messages.at("wrongOutputFormat"));
+        if (usersList.isEmpty()) {
+            return Results.notFound(messages.at("user.wrongName"));
         }
 
         //Si la lista no está vacía
@@ -282,14 +276,8 @@ public class UserController extends Controller {
         List<User> usersList = list.getList();
 
         //Si la lista está vacía
-        if (usersList.isEmpty()) {//TODO se devuelve el error en xml??
-            if (request().accepts("application/xml")) {
-                return Results.notFound(messages.at("user.wrongSurname"));
-            } else if (request().accepts("application/json")) {
-                return Results.notFound(messages.at("user.wrongSurname"));
-            }
-
-            return Results.status(415, messages.at("wrongOutputFormat"));
+        if (usersList.isEmpty()) {
+            return Results.notFound(messages.at("user.wrongSurname"));
         }
 
         //Si la lista no está vacía
@@ -338,14 +326,8 @@ public class UserController extends Controller {
         List<User> usersList = list.getList();
 
         //Si la lista está vacía
-        if (usersList.isEmpty()) {//TODO se devuelve el error en xml??
-            if (request().accepts("application/xml")) {
-                return Results.notFound(messages.at("user.wrongFullName"));
-            } else if (request().accepts("application/json")) {
-                return Results.notFound(messages.at("user.wrongFullName"));
-            }
-            
-            return Results.status(415, messages.at("wrongOutputFormat"));
+        if (usersList.isEmpty()) {
+            return Results.notFound(messages.at("user.wrongFullName"));
         }
 
         //Si la lista no está vacía
@@ -394,14 +376,8 @@ public class UserController extends Controller {
         List<User> usersList = list.getList();
 
         //Si la lista está vacía
-        if (usersList.isEmpty()) {  //TODO se devuelve el error en xml??
-            if (request().accepts("application/xml")) {
-                return Results.notFound(messages.at("user.wrongCity"));
-            } else if (request().accepts("application/json")) {
-                return Results.notFound(messages.at("user.wrongCity"));
-            }
-            
-            return Results.status(415, messages.at("wrongOutputFormat"));
+        if (usersList.isEmpty()) {
+            return Results.notFound(messages.at("user.wrongCity"));
         }
 
         //Si la lista no está vacía
@@ -493,7 +469,7 @@ public class UserController extends Controller {
             //Obtenemos el usuario de la cabecera Authorization
             User loggedUser = (User) Http.Context.current().args.get("loggedUser");
 
-            if (user.getId() == loggedUser.getId() || loggedUser.getAdmin() ) {
+            if (user.getId() == loggedUser.getId() || loggedUser.getAdmin()) {
                 if (user.delete()) {
                     //Se borran la caché de las peticiones de usuario único
                     String key = "user-" + id_user;
@@ -511,7 +487,7 @@ public class UserController extends Controller {
             }
             return Results.status(401, messages.at("user.authorization"));
         }
-        
+
         //Por idempotencia, aunque no exista el usuario, la respuesta debe ser correcta.
         return ok(messages.at("user.deleted"));
 
@@ -545,14 +521,8 @@ public class UserController extends Controller {
         List<User> usersList = list.getList();
 
         //Si la lista está vacía
-        if (usersList.isEmpty()) { //TODO se devuelve el error en xml??
-            if (request().accepts("application/xml")) {
-                return Results.notFound(messages.at("user.listEmpty"));
-            } else if (request().accepts("application/json")) {
-                return Results.notFound(messages.at("user.listEmpty"));
-            }
-            
-            return Results.status(415, messages.at("wrongOutputFormat")); //Unsupported media type
+        if (usersList.isEmpty()) {
+            return Results.notFound(messages.at("user.listEmpty"));
         }
 
         //Si la lista tiene usuarios
