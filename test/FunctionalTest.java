@@ -50,11 +50,11 @@ public class FunctionalTest extends WithApplication {
                 .method("DELETE")
                 .uri("/category/999");
         Result r = Helpers.route(app, req);
-        assertThat(r.status()).isEqualTo(404);
+        assertThat(r.status()).isEqualTo(403);//Solo puede eliminar una categoria el administrador
     }
 
     @Test
-    public void testPostRecipeWithoutIngredients() {
+    public void testPostRecipeWithoutIngredientsAndApikey() {
 
         Map<String, String> data = new HashMap<String, String>();
         data.put("title", "Filete con patatas");
@@ -68,7 +68,24 @@ public class FunctionalTest extends WithApplication {
 
         RequestBuilder req = Helpers.fakeRequest()
                 .method("POST")
-                .uri("/recipe?apiKey=20vzaBgEkhHqp8mfPjpTic2kAnkAWC")
+                .uri("/recipe")
+                .header("Content-Type", "application/json")
+                .bodyForm(data);
+        Result r = Helpers.route(app, req);
+        assertThat(r.status()).isEqualTo(403);//La falta del Apikey tiene prioridad frente a los ingredientes
+    }
+    
+    @Test
+    public void testPostUserWithoutSurname() {
+    	
+        Map<String, String> data = new HashMap<String, String>();
+        data.put("nick", "VaderRules61");
+        data.put("name", "Darth Vader");
+        data.put("city", "Galactic Empire");
+
+        RequestBuilder req = Helpers.fakeRequest()
+                .method("POST")
+                .uri("/user")
                 .header("Content-Type", "application/json")
                 .bodyForm(data);
         Result r = Helpers.route(app, req);
