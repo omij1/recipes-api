@@ -15,6 +15,9 @@ public class FirstCapitalLetterValidator
 
     @Override
     public boolean isValid(String string) {
+        if (string == null) { //Si se pasa una cadena vacía, devuelve true para que el validador @NotBlanck de el error correspondiente
+            return true;
+        }
         if (Character.isUpperCase(string.charAt(0))) {
             for (int i = 1; i < string.length(); i++) {
                 if (Character.isUpperCase(string.charAt(i)) && Character.isLetter(string.charAt(i - 1))) {
