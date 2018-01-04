@@ -177,7 +177,7 @@ public class CategoryController extends Controller {
 
         String pageString = request().getQueryString("page");
         if (pageString == null) {
-            return Results.status(409, messages.at("page.null"));
+            return Results.status(409, new ErrorObject("5", messages.at("page.null")).convertToJson()).as("application/json");
         }
         Integer page = Integer.parseInt(pageString);
 
@@ -204,12 +204,12 @@ public class CategoryController extends Controller {
      * @return Devuelve las recetas pertenecientes a la categoría especificada o error
      */
     public Result retrieveRecipesByCategory(Long id) {
-        //TODO Devolver listado?
+
         messages = Http.Context.current().messages();
 
         String pageString = request().getQueryString("page");
         if (pageString == null) {
-            return Results.status(409, messages.at("page.null"));
+            return Results.status(409, new ErrorObject("5", messages.at("page.null")).convertToJson()).as("application/json");
         }
         Integer page = Integer.parseInt(pageString);
 

@@ -23,14 +23,6 @@ import java.util.Map;
 public class FunctionalTest extends WithApplication {
 
     @Test
-    public void renderTemplate() {
-
-        Content html = views.html.index.render("Your new application is ready.");
-        assertThat("text/html").isEqualTo(html.contentType());
-        assertThat(html.body()).contains("Your new application is ready.");
-    }
-
-    @Test
     public void testGetCategoryWrongFormat() {
 
         RequestBuilder req = Helpers.fakeRequest()
@@ -63,7 +55,6 @@ public class FunctionalTest extends WithApplication {
 
     @Test
     public void testPostRecipeWithoutIngredients() {
-
 
         Map<String, String> data = new HashMap<String, String>();
         data.put("title", "Filete con patatas");

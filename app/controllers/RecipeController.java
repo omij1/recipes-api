@@ -248,7 +248,7 @@ public class RecipeController extends Controller {
         //Obtenemos la página
         String pageString = request().getQueryString("page");
         if (pageString == null) {
-            return Results.status(409, messages.at("page.null"));
+            return Results.status(409, new ErrorObject("5", messages.at("page.null")).convertToJson()).as("application/json");
         }
         Integer page = Integer.parseInt(pageString);
 
