@@ -9,6 +9,7 @@ category.notExist = La categoría introducida no existe
 category.updated = Categoría actualizada correctamente
 category.deleted = Categoría eliminada correctamente
 category.deletedFailed = Ha ocurrido un error borrando la categoría
+category.empty = No existen categorías en la base de datos
 
 
 
@@ -19,7 +20,8 @@ recipe.updated = Receta actualizada correctamente
 recipe.deleted = Receta eliminada satisfactoriamente
 recipe.wrongName = No existe ninguna receta con ese nombre
 recipe.emptyName = Debe introducir el nombre de una receta
-
+recipe.empty = No existen recetas pertenecientes a esa categoría
+recipe.emptyList = La lista de recetas está vacía
 
 
 validation.difficulty = Los valores de dificultad son: MUY_FACIL, FACIL, INTERMEDIA, DIFICIL, MUY_DIFICIL

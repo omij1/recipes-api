@@ -185,6 +185,11 @@ public class CategoryController extends Controller {
         PagedList<Category> list = Category.findPage(page);
         List<Category> categories = list.getList();
         Integer number = list.getTotalCount();
+        
+        //Si no hay categorias
+        if(categories.isEmpty()) {
+        		return Results.notFound(messages.at("category.empty"));
+        }
 
         //Se ordenan las categorías de recetas alfabéticamente y se muestran al usuario
         sortAlphabetically(categories);
@@ -216,11 +221,16 @@ public class CategoryController extends Controller {
         PagedList<Recipe> list = Recipe.findRecipesByCategory(id, page);
         List<Recipe> recipes = list.getList();
         Integer number = list.getTotalCount();
-
+        
         //Se obtienen las recetas de la categoría elegida y se muestran al usuario
         Category c = Category.findByCategoryId(id);
         if (c == null) {
             return Results.notFound(messages.at("category.notExist"));
+        }
+        
+        //Si no hay recetas de esa categoría
+        if(recipes.isEmpty()) {
+        		return Results.notFound(messages.at("recipe.empty"));
         }
 
         if (request().accepts("application/json")) {

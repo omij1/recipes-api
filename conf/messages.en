@@ -9,6 +9,7 @@ category.notExist = The input category does not exist
 category.updated = Category updated
 category.deleted = Category deleted
 category.deletedFailed = An error has occured deleting the category
+category.empty = There are no categories in the database
 
 
 
@@ -19,6 +20,8 @@ recipe.updated = Recipe updated
 recipe.deleted = Recipe deleted
 recipe.wrongName = There is no recipe with that name
 recipe.emptyName = You must enter the name of a recipe
+recipe.empty = There are no recipes belonging to this category
+recipe.emptyList = The recipe list is empty
 
 
 

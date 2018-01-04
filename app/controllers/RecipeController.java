@@ -252,7 +252,7 @@ public class RecipeController extends Controller {
         }
         Integer page = Integer.parseInt(pageString);
 
-        //Comprobamos si la receta está en caché
+        //Comprobamos si las recetas están en caché
         String key = "recipeList-" + page;
         PagedList<Recipe> list = cache.get(key);
         //Si no lo tenemos en caché, lo buscamos y lo guardamos
@@ -262,6 +262,11 @@ public class RecipeController extends Controller {
         }
         List<Recipe> recipes = list.getList();
         Integer number = list.getTotalCount();
+        
+        //Si no hay recetas, poco habitual
+        if(recipes.isEmpty()) {
+        		return Results.notFound(messages.at("recipe.emptyList"));
+        }
 
         //Se ordenan las recetas alfabéticamente y se devuelven al usuario
         sortAlphabetically(recipes);
