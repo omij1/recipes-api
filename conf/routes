@@ -11,7 +11,7 @@ GET           /user/:id_user                        controllers.UserController.r
 PUT           /user/:id_user                        controllers.UserController.updateUser(id_user: Long)
 DELETE        /user/:id_user                        controllers.UserController.deleteUser(id_user: Long)
 GET           /user/nick/:nick                      controllers.UserController.retrieveUserByNick(nick: String)
-GET			  /user/:id_user/recipes_created		   controllers.UserController.retrieveUserRecipes(id_user: Long)
+GET           /user/:id_user/recipes_created        controllers.UserController.retrieveUserRecipes(id_user: Long)
 
 GET           /users                                controllers.UserController.retrieveUserCollection()
 GET           /users/name/:name                     controllers.UserController.retrieveUserByName(name: String)
@@ -53,4 +53,4 @@ DELETE        /category/:id                         controllers.CategoryControll
 GET           /categories                           controllers.CategoryController.retrieveCategoryCollection()
 
 # Obtener las recetas de una categoría
-GET           /category/:id/recipes/list            controllers.CategoryController.retrieveRecipesByCategory(id: Long)
+GET           /category/:id/recipes                 controllers.CategoryController.retrieveRecipesByCategory(id: Long)

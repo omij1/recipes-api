@@ -8,6 +8,7 @@ category.alreadyExist = Category already exist
 category.notExist = The input category does not exist
 category.updated = Category updated
 category.deleted = Category deleted
+category.deletedFailed = An error has occured deleting the category
 
 
 
