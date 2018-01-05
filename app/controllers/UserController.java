@@ -4,6 +4,7 @@ package controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.ebean.Ebean;
 import io.ebean.PagedList;
+import models.Recipe;
 import models.User;
 import play.cache.SyncCacheApi;
 import play.data.Form;
@@ -158,45 +159,65 @@ public class UserController extends Controller {
     /**
      * Método que permite obtener las recetas creadas por un usuario
      *
-     * @param id Identificador del usuario del que se desean ver sus recetas
+     * @param id_user Identificador del usuario del que se desean ver sus recetas
      * @return Devuelve las recetas creadas por el usuario seleccionado o error
      */
-    public Result retrieveUserRecipes(Long id) {
+    public Result retrieveUserRecipes(Long id_user) {
 
         messages = Http.Context.current().messages();
 
+        //Obtenemos la página
+        String pageString = request().getQueryString("page");
+        if (pageString == null) {
+            return Results.status(409, messages.at("page.null"));
+        }
+        Integer page = Integer.parseInt(pageString);
+
         //Comprobamos si el usuario está en caché
-        String key = "userRecipes-" + id;
+        String key = "user-" + id_user;
         User user = cache.get(key);
         //Si no lo tenemos en caché, lo buscamos y lo guardamos
         if (user == null) {
-            user = User.findById(id);
+            user = User.findById(id_user);
             cache.set(key, user);
         }
 
-        //Comprobamos si el id introducido corresponde a un usuario
+        //Si el usuario no existe, se devuelve un error
         if (user == null) {
             return Results.notFound(messages.at("user.wrongId"));
         }
 
-        //Miramos si el usuario tiene recetas publicadas
-        if (user.getUserRecipes().size() > 0) {
-            if (request().accepts("application/json")) {
-                //Buscamos la respuesta en caché
-                key = "userRecipes-" + id + "-json";
-                JsonNode json = cache.get(key);
-                //Si no está, la creamos y la guardamos en caché
-                if (json == null) {
-                    json = Json.toJson(user.getUserRecipes());
-                    cache.set(key, json);
-                }
-                return ok(Json.prettyPrint(json));
-            } else if (request().accepts("application/xml")) {
-                return ok(views.xml.recipes.render(user.getUserRecipes()));
-            }
-        return Results.status(415, messages.at("wrongOutputFormat"));
+        //Comprobamos si la lista de recetas de ese usuario está en caché
+        key = "userRecipes-" + id_user + page;
+        PagedList<Recipe> list = cache.get(key);
+        //Si no lo tenemos en caché, lo buscamos y lo guardamos
+        if (list == null) {
+            list = Recipe.findRecipesByUser(id_user, page);
+            cache.set(key, list, 60 * 2);
         }
-        return Results.ok(messages.at("user.listEmpty"));
+        List<Recipe> userRecipesList = list.getList();
+        Integer number = list.getTotalCount();
+
+        //Si la lista está vacía
+        if (userRecipesList.isEmpty()) {
+            return Results.ok(messages.at("user.listEmpty"));
+        }
+
+        //Si la lista contiene elementos
+        if (request().accepts("application/json")) {
+            //Buscamos la respuesta en caché
+            key = "userRecipes-" + id_user + page + "-json";
+            JsonNode json = cache.get(key);
+            //Si no está, la creamos y la guardamos en caché
+            if (json == null) {
+                json = Json.toJson(userRecipesList);
+                cache.set(key, json, 60 * 2);
+            }
+            return ok(Json.prettyPrint(json)).withHeader("X-Count", number.toString());
+        } else if (request().accepts("application/xml")) {
+            return ok(views.xml.recipes.render(userRecipesList)).withHeader("X-Count", number.toString());
+        }
+        return Results.status(415, messages.at("wrongOutputFormat"));
 
     }
 
@@ -225,21 +246,16 @@ public class UserController extends Controller {
             cache.set(key, list, 60 * 2);
         }
         List<User> usersList = list.getList();
+        Integer number = list.getTotalCount();
 
         //Si la lista está vacía
-        if (usersList.isEmpty()) { //TODO se devuelve el error en xml??
-            if (request().accepts("application/xml")) {
-                return Results.notFound(messages.at("user.wrongName"));
-            } else if (request().accepts("application/json")) {
-                return Results.notFound(messages.at("user.wrongName"));
-            }
-            
-            return Results.status(415, messages.at("wrongOutputFormat"));
+        if (usersList.isEmpty()) {
+            return Results.notFound(messages.at("user.wrongName"));
         }
 
         //Si la lista no está vacía
         if (request().accepts("application/xml")) {
-            return ok(views.xml.users.render(usersList));
+            return ok(views.xml.users.render(usersList)).withHeader("X-Count", number.toString());
         } else if (request().accepts("application/json")) {
             //Buscamos la respuesta en caché
             key = "listByName-" + name + page + "-json";
@@ -249,7 +265,7 @@ public class UserController extends Controller {
                 json = Json.toJson(usersList);
                 cache.set(key, json, 60 * 2);
             }
-            return ok(Json.prettyPrint(json));
+            return ok(Json.prettyPrint(json)).withHeader("X-Count", number.toString());
         }
 
         return Results.status(415, messages.at("wrongOutputFormat"));
@@ -280,21 +296,16 @@ public class UserController extends Controller {
             cache.set(key, list, 60 * 2);
         }
         List<User> usersList = list.getList();
+        Integer number = list.getTotalCount();
 
         //Si la lista está vacía
-        if (usersList.isEmpty()) {//TODO se devuelve el error en xml??
-            if (request().accepts("application/xml")) {
-                return Results.notFound(messages.at("user.wrongSurname"));
-            } else if (request().accepts("application/json")) {
-                return Results.notFound(messages.at("user.wrongSurname"));
-            }
-
-            return Results.status(415, messages.at("wrongOutputFormat"));
+        if (usersList.isEmpty()) {
+            return Results.notFound(messages.at("user.wrongSurname"));
         }
 
         //Si la lista no está vacía
         if (request().accepts("application/xml")) {
-            return ok(views.xml.users.render(usersList));
+            return ok(views.xml.users.render(usersList)).withHeader("X-Count", number.toString());
         } else if (request().accepts("application/json")) {
             //Buscamos la respuesta en caché
             key = "listBySurname-" + surname + page + "-json";
@@ -304,7 +315,7 @@ public class UserController extends Controller {
                 json = Json.toJson(usersList);
                 cache.set(key, json, 60 * 2);
             }
-            return ok(Json.prettyPrint(json));
+            return ok(Json.prettyPrint(json)).withHeader("X-Count", number.toString());
         }
         return Results.status(415, messages.at("wrongOutputFormat"));
 
@@ -336,21 +347,16 @@ public class UserController extends Controller {
             cache.set(key, list, 60 * 2);
         }
         List<User> usersList = list.getList();
+        Integer number = list.getTotalCount();
 
         //Si la lista está vacía
-        if (usersList.isEmpty()) {//TODO se devuelve el error en xml??
-            if (request().accepts("application/xml")) {
-                return Results.notFound(messages.at("user.wrongFullName"));
-            } else if (request().accepts("application/json")) {
-                return Results.notFound(messages.at("user.wrongFullName"));
-            }
-            
-            return Results.status(415, messages.at("wrongOutputFormat"));
+        if (usersList.isEmpty()) {
+            return Results.notFound(messages.at("user.wrongFullName"));
         }
 
         //Si la lista no está vacía
         if (request().accepts("application/xml")) {
-            return ok(views.xml.users.render(usersList));
+            return ok(views.xml.users.render(usersList)).withHeader("X-Count", number.toString());
         } else if (request().accepts("application/json")) {
             //Buscamos la respuesta en caché
             key = "listByFullName-" + name + surname + page + "-json";
@@ -360,7 +366,7 @@ public class UserController extends Controller {
                 json = Json.toJson(usersList);
                 cache.set(key, json, 60 * 2);
             }
-            return ok(Json.prettyPrint(json));
+            return ok(Json.prettyPrint(json)).withHeader("X-Count", number.toString());
         }
         return Results.status(415, messages.at("wrongOutputFormat"));
 
@@ -392,21 +398,16 @@ public class UserController extends Controller {
             cache.set(key, list, 60 * 2);
         }
         List<User> usersList = list.getList();
+        Integer number = list.getTotalCount();
 
         //Si la lista está vacía
-        if (usersList.isEmpty()) {  //TODO se devuelve el error en xml??
-            if (request().accepts("application/xml")) {
-                return Results.notFound(messages.at("user.wrongCity"));
-            } else if (request().accepts("application/json")) {
-                return Results.notFound(messages.at("user.wrongCity"));
-            }
-            
-            return Results.status(415, messages.at("wrongOutputFormat"));
+        if (usersList.isEmpty()) {
+            return Results.notFound(messages.at("user.wrongCity"));
         }
 
         //Si la lista no está vacía
         if (request().accepts("application/xml")) {
-            return ok(views.xml.users.render(usersList));
+            return ok(views.xml.users.render(usersList)).withHeader("X-Count", number.toString());
         } else if (request().accepts("application/json")) {
             //Buscamos la respuesta en caché
             key = "listByCity-" + city + page + "-json";
@@ -416,7 +417,7 @@ public class UserController extends Controller {
                 json = Json.toJson(usersList);
                 cache.set(key, json, 60 * 2);
             }
-            return ok(Json.prettyPrint(json));
+            return ok(Json.prettyPrint(json)).withHeader("X-Count", number.toString());
         }
         return Results.status(415, messages.at("wrongOutputFormat"));
 
@@ -493,7 +494,7 @@ public class UserController extends Controller {
             //Obtenemos el usuario de la cabecera Authorization
             User loggedUser = (User) Http.Context.current().args.get("loggedUser");
 
-            if (user.getId() == loggedUser.getId() || loggedUser.getAdmin() ) {
+            if (user.getId() == loggedUser.getId() || loggedUser.getAdmin()) {
                 if (user.delete()) {
                     //Se borran la caché de las peticiones de usuario único
                     String key = "user-" + id_user;
@@ -511,7 +512,7 @@ public class UserController extends Controller {
             }
             return Results.status(401, messages.at("user.authorization"));
         }
-        
+
         //Por idempotencia, aunque no exista el usuario, la respuesta debe ser correcta.
         return ok(messages.at("user.deleted"));
 
@@ -543,21 +544,16 @@ public class UserController extends Controller {
             cache.set(key, list, 60 * 2);
         }
         List<User> usersList = list.getList();
+        Integer number = list.getTotalCount();
 
         //Si la lista está vacía
-        if (usersList.isEmpty()) { //TODO se devuelve el error en xml??
-            if (request().accepts("application/xml")) {
-                return Results.notFound(messages.at("user.listEmpty"));
-            } else if (request().accepts("application/json")) {
-                return Results.notFound(messages.at("user.listEmpty"));
-            }
-            
-            return Results.status(415, messages.at("wrongOutputFormat")); //Unsupported media type
+        if (usersList.isEmpty()) {
+            return Results.notFound(messages.at("user.listEmpty"));
         }
 
         //Si la lista tiene usuarios
         if (request().accepts("application/xml")) {
-            return ok(views.xml.users.render(usersList));
+            return ok(views.xml.users.render(usersList)).withHeader("X-Count", number.toString());
         } else if (request().accepts("application/json")) {
             //Buscamos la respuesta en caché
             key = "usersList-" + page + "-json";
@@ -567,7 +563,7 @@ public class UserController extends Controller {
                 json = Json.toJson(usersList);
                 cache.set(key, json, 60 * 2);
             }
-            return ok(Json.prettyPrint(json));
+            return ok(Json.prettyPrint(json)).withHeader("X-Count", number.toString());
         }
         return Results.status(415, messages.at("wrongOutputFormat"));
 

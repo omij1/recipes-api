@@ -140,12 +140,23 @@ public class Recipe extends BaseModel {
     /**
      * Método que muestra las recetas existentes en una categoría
      *
-     * @param id Id de la categoría
+     * @param id   Id de la categoría
      * @param page Número de la página que se desea ver
-     * @return
+     * @return Devuelve el listado con las recetas
      */
     public static PagedList<Recipe> findRecipesByCategory(Long id, Integer page) {
-        return find.query().where().eq("category_id", id).setMaxRows(10).setFirstRow(10*page).findPagedList();
+        return find.query().where().eq("category_id", id).setMaxRows(10).setFirstRow(10 * page).findPagedList();
+    }
+
+    /**
+     * Método que muestra las recetas existentes de un usuario
+     *
+     * @param id Id del usuario
+     * @param page Número de la página que se desea ver
+     * @return Devuelve el listado con las recetas
+     */
+    public static PagedList<Recipe> findRecipesByUser(Long id, Integer page) {
+        return find.query().where().eq("user_id", id).setMaxRows(10).setFirstRow(10 * page).findPagedList();
     }
 
     /**
@@ -171,21 +182,20 @@ public class Recipe extends BaseModel {
     public boolean checkRecipe() {
 
         if (Recipe.findByName(this.title.toUpperCase()) == null) {
-        	
+
             this.title = this.title.toUpperCase();
             this.checkIngredients(this.ingredients);
-            
+
             Ebean.beginTransaction();
             try {
-            		this.save();
+                this.save();
                 Ebean.commitTransaction();
-            }
-            finally {
-            		Ebean.endTransaction();
+            } finally {
+                Ebean.endTransaction();
             }
             return true;
         }
-        
+
         return false;
     }
 
@@ -341,6 +351,7 @@ public class Recipe extends BaseModel {
 
     /**
      * Getter de user
+     *
      * @return Usuario que publicó la receta
      */
     public User getUser() {
@@ -349,6 +360,7 @@ public class Recipe extends BaseModel {
 
     /**
      * Setter de user
+     *
      * @param user Usuario que publica la receta
      */
     public void setUser(User user) {

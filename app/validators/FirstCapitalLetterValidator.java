@@ -7,6 +7,10 @@ import play.mvc.Http;
 
 import javax.validation.ConstraintValidator;
 
+/**
+ * Clase validadora que comprueba que la palabra introducida tiene la primera letra mayúscula y el resto minúsculas.
+ * También comprueba esta condición en cada palabra si hay dos o más separadas por espacios.
+ */
 public class FirstCapitalLetterValidator
         extends Constraints.Validator<String>
         implements ConstraintValidator<FirstCapitalLetter, String> {
