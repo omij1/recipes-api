@@ -1,6 +1,7 @@
 package controllers;
 
 import models.User;
+import play.cache.SyncCacheApi;
 import play.data.Form;
 import play.data.FormFactory;
 import play.i18n.Messages;
@@ -34,6 +35,12 @@ public class CategoryController extends Controller {
      */
     @Inject
     FormFactory formFactory;
+
+    /**
+     * Variable caché
+     */
+    @Inject
+    private SyncCacheApi cache;
 
     /**
      * Variable para presentar los mensajes al usuario según el idioma
@@ -85,16 +92,33 @@ public class CategoryController extends Controller {
         //Le asigno el contexto actual del método de acción
         messages = Http.Context.current().messages();
 
-        //Se busca la categoría solicitada y en caso de encontrarla se muestra al usuario
-        Category c = Category.findByCategoryId(id);
-        if (c == null) {
+        //Comprobamos si la categoría está en caché
+        String key = "category-" + id;
+        Category category = cache.get(key);
+        //Si no la tenemos en caché, la buscamos y la guardamos
+        if (category == null) {
+            category = Category.findByCategoryId(id);
+            cache.set(key, category);
+        }
+
+        //Si la categoría no existe
+        if (category == null) {
             return Results.notFound(messages.at("category.notExist"));
         }
 
+        //Si la categoría existe
         if (request().accepts("application/json")) {
-            return ok(Json.prettyPrint(Json.toJson(c)));
+            //Buscamos la respuesta en caché
+            key = "category-" + id + "-json";
+            JsonNode json = cache.get(key);
+            //Si no está, la creamos y la guardamos en caché
+            if (json == null) {
+                json = Json.toJson(category);
+                cache.set(key, json);
+            }
+            return ok(Json.prettyPrint(json));
         } else if (request().accepts("application/xml")) {
-            return ok(views.xml._category.render(c));
+            return ok(views.xml._category.render(category));
         }
         return Results.status(415, messages.at("wrongOutputFormat"));
 
@@ -132,6 +156,10 @@ public class CategoryController extends Controller {
             updateCategory.setId(c.getId());
             updateCategory.setCategoryName(updateCategory.getCategoryName().toUpperCase());
             updateCategory.update();
+            String key = "category-" + id;
+            cache.remove(key);
+            key = "category-" + id + "-json";
+            cache.remove(key);
             return ok(messages.at("category.updated"));
         }
         return Results.status(401, messages.at("user.authorization"));
@@ -156,6 +184,10 @@ public class CategoryController extends Controller {
             Category c = Category.findByCategoryId(id);
             if (c != null) {
                 if (c.delete()) {
+                    String key = "category-" + id;
+                    cache.remove(key);
+                    key = "category-" + id + "-json";
+                    cache.remove(key);
                     return ok(messages.at("category.deleted"));
                 }
                 return internalServerError(messages.at("category.deletedFailed"));
@@ -175,21 +207,36 @@ public class CategoryController extends Controller {
 
         messages = Http.Context.current().messages();
 
+        //Obtenemos la página
         String pageString = request().getQueryString("page");
         if (pageString == null) {
             return Results.status(409, messages.at("page.null"));
         }
         Integer page = Integer.parseInt(pageString);
 
-        //Se obtienen las categorías de recetas de forma paginada
-        PagedList<Category> list = Category.findPage(page);
+        //Comprobamos si la lista está en caché
+        String key = "categoriesList-" + page;
+        PagedList<Category> list = cache.get(key);
+        //Si no lo tenemos en caché, lo buscamos y lo guardamos
+        if (list == null) {
+            list = Category.findPage(page);
+            cache.set(key, list, 60 * 2);
+        }
         List<Category> categories = list.getList();
         Integer number = list.getTotalCount();
 
         //Se ordenan las categorías de recetas alfabéticamente y se muestran al usuario
         sortAlphabetically(categories);
         if (request().accepts("application/json")) {
-            return ok(Json.prettyPrint(Json.toJson(categories))).withHeader("X-Count", number.toString());
+            //Buscamos la respuesta en caché
+            key = "categoriesList-" + page + "-json";
+            JsonNode json = cache.get(key);
+            //Si no está, la creamos y la guardamos en caché
+            if (json == null) {
+                json = Json.toJson(categories);
+                cache.set(key, json, 60 * 2);
+            }
+            return ok(Json.prettyPrint(json)).withHeader("X-Count", number.toString());
         } else if (request().accepts("application/xml")) {
             return ok(views.xml.categories.render(categories)).withHeader("X-Count", number.toString());
         }
@@ -204,7 +251,7 @@ public class CategoryController extends Controller {
      * @return Devuelve las recetas pertenecientes a la categoría especificada o error
      */
     public Result retrieveRecipesByCategory(Long id) {
-        //TODO Devolver listado?
+
         messages = Http.Context.current().messages();
 
         String pageString = request().getQueryString("page");
@@ -213,18 +260,41 @@ public class CategoryController extends Controller {
         }
         Integer page = Integer.parseInt(pageString);
 
-        PagedList<Recipe> list = Recipe.findRecipesByCategory(id, page);
-        List<Recipe> recipes = list.getList();
-        Integer number = list.getTotalCount();
+        //Comprobamos si la categoría está en caché
+        String key = "category-" + id;
+        Category category = cache.get(key);
+        //Si no la tenemos en caché, la buscamos y la guardamos
+        if (category == null) {
+            category = Category.findByCategoryId(id);
+            cache.set(key, category);
+        }
 
-        //Se obtienen las recetas de la categoría elegida y se muestran al usuario
-        Category c = Category.findByCategoryId(id);
-        if (c == null) {
+        //Si la categoría no existe
+        if (category == null) {
             return Results.notFound(messages.at("category.notExist"));
         }
 
+        //Comprobamos si la lista de recetas de esa categoría está en caché
+        key = "categoryRecipes-" + id + page;
+        PagedList<Recipe> list = cache.get(key);
+        //Si no lo tenemos en caché, lo buscamos y lo guardamos
+        if (list == null) {
+            list = Recipe.findRecipesByCategory(id, page);
+            cache.set(key, list, 60 * 2);
+        }
+        List<Recipe> recipes = list.getList();
+        Integer number = list.getTotalCount();
+
         if (request().accepts("application/json")) {
-            return ok(Json.prettyPrint(Json.toJson(recipes))).withHeader("X-Count", number.toString());
+            //Buscamos la respuesta en caché
+            key = "categoryRecipes-" + id + page + "-json";
+            JsonNode json = cache.get(key);
+            //Si no está, la creamos y la guardamos en caché
+            if (json == null) {
+                json = Json.toJson(recipes);
+                cache.set(key, json, 60 * 2);
+            }
+            return ok(Json.prettyPrint(json)).withHeader("X-Count", number.toString());
         } else if (request().accepts("application/xml")) {
             return ok(views.xml.recipes.render(recipes)).withHeader("X-Count", number.toString());
         }
