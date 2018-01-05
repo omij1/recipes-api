@@ -4,6 +4,7 @@ package controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.ebean.Ebean;
 import io.ebean.PagedList;
+import models.Recipe;
 import models.User;
 import play.cache.SyncCacheApi;
 import play.data.Form;
@@ -165,38 +166,50 @@ public class UserController extends Controller {
 
         messages = Http.Context.current().messages();
 
-        //Comprobamos si el usuario está en caché
-        String key = "userRecipes-" + id;
-        User user = cache.get(key);
-        //Si no lo tenemos en caché, lo buscamos y lo guardamos
-        if (user == null) {
-            user = User.findById(id);
-            cache.set(key, user);
+        //Obtenemos la página
+        String pageString = request().getQueryString("page");
+        if (pageString == null) {
+            return Results.status(409, messages.at("page.null"));
         }
+        Integer page = Integer.parseInt(pageString);
 
+        User user = User.findById(id);
         //Comprobamos si el id introducido corresponde a un usuario
         if (user == null) {
             return Results.notFound(messages.at("user.wrongId"));
         }
 
-        //Miramos si el usuario tiene recetas publicadas
-        if (user.getUserRecipes().size() > 0) {
-            if (request().accepts("application/json")) {
-                //Buscamos la respuesta en caché
-                key = "userRecipes-" + id + "-json";
-                JsonNode json = cache.get(key);
-                //Si no está, la creamos y la guardamos en caché
-                if (json == null) {
-                    json = Json.toJson(user.getUserRecipes());
-                    cache.set(key, json);
-                }
-                return ok(Json.prettyPrint(json));
-            } else if (request().accepts("application/xml")) {
-                return ok(views.xml.recipes.render(user.getUserRecipes()));
-            }
-            return Results.status(415, messages.at("wrongOutputFormat"));
+        //Comprobamos si la lista de recetas de ese usuario está en caché
+        String key = "userRecipes-" + id + page;
+        PagedList<Recipe> list = cache.get(key);
+        //Si no lo tenemos en caché, lo buscamos y lo guardamos
+        if (list == null) {
+            list = Recipe.findRecipesByUser(id, page);
+            cache.set(key, list, 60 * 2);
         }
-        return Results.ok(messages.at("user.listEmpty"));
+        List<Recipe> userRecipesList = list.getList();
+        Integer number = list.getTotalCount();
+
+        //Si la lista está vacía
+        if (userRecipesList.isEmpty()) {
+            return Results.ok(messages.at("user.listEmpty"));
+        }
+
+        //Si la lista contiene elementos
+        if (request().accepts("application/json")) {
+            //Buscamos la respuesta en caché
+            key = "userRecipes-" + id + page + "-json";
+            JsonNode json = cache.get(key);
+            //Si no está, la creamos y la guardamos en caché
+            if (json == null) {
+                json = Json.toJson(userRecipesList);
+                cache.set(key, json);
+            }
+            return ok(Json.prettyPrint(json)).withHeader("X-Count", number.toString());
+        } else if (request().accepts("application/xml")) {
+            return ok(views.xml.recipes.render(userRecipesList)).withHeader("X-Count", number.toString());
+        }
+        return Results.status(415, messages.at("wrongOutputFormat"));
 
     }
 
