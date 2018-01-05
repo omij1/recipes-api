@@ -14,8 +14,7 @@ import javax.validation.ConstraintValidator;
 public class FirstCapitalLetterValidator
         extends Constraints.Validator<String>
         implements ConstraintValidator<FirstCapitalLetter, String> {
-
-    Messages messages = Http.Context.current().messages();
+ 
 
     @Override
     public boolean isValid(String string) {
@@ -35,6 +34,7 @@ public class FirstCapitalLetterValidator
 
     @Override
     public F.Tuple<String, Object[]> getErrorMessageKey() {
+    		Messages messages = Http.Context.current().messages();
         return new F.Tuple<String, Object[]>(messages.at("validation.capitalLetter"),
                 new Object[]{""});
     }

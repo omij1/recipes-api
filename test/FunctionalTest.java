@@ -102,6 +102,7 @@ public class FunctionalTest extends WithApplication {
 
     @Test
     public void testNickMinLength() {
+    	
         Map<String, String> data = new HashMap<String, String>();
         data.put("nick", "Nic");
         data.put("name", "Name");
@@ -120,6 +121,7 @@ public class FunctionalTest extends WithApplication {
 
     @Test
     public void testNickMaxLength() {
+    	
         Map<String, String> data = new HashMap<String, String>();
         data.put("nick", "NickNickNickNick");
         data.put("name", "Name");
@@ -135,6 +137,5 @@ public class FunctionalTest extends WithApplication {
         System.out.println(data.toString());
         assertThat(r.status()).isEqualTo(409);
     }
-
 
 }
