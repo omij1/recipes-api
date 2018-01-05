@@ -159,10 +159,10 @@ public class UserController extends Controller {
     /**
      * Método que permite obtener las recetas creadas por un usuario
      *
-     * @param id Identificador del usuario del que se desean ver sus recetas
+     * @param id_user Identificador del usuario del que se desean ver sus recetas
      * @return Devuelve las recetas creadas por el usuario seleccionado o error
      */
-    public Result retrieveUserRecipes(Long id) {
+    public Result retrieveUserRecipes(Long id_user) {
 
         messages = Http.Context.current().messages();
 
@@ -173,18 +173,26 @@ public class UserController extends Controller {
         }
         Integer page = Integer.parseInt(pageString);
 
-        User user = User.findById(id);
-        //Comprobamos si el id introducido corresponde a un usuario
+        //Comprobamos si el usuario está en caché
+        String key = "user-" + id_user;
+        User user = cache.get(key);
+        //Si no lo tenemos en caché, lo buscamos y lo guardamos
+        if (user == null) {
+            user = User.findById(id_user);
+            cache.set(key, user);
+        }
+
+        //Si el usuario no existe, se devuelve un error
         if (user == null) {
             return Results.notFound(messages.at("user.wrongId"));
         }
 
         //Comprobamos si la lista de recetas de ese usuario está en caché
-        String key = "userRecipes-" + id + page;
+        key = "userRecipes-" + id_user + page;
         PagedList<Recipe> list = cache.get(key);
         //Si no lo tenemos en caché, lo buscamos y lo guardamos
         if (list == null) {
-            list = Recipe.findRecipesByUser(id, page);
+            list = Recipe.findRecipesByUser(id_user, page);
             cache.set(key, list, 60 * 2);
         }
         List<Recipe> userRecipesList = list.getList();
@@ -198,12 +206,12 @@ public class UserController extends Controller {
         //Si la lista contiene elementos
         if (request().accepts("application/json")) {
             //Buscamos la respuesta en caché
-            key = "userRecipes-" + id + page + "-json";
+            key = "userRecipes-" + id_user + page + "-json";
             JsonNode json = cache.get(key);
             //Si no está, la creamos y la guardamos en caché
             if (json == null) {
                 json = Json.toJson(userRecipesList);
-                cache.set(key, json);
+                cache.set(key, json, 60 * 2);
             }
             return ok(Json.prettyPrint(json)).withHeader("X-Count", number.toString());
         } else if (request().accepts("application/xml")) {
