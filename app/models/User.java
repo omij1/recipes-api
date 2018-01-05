@@ -143,6 +143,7 @@ public class User extends BaseModel {
      * Búsqueda por nombre
      *
      * @param name Nombre del usuario
+     * @param page Página del listado a mostrar
      * @return <p>Devuelve el usuario o usuarios con el nombre indicado</p>
      */
     public static PagedList<User> findByName(String name, Integer page) {
@@ -155,6 +156,7 @@ public class User extends BaseModel {
      * Búsqueda por apellido
      *
      * @param surname Apellido del usuario
+     * @param page Página del listado a mostrar
      * @return <p>Devuelve el usuario o usuarios con el apellido indicado</p>
      */
     public static PagedList<User> findBySurname(String surname, Integer page) {
@@ -168,6 +170,7 @@ public class User extends BaseModel {
      *
      * @param name    Nombre del usuario
      * @param surname Apellido del usuario
+     * @param page Página del listado a mostrar
      * @return <p>Devuelve el usuario o usuarios con el nombre y apellido indicados</p>
      */
     public static PagedList<User> findByFullName(String name, String surname, Integer page) {
@@ -180,6 +183,7 @@ public class User extends BaseModel {
      * Búsqueda por ciudad
      *
      * @param city Ciudad del usuario
+     * @param page Página del listado a mostrar
      * @return <p>Devuelve el usuario o usuarios que vivan en la ciudad indicada</p>
      */
     public static PagedList<User> findByCity(String city, Integer page) {

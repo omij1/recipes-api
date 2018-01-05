@@ -63,7 +63,7 @@ public class Ingredient extends BaseModel {
 	 * Método que comprueba si un ingrediente ya existe
 	 * @param name Nombre del ingrediente
 	 * @param units Unidades del ingrediente
-	 * @return UN objeto con la instancia del ingrediente
+	 * @return Un objeto con la instancia del ingrediente
 	 */
 	public static Ingredient findIngredientByNameAndUnit(String name, String units) {
 		return find.query().where().isNotNull("ingredientName").eq("ingredientName", name)

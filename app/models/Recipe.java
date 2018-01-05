@@ -81,6 +81,7 @@ public class Recipe extends BaseModel {
     @ManyToOne
     @JsonIgnore
     public User user;
+    
 
     /**
      * Constructor de la clase Recipe
@@ -201,7 +202,7 @@ public class Recipe extends BaseModel {
 
     /**
      * Método que comprueba si los ingredientes de la receta ya existen en la base de datos para evitar la creación de tuplas repetidas con la
-     * misma información. Además transforma los ingredientes en minúsculas.
+     * misma información. Además transforma las unidades de los ingredientes en minúsculas.
      *
      * @param i Lista con los ingredientes de la receta
      */
@@ -209,6 +210,7 @@ public class Recipe extends BaseModel {
 
         Ingredient ing;
         for (int j = 0; j < i.size(); j++) {
+        	
             i.get(j).setIngredientName(i.get(j).getIngredientName());
             i.get(j).setUnits(i.get(j).getUnits().toLowerCase());
             ing = Ingredient.findIngredientByNameAndUnit(i.get(j).getIngredientName(), i.get(j).getUnits());
@@ -230,6 +232,7 @@ public class Recipe extends BaseModel {
         Ingredient ing;
         this.ingredients.clear();
         for (int j = 0; j < i.size(); j++) {
+        	
             i.get(j).setIngredientName(i.get(j).getIngredientName());
             i.get(j).setUnits(i.get(j).getUnits().toLowerCase());
             ing = Ingredient.findIngredientByNameAndUnit(i.get(j).getIngredientName(), i.get(j).getUnits());
