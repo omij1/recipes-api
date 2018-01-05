@@ -45,7 +45,7 @@ public class RecipeController extends Controller {
 
 
     /**
-     * Método que permite crear una nueva receta. Corresponde con un POST
+     * Método que permite crear una nueva receta.
      *
      * @return Indica si la receta se creó satisfactoriamente o si por el contrario hubo algún error
      */
@@ -86,7 +86,7 @@ public class RecipeController extends Controller {
     }
 
     /**
-     * Método que permite obtener la información de una receta. Corresponde con un GET.
+     * Método que permite obtener la información de una receta.
      *
      * @param id Id de la receta que se desea visualizar
      * @return Respuesta que muestra la receta o error si se produjo alguno
@@ -128,7 +128,7 @@ public class RecipeController extends Controller {
     }
 
     /**
-     * Método que permite actualizar la información de una receta. Corresponde con un PUT.
+     * Método que permite actualizar la información de una receta.
      *
      * @param id Id de la receta que se desea actualizar
      * @return Respuesta que indica el resultado de la operación
@@ -199,7 +199,7 @@ public class RecipeController extends Controller {
     }
 
     /**
-     * Método que permite eliminar una receta. Corresponde con un DELETE.
+     * Método que permite eliminar una receta.
      *
      * @param id Id de la receta que se desea eliminar
      * @return Respuesta que indica si la receta se borró o si se produjo un error
@@ -236,7 +236,7 @@ public class RecipeController extends Controller {
     }
 
     /**
-     * Método que permite visualizar las recetas existentes sin tener en cuenta su categoría. Corresponde con un GET.
+     * Método que permite visualizar las recetas existentes sin tener en cuenta su categoría.
      *
      * @return Respuesta que muestra todas las recetas existentes
      */

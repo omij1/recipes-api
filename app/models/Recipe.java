@@ -193,7 +193,7 @@ public class Recipe extends BaseModel {
      * Método que comprueba si los ingredientes de la receta ya existen en la base de datos para evitar la creación de tuplas repetidas con la
      * misma información. Además transforma los ingredientes en minúsculas.
      *
-     * @param i Los ingredientes de la receta
+     * @param i Lista con los ingredientes de la receta
      */
     public void checkIngredients(List<Ingredient> i) {
 

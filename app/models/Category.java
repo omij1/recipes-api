@@ -47,8 +47,7 @@ public class Category extends BaseModel{
 
 	/**
 	 * Constructor de la clase Category
-	 * @param id_categoria Identificador de la categoría de recetas
-	 * @param nombre_categoria Nombre de la categoría de recetas
+	 * @param categoryName Nombre de la categoría de recetas
 	 */
 	public Category(@NotBlank String categoryName) {
 		
@@ -68,7 +67,7 @@ public class Category extends BaseModel{
 	
 	/**
 	 * Método que busca una categoría basándose en su nombre
-	 * @param nombreCategoria Nombre de la categoría
+	 * @param categoryName Nombre de la categoría
 	 * @return Un objeto con los datos de la categoría
 	 */
 	public static Category findByCategoryName(String categoryName) {
