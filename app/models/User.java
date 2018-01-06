@@ -72,6 +72,7 @@ public class User extends BaseModel {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     public List<Recipe> userRecipes = new ArrayList<>();
 
+    
 
     /**
      * Constructor del modelo User
