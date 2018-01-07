@@ -1,4 +1,4 @@
-name := """play-java-starter-example"""
+name := """easy-recipes-API"""
 
 version := "1.0-SNAPSHOT"
 
@@ -10,6 +10,7 @@ libraryDependencies += guice
 
 // Test Database
 libraryDependencies += "com.h2database" % "h2" % "1.4.194"
+//libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.36"
 
 // Testing libraries for dealing with CompletionStage...
 libraryDependencies += "org.assertj" % "assertj-core" % "3.6.2" % Test
