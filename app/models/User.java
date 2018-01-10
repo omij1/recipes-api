@@ -141,6 +141,19 @@ public class User extends BaseModel {
     }
 
     /**
+     * Búsqueda por privilegios de Administrador
+     *
+     * @param page Página del listado a mostrar
+     * @return <p>Devuelve el usuario o usuarios con privilegios de Administrador</p>
+     */
+    public static PagedList<User> findByAdmin(Integer page) {
+
+            return find.query().where().isNotNull("admin").eq("admin", true).setMaxRows(10)
+                    .setFirstRow(10 * page).findPagedList();
+
+    }
+
+    /**
      * Búsqueda por nombre
      *
      * @param name Nombre del usuario
