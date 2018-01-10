@@ -48,6 +48,9 @@ user.wrongCity = There is no user from that city
 user.authorization = You have no authorization to do this action
 user.listEmpty = The list is empty
 user.notExists = The user does not exist
+user.setAdmin = The user is set to Administrator now
+user.setNoAdmin = The user is no longer an Administrator
+user.adminError = There must be at least one Administrator
 
 
 apiKey.null = To do this action, you must enter the correct apikey in the "Authorization" header

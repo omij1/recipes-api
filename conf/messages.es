@@ -47,6 +47,11 @@ user.wrongCity = No existe ningún usuario de esa ciudad
 user.authorization = No tienes autorización para realizar esta acción
 user.listEmpty = La lista está vacía
 user.notExists = El usuario no existe
+user.setAdmin = El usuario está configurado como Administrador
+user.setNoAdmin = El usuario ya no es Administrador
+user.adminError = Tiene que haber al menos un Administrador
+
+
 
 
 
