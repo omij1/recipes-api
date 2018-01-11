@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.ebean.Ebean;
 import io.ebean.Finder;
 import io.ebean.PagedList;
+import io.ebean.annotation.DbArray;
 import play.data.validation.Constraints.MaxLength;
 import play.data.validation.Constraints.Required;
 
@@ -50,8 +51,10 @@ public class Recipe extends BaseModel {
     /**
      * Pasos para elaborar la receta
      */
-    @NotBlank(message = "validation.blank")
-    String steps;
+    @Required(message = "validation.blank")
+    @Valid
+    @DbArray
+    List<String> steps = new ArrayList<String>();
 
     /**
      * Unidad de tiempo necesario para elaborar la receta. Pueden ser minutos u horas
@@ -93,7 +96,7 @@ public class Recipe extends BaseModel {
      * @param difficulty  Dificultad de la receta
      * @param category    Categoría de la receta
      */
-    public Recipe(@NotBlank String title, @NotBlank List<Ingredient> ingredients, @NotBlank String steps, @NotBlank String time, @NotBlank Difficulty difficulty,
+    public Recipe(@NotBlank String title, @NotBlank List<Ingredient> ingredients, @Required List<String> steps, @NotBlank String time, @NotBlank Difficulty difficulty,
                   Category category) {
 
         super();
@@ -285,7 +288,7 @@ public class Recipe extends BaseModel {
      *
      * @return Los pasos para elaborar la receta
      */
-    public String getSteps() {
+    public List<String> getSteps() {
         return steps;
     }
 
@@ -294,7 +297,7 @@ public class Recipe extends BaseModel {
      *
      * @param steps Pasos para elaborar la receta
      */
-    public void setSteps(String steps) {
+    public void setSteps(List<String> steps) {
         this.steps = steps;
     }
 
