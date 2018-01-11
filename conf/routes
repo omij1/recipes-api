@@ -15,6 +15,7 @@ GET           /user/nick/:nick                      controllers.UserController.r
 GET           /user/:id_user/recipes                controllers.UserController.retrieveUserRecipes(id_user: Long)
 
 GET           /users                                controllers.UserController.retrieveUserCollection()
+GET           /users/admin                          controllers.UserController.retrieveAdmin()
 GET           /users/name/:name                     controllers.UserController.retrieveUserByName(name: String)
 GET           /users/surname/:surname               controllers.UserController.retrieveUserBySurname(surname: String)
 GET           /users/fullname/:name/:surname        controllers.UserController.retrieveUserByFullName(name: String, surname: String)

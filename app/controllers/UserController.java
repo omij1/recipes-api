@@ -628,4 +628,58 @@ public class UserController extends Controller {
 
     }
 
+
+
+    /**
+     * Método para obtener un listado de los administradores
+     *
+     * @return Indica si se ha realizado correctamente o no la operación
+     */
+    public Result retrieveAdmin() {
+
+        messages = Http.Context.current().messages();
+
+        //Obtenemos la página
+        String pageString = request().getQueryString("page");
+        if (pageString == null) {
+            return Results.status(409, new ErrorObject("5", messages.at("page.null")).convertToJson()).as("application/json");
+        }
+        Integer page = Integer.parseInt(pageString);
+
+        //Comprobamos si la lista está en caché
+        String key = "adminList-" + page;
+        PagedList<User> list = cache.get(key);
+        //Si no lo tenemos en caché, lo buscamos y lo guardamos
+        if (list == null) {
+            list = User.findByAdmin(page);
+            cache.set(key, list, 60 * 2);
+        }
+        List<User> usersList = list.getList();
+        Integer number = list.getTotalCount();
+
+        //Si la lista está vacía
+        if (usersList.isEmpty()) {
+            return Results.notFound(messages.at("user.listEmpty"));
+        }
+
+        //Si la lista tiene usuarios
+        if (request().accepts("application/xml")) {
+            return ok(views.xml.users.render(usersList)).withHeader("X-Count", number.toString());
+        } else if (request().accepts("application/json")) {
+            //Buscamos la respuesta en caché
+            key = "adminList-" + page + "-json";
+            JsonNode json = cache.get(key);
+            //Si no está, la creamos y la guardamos en caché
+            if (json == null) {
+                json = Json.toJson(usersList);
+                cache.set(key, json, 60 * 2);
+            }
+            return ok(Json.prettyPrint(json)).withHeader("X-Count", number.toString());
+        }
+        return Results.status(415, messages.at("wrongOutputFormat"));
+
+    }
+
+
+
 }
