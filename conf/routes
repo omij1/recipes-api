@@ -42,6 +42,9 @@ GET           /recipes                              controllers.RecipeController
 # Buscar una receta por su título
 GET           /recipes/search                       controllers.RecipeController.searchRecipe()
 
+# Obtener las recetas de una categoría
+GET           /recipes/category/:id                 controllers.RecipeController.retrieveRecipesByCategory(id: Long)
+
 # Rutas de categoría
 
 POST          /category                             controllers.CategoryController.createCategory()
@@ -51,6 +54,3 @@ DELETE        /category/:id                         controllers.CategoryControll
 
 # Obtener las categorías de recetas ordenadas alfabéticamente
 GET           /categories                           controllers.CategoryController.retrieveCategoryCollection()
-
-# Obtener las recetas de una categoría
-GET           /category/:id/recipes                 controllers.CategoryController.retrieveRecipesByCategory(id: Long)

@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import io.ebean.PagedList;
+import models.Category;
 import models.Recipe;
 import models.User;
 import play.cache.SyncCacheApi;
@@ -332,6 +333,69 @@ public class RecipeController extends Controller {
             return ok(views.xml._recipe.render(recipe));
         }
 
+        return Results.status(415, messages.at("wrongOutputFormat"));
+
+    }
+    
+    /**
+     * Método que permite visualizar todas las recetas pertenecientes a una categoría.
+     *
+     * @param id Id de la categoría de recetas que se quiere visualizar
+     * @return Devuelve las recetas pertenecientes a la categoría especificada o error
+     */
+    public Result retrieveRecipesByCategory(Long id) {
+
+        messages = Http.Context.current().messages();
+
+        String pageString = request().getQueryString("page");
+        if (pageString == null) {
+            return Results.status(409, new ErrorObject("5", messages.at("page.null")).convertToJson()).as("application/json");
+        }
+        Integer page = Integer.parseInt(pageString);
+
+        //Comprobamos si la categoría está en caché
+        String key = "category-" + id;
+        Category category = cache.get(key);
+        //Si no la tenemos en caché, la buscamos y la guardamos
+        if (category == null) {
+            category = Category.findByCategoryId(id);
+            cache.set(key, category);
+        }
+
+        //Si la categoría no existe
+        if (category == null) {
+            return Results.notFound(messages.at("category.notExist"));
+        }
+
+        //Comprobamos si la lista de recetas de esa categoría está en caché
+        key = "categoryRecipes-" + id + page;
+        PagedList<Recipe> list = cache.get(key);
+        //Si no lo tenemos en caché, lo buscamos y lo guardamos
+        if (list == null) {
+            list = Recipe.findRecipesByCategory(id, page);
+            cache.set(key, list, 60 * 2);
+        }
+        List<Recipe> recipes = list.getList();
+        Integer number = list.getTotalCount();
+
+        //Si no hay recetas de esa categoría
+        if(recipes.isEmpty()) {
+            return Results.notFound(messages.at("recipe.empty"));
+        }
+
+        if (request().accepts("application/json")) {
+            //Buscamos la respuesta en caché
+            key = "categoryRecipes-" + id + page + "-json";
+            JsonNode json = cache.get(key);
+            //Si no está, la creamos y la guardamos en caché
+            if (json == null) {
+                json = Json.toJson(recipes);
+                cache.set(key, json, 60 * 2);
+            }
+            return ok(Json.prettyPrint(json)).withHeader("X-Count", number.toString());
+        } else if (request().accepts("application/xml")) {
+            return ok(views.xml.recipes.render(recipes)).withHeader("X-Count", number.toString());
+        }
         return Results.status(415, messages.at("wrongOutputFormat"));
 
     }
