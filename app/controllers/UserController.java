@@ -450,6 +450,7 @@ public class UserController extends Controller {
 
         //Objeto User donde se guarda la información de la petición
         User updateUser = f.get();
+        updateUser.setAdmin(false);
 
         //User correspondiente al id enviado en la petición
         User user = User.findById(id_user);
@@ -479,6 +480,64 @@ public class UserController extends Controller {
         return Results.status(401, messages.at("user.authorization"));
 
     }
+
+    /**
+     * Método para que un administrador pueda dar o quitar privilegios de administrador a otro usuario
+     *
+     * @param id_user Id del usuario al que se le quieren dar o quitar privilegios
+     * @return Indica si se ha realizado correctamente o no la operación
+     */
+    @Security.Authenticated(Authorization.class)
+    public Result toggleAdmin(Long id_user) {
+
+        messages = Http.Context.current().messages();
+
+        //Obtenemos el usuario de la cabecera Authorization
+        User loggedUser = (User) Http.Context.current().args.get("loggedUser");
+
+        //Obtenemos el usuario que va a ser o dejar de ser Administrador
+        User userToAdmin = User.findById(id_user);
+        if (userToAdmin == null) {
+            return Results.notFound(messages.at("user.wrongId"));
+        }
+
+        if (loggedUser.getAdmin()) {  //Si el usuario que envía la petición es el Administrador
+
+            //Si ya es administrador
+            if (userToAdmin.getAdmin()) {
+                //Si sólo hay un Administrador no se puede eliminar
+                if (User.findByAdmin(0).getTotalCount() > 1) {
+                    Ebean.beginTransaction();
+                    try {
+                        userToAdmin.setAdmin(false);     //Deja de ser Administrador
+                        userToAdmin.update();           //Se guarda en la base de datos
+                        Ebean.commitTransaction();
+                    } finally {
+                        Ebean.endTransaction();
+                    }
+                    return ok(messages.at("user.setNoAdmin"));
+                }
+                return Results.status(401, messages.at("user.adminError"));
+            }
+
+            //Si no es administrador
+            if (!userToAdmin.getAdmin()) {
+                Ebean.beginTransaction();
+                try {
+                    userToAdmin.setAdmin(true);     //Pasa a ser administrador
+                    userToAdmin.update();           //Se guarda en la base de datos
+                    Ebean.commitTransaction();
+                } finally {
+                    Ebean.endTransaction();
+                }
+                return ok(messages.at("user.setAdmin"));
+            }
+
+        }
+        return Results.status(401, messages.at("user.authorization"));
+
+    }
+
 
     /**
      * Método para borrar un usuario
@@ -534,7 +593,7 @@ public class UserController extends Controller {
         //Obtenemos la página
         String pageString = request().getQueryString("page");
         if (pageString == null) {
-            return Results.status(409,new ErrorObject("5", messages.at("page.null")).convertToJson()).as("application/json");
+            return Results.status(409, new ErrorObject("5", messages.at("page.null")).convertToJson()).as("application/json");
         }
         Integer page = Integer.parseInt(pageString);
 
@@ -571,5 +630,59 @@ public class UserController extends Controller {
         return Results.status(415, messages.at("wrongOutputFormat"));
 
     }
+
+
+
+    /**
+     * Método para obtener un listado de los administradores
+     *
+     * @return Indica si se ha realizado correctamente o no la operación
+     */
+    public Result retrieveAdmin() {
+
+        messages = Http.Context.current().messages();
+
+        //Obtenemos la página
+        String pageString = request().getQueryString("page");
+        if (pageString == null) {
+            return Results.status(409, new ErrorObject("5", messages.at("page.null")).convertToJson()).as("application/json");
+        }
+        Integer page = Integer.parseInt(pageString);
+
+        //Comprobamos si la lista está en caché
+        String key = "adminList-" + page;
+        PagedList<User> list = cache.get(key);
+        //Si no lo tenemos en caché, lo buscamos y lo guardamos
+        if (list == null) {
+            list = User.findByAdmin(page);
+            cache.set(key, list, 60 * 2);
+        }
+        List<User> usersList = list.getList();
+        Integer number = list.getTotalCount();
+
+        //Si la lista está vacía
+        if (usersList.isEmpty()) {
+            return Results.notFound(messages.at("user.listEmpty"));
+        }
+
+        //Si la lista tiene usuarios
+        if (request().accepts("application/xml")) {
+            return ok(views.xml.users.render(usersList)).withHeader("X-Count", number.toString());
+        } else if (request().accepts("application/json")) {
+            //Buscamos la respuesta en caché
+            key = "adminList-" + page + "-json";
+            JsonNode json = cache.get(key);
+            //Si no está, la creamos y la guardamos en caché
+            if (json == null) {
+                json = Json.toJson(usersList);
+                cache.set(key, json, 60 * 2);
+            }
+            return ok(Json.prettyPrint(json)).withHeader("X-Count", number.toString());
+        }
+        return Results.status(415, messages.at("wrongOutputFormat"));
+
+    }
+
+
 
 }

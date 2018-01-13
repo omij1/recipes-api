@@ -9,15 +9,18 @@
 POST          /user                                 controllers.UserController.createUser
 GET           /user/:id_user                        controllers.UserController.retrieveUser(id_user: Long)
 PUT           /user/:id_user                        controllers.UserController.updateUser(id_user: Long)
+PATCH         /user/admin/:id_user                  controllers.UserController.toggleAdmin(id_user: Long)
 DELETE        /user/:id_user                        controllers.UserController.deleteUser(id_user: Long)
 GET           /user/nick/:nick                      controllers.UserController.retrieveUserByNick(nick: String)
 GET           /user/:id_user/recipes                controllers.UserController.retrieveUserRecipes(id_user: Long)
 
 GET           /users                                controllers.UserController.retrieveUserCollection()
+GET           /users/admin                          controllers.UserController.retrieveAdmin()
 GET           /users/name/:name                     controllers.UserController.retrieveUserByName(name: String)
 GET           /users/surname/:surname               controllers.UserController.retrieveUserBySurname(surname: String)
 GET           /users/fullname/:name/:surname        controllers.UserController.retrieveUserByFullName(name: String, surname: String)
 GET           /users/city/:city                     controllers.UserController.retrieveUserByCity(city: String)
+
 
 # An example controller showing a sample home page
 GET           /                                     controllers.HomeController.index
