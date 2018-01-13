@@ -36,6 +36,7 @@ validation.capitalLetter = The first letter must be capital letter and the rest 
 
 user.created = User created
 user.alreadyExist = User already exists
+user.nickAlreadyExist = Nick already exists
 user.wrongId = There is no user with that identifier
 user.updated = User updated
 user.deleted = User deleted

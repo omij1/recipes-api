@@ -35,6 +35,7 @@ validation.capitalLetter = La primera letra debe ser mayúscula y el resto minú
 
 user.created = Usuario creado correctamente
 user.alreadyExist = Ya existe un usuario con ese nombre
+user.nickAlreadyExist = Ya existe ese nick
 user.wrongId = No existe ningún usuario con ese identificador
 user.updated = Usuario actualizado correctamente
 user.deleted = Usuario eliminado satisfactoriamente

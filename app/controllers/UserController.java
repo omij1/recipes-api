@@ -452,6 +452,11 @@ public class UserController extends Controller {
         User updateUser = f.get();
         updateUser.setAdmin(false);
 
+        //Comprobamos que si actualiza el nick, no coja uno repetido
+        if (User.findByNick(updateUser.getNick())!=null) {
+            return Results.status(409, new ErrorObject("6", messages.at("user.nickAlreadyExist")).convertToJson()).as("application/json");
+        }
+
         //User correspondiente al id enviado en la petición
         User user = User.findById(id_user);
         if (user == null) {
