@@ -30,7 +30,6 @@ public class FunctionalTest extends WithApplication {
                 .uri("/category/1")
                 .header("Accept", "application/heml");
         Result r = Helpers.route(app, req);
-        System.out.println(r.status());
         assertThat(r.status()).isEqualTo(415);
     }
 
