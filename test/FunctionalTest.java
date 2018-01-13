@@ -133,7 +133,6 @@ public class FunctionalTest extends WithApplication {
                 .header("accept", "json")
                 .bodyForm(data);
         Result r = Helpers.route(app, req);
-        System.out.println(data.toString());
         assertThat(r.status()).isEqualTo(409);
     }
 

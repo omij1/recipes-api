@@ -60,9 +60,12 @@ public class UserController extends Controller {
 
         //Validación y guardado en caso de que el nick no exista. En caso contrario se muestra el error correspondiente
         if (user.checkAndSave()) {
+        	
             if (request().accepts("application/xml")) {
                 return Results.created(views.xml.apiKey.render(user));
-            } //Si acepta json, no indica el formato o el formato indicado es incorrecto, se envía en json
+            } 
+            
+            //Si acepta json, no indica el formato o el formato indicado es incorrecto, se envía en json
             ObjectNode apiKey = Json.newObject();
             apiKey.put("apiKey", user.getApiKey().getKey());
             return Results.created(Json.prettyPrint(apiKey));
