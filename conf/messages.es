@@ -19,6 +19,7 @@ recipe.wrongId = No existe ninguna receta con ese identificador
 recipe.updated = Receta actualizada correctamente
 recipe.deleted = Receta eliminada satisfactoriamente
 recipe.wrongName = No existe ninguna receta con ese nombre
+recipe.titleAlreadyExists = Ya existe una receta con ese título
 recipe.emptyName = Debe introducir el nombre de una receta
 recipe.empty = No existen recetas pertenecientes a esa categoría
 recipe.emptyList = La lista de recetas está vacía

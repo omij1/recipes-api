@@ -13,7 +13,8 @@ import play.libs.Json;
  *   4 - Categoría de recetas ya existente
  *   5 - No se ha introducido número de página
  *   6 - Se desea modificar el nick pero ya existe un usuario con ese nick
- *   
+ *   7 - Se desea modificar el título de una receta pero ya existe una receta con ese título
+ *
  * @author MIMO
  *
  */

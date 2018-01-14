@@ -158,6 +158,10 @@ public class RecipeController extends Controller {
         //Comprobamos que coinciden el creador y el que la quiere modificar
         if (user.getId() == loggedUser.getId() || loggedUser.getAdmin()) {
             Form<Recipe> f = formFactory.form(Recipe.class).bindFromRequest();
+            //Comprobamos que si actualiza el título, no coja uno repetido
+            if (Recipe.findByName(f.get().getTitle().toUpperCase())!=null) {
+                return Results.status(409, new ErrorObject("7", messages.at("recipe.titleAlreadyExists")).convertToJson()).as("application/json");
+            }
             if (f.hasErrors()) {
                 return Results.ok(f.errorsAsJson());
             }
@@ -180,13 +184,10 @@ public class RecipeController extends Controller {
     private boolean updateFields(Recipe r, Form<Recipe> f) {
 
         r.setTitle(f.get().getTitle().toUpperCase());
-
         r.updateRecipeIngredients(f.get().getIngredients());
-
         r.setSteps(f.get().getSteps());
         r.setTime(f.get().getTime());
         r.setDifficulty(f.get().getDifficulty());
-
         r.setCategory(f.get().getCategory());
         if (!r.checkCategory()) {
             return false;
