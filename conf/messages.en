@@ -5,6 +5,7 @@ emptyParams = Required parameters
 category.wrongFormat = The input category does not have the correct format
 category.created = Category created
 category.alreadyExist = Category already exist
+category.titleAlreadyExists = Category title already exists
 category.notExist = The input category does not exist
 category.updated = Category updated
 category.deleted = Category deleted

@@ -12,8 +12,9 @@ import play.libs.Json;
  *   3 - Se desea crear un nuevo usuario pero los datos introducidos coinciden con un usuario ya existente
  *   4 - Categoría de recetas ya existente
  *   5 - No se ha introducido número de página
- *   6 - Se desea modificar el nick pero ya existe un usuario con ese nick
- *   7 - Se desea modificar el título de una receta pero ya existe una receta con ese título
+ *   6 - Se desea modificar el nick de un usuario pero ya existe uno con ese nick
+ *   7 - Se desea modificar el título de una receta pero ya existe una con ese título
+ *   8 - Se desea modificar el título de una categoría pero ya existe una con ese título
  *
  * @author MIMO
  *

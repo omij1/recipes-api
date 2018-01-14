@@ -5,6 +5,7 @@ emptyParams = Parámetros obligatorios
 category.wrongFormat = La categoría introducida no tiene el formato correcto
 category.created = Categoría creada correctamente
 category.alreadyExist = Categoría ya existente
+category.titleAlreadyExists = Ya existe una categoría con ese título
 category.notExist = La categoría introducida no existe
 category.updated = Categoría actualizada correctamente
 category.deleted = Categoría eliminada correctamente
