@@ -145,6 +145,13 @@ public class CategoryController extends Controller {
 
         //Objeto Category donde se guardan los datos de la petición
         Category updateCategory = f.get();
+
+        //Comprobamos que si actualiza el título, no coja uno repetido
+        if (Category.findByCategoryName(updateCategory.getCategoryName().toUpperCase())!=null) {
+            return Results.status(409, new ErrorObject("8", messages.at("category.titleAlreadyExists")).convertToJson()).as("application/json");
+        }
+
+        //Obtenemos mediante el id pasado como parámetro la categoría que se quiere modificar
         Category c = Category.findByCategoryId(id);
 
         //Se busca la categoría que se quiere actualizar y se actualiza

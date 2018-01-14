@@ -2,26 +2,6 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-#
-# User resource
-#
-
-POST          /user                                 controllers.UserController.createUser
-GET           /user/:id_user                        controllers.UserController.retrieveUser(id_user: Long)
-PUT           /user/:id_user                        controllers.UserController.updateUser(id_user: Long)
-PATCH         /user/admin/:id_user                  controllers.UserController.toggleAdmin(id_user: Long)
-DELETE        /user/:id_user                        controllers.UserController.deleteUser(id_user: Long)
-GET           /user/nick/:nick                      controllers.UserController.retrieveUserByNick(nick: String)
-GET           /user/:id_user/recipes                controllers.UserController.retrieveUserRecipes(id_user: Long)
-
-GET           /users                                controllers.UserController.retrieveUserCollection()
-GET           /users/admin                          controllers.UserController.retrieveAdmin()
-GET           /users/name/:name                     controllers.UserController.retrieveUserByName(name: String)
-GET           /users/surname/:surname               controllers.UserController.retrieveUserBySurname(surname: String)
-GET           /users/fullname/:name/:surname        controllers.UserController.retrieveUserByFullName(name: String, surname: String)
-GET           /users/city/:city                     controllers.UserController.retrieveUserByCity(city: String)
-
-
 # An example controller showing a sample home page
 GET           /                                     controllers.HomeController.index
 # An example controller showing how to use dependency injection
@@ -32,6 +12,38 @@ GET           /message                              controllers.AsyncController.
 # Map static resources from the /public folder to the /assets URL path
 GET           /assets/*file                         controllers.Assets.versioned(path="/public", file: Asset)
 
+
+#
+# User resource
+#
+
+POST          /user                                 controllers.UserController.createUser
+GET           /user/:id_user                        controllers.UserController.retrieveUser(id_user: Long)
+PUT           /user/:id_user                        controllers.UserController.updateUser(id_user: Long)
+PATCH         /user/admin/:id_user                  controllers.UserController.toggleAdmin(id_user: Long)
+DELETE        /user/:id_user                        controllers.UserController.deleteUser(id_user: Long)
+GET           /user/nick/:nick                      controllers.UserController.retrieveUserByNick(nick: String)
+
+# Get users list
+GET           /users                                controllers.UserController.retrieveUserCollection()
+
+# Get admin users list
+GET           /users/admin                          controllers.UserController.retrieveAdmin()
+
+# Get users list by name
+GET           /users/name/:name                     controllers.UserController.retrieveUserByName(name: String)
+
+# Get users list by surname
+GET           /users/surname/:surname               controllers.UserController.retrieveUserBySurname(surname: String)
+
+# Get users list by full name
+GET           /users/fullname/:name/:surname        controllers.UserController.retrieveUserByFullName(name: String, surname: String)
+
+# Get users list by city
+GET           /users/city/:city                     controllers.UserController.retrieveUserByCity(city: String)
+
+
+
 #
 # Recipe resource
 #
@@ -41,23 +53,19 @@ GET           /recipe/:id                           controllers.RecipeController
 PUT           /recipe/:id                           controllers.RecipeController.updateRecipe(id: Long)
 DELETE        /recipe/:id                           controllers.RecipeController.deleteRecipe(id: Long)
 
-#
 # See all existing recipes in the API alphabetically
-#
-
 GET           /recipes                              controllers.RecipeController.retrieveRecipeCollection()
 
-#
-# Search recipe by title
-#
-
+# Search recipes by title
 GET           /recipes/search                       controllers.RecipeController.searchRecipe()
 
-#
-# Get the recipes of a category
-#
+# Get user's recipes
+GET           /recipes/user/:id_user                controllers.RecipeController.retrieveUserRecipes(id_user: Long)
 
+# Get category's recipes
 GET           /recipes/category/:id                 controllers.RecipeController.retrieveRecipesByCategory(id: Long)
+
+
 
 #
 # Category resource
@@ -68,8 +76,5 @@ GET           /category/:id                         controllers.CategoryControll
 PUT           /category/:id                         controllers.CategoryController.updateCategory(id: Long)
 DELETE        /category/:id                         controllers.CategoryController.deleteCategory(id: Long)
 
-#
 # Get recipes categories alphabetically
-#
-
 GET           /categories                           controllers.CategoryController.retrieveCategoryCollection()
