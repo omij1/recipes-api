@@ -32,28 +32,44 @@ GET           /message                              controllers.AsyncController.
 # Map static resources from the /public folder to the /assets URL path
 GET           /assets/*file                         controllers.Assets.versioned(path="/public", file: Asset)
 
-# Rutas de recetas
+#
+# Recipe resource
+#
 
 POST          /recipe                               controllers.RecipeController.createRecipe()
 GET           /recipe/:id                           controllers.RecipeController.retrieveRecipe(id: Long)
 PUT           /recipe/:id                           controllers.RecipeController.updateRecipe(id: Long)
 DELETE        /recipe/:id                           controllers.RecipeController.deleteRecipe(id: Long)
 
-# Ver todas las recetas existentes en el API ordenadas alfabéticamente
+#
+# See all existing recipes in the API alphabetically
+#
+
 GET           /recipes                              controllers.RecipeController.retrieveRecipeCollection()
 
-# Buscar una receta por su título
+#
+# Search recipe by title
+#
+
 GET           /recipes/search                       controllers.RecipeController.searchRecipe()
 
-# Obtener las recetas de una categoría
+#
+# Get the recipes of a category
+#
+
 GET           /recipes/category/:id                 controllers.RecipeController.retrieveRecipesByCategory(id: Long)
 
-# Rutas de categoría
+#
+# Category resource
+#
 
 POST          /category                             controllers.CategoryController.createCategory()
 GET           /category/:id                         controllers.CategoryController.retrieveCategory(id: Long)
 PUT           /category/:id                         controllers.CategoryController.updateCategory(id: Long)
 DELETE        /category/:id                         controllers.CategoryController.deleteCategory(id: Long)
 
-# Obtener las categorías de recetas ordenadas alfabéticamente
+#
+# Get recipes categories alphabetically
+#
+
 GET           /categories                           controllers.CategoryController.retrieveCategoryCollection()
