@@ -12,7 +12,6 @@ PUT           /user/:id_user                        controllers.UserController.u
 PATCH         /user/admin/:id_user                  controllers.UserController.toggleAdmin(id_user: Long)
 DELETE        /user/:id_user                        controllers.UserController.deleteUser(id_user: Long)
 GET           /user/nick/:nick                      controllers.UserController.retrieveUserByNick(nick: String)
-GET           /user/:id_user/recipes                controllers.UserController.retrieveUserRecipes(id_user: Long)
 
 GET           /users                                controllers.UserController.retrieveUserCollection()
 GET           /users/admin                          controllers.UserController.retrieveAdmin()
@@ -44,6 +43,9 @@ GET           /recipes                              controllers.RecipeController
 
 # Buscar una receta por su título
 GET           /recipes/search                       controllers.RecipeController.searchRecipe()
+
+# Obtener las recetas de un usuario
+GET           /recipes/user/:id_user                controllers.RecipeController.retrieveUserRecipes(id_user: Long)
 
 # Obtener las recetas de una categoría
 GET           /recipes/category/:id                 controllers.RecipeController.retrieveRecipesByCategory(id: Long)
