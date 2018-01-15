@@ -189,7 +189,7 @@ public class RecipeController extends Controller {
         r.setSteps(f.get().getSteps());
         r.setTime(f.get().getTime());
         r.setDifficulty(f.get().getDifficulty());
-        r.setPeople(f.get().getPeople());
+        r.setServing(f.get().getServing());
         r.setCategory(f.get().getCategory());
         if (!r.checkCategory()) {
             return false;

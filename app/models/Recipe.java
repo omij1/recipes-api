@@ -70,10 +70,10 @@ public class Recipe extends BaseModel {
     public Difficulty difficulty;
     
     /**
-     * Número de personas indicadas para la receta
+     * Número de raciones de la receta
      */
     @NotBlank(message = "validation.blank")
-    String people;
+    String serving;
 
 	/**
      * Categoría de la receta
@@ -100,11 +100,11 @@ public class Recipe extends BaseModel {
      * @param steps       Pasos para elaborar la receta
      * @param time        Unidad de tiempo para elaborar la receta
      * @param difficulty  Dificultad de la receta
-     * @param people      Número de personas indicadas para la receta
+     * @param serving     Número de raciones de la receta
      * @param category    Categoría de la receta
      */
     public Recipe(@NotBlank String title, @Required List<Ingredient> ingredients, @Required List<String> steps, @NotBlank String time, @Required Difficulty difficulty,
-                  @NotBlank String people, @Required Category category) {
+                  @NotBlank String serving, @Required Category category) {
 
         super();
         this.title = title;
@@ -112,7 +112,7 @@ public class Recipe extends BaseModel {
         this.steps = steps;
         this.time = time;
         this.difficulty = difficulty;
-        this.people = people;
+        this.serving = serving;
         this.category = category;
     }
 
@@ -364,19 +364,19 @@ public class Recipe extends BaseModel {
     }
     
     /**
-     * Getter de people
-     * @return Número de personas para las que está indicada la receta
+     * Getter de serving
+     * @return Número de raciones de la receta
      */
-    public String getPeople() {
-		return people;
+    public String getServing() {
+		return serving;
 	}
 
     /**
-     * Setter de people
-     * @param people Número de personas indicadas para la receta
+     * Setter de serving
+     * @param serving Raciones de la receta
      */
-	public void setPeople(String people) {
-		this.people = people;
+	public void setServing(String serving) {
+		this.serving = serving;
 	}
 
     /**
