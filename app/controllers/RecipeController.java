@@ -159,7 +159,8 @@ public class RecipeController extends Controller {
         if (user.getId() == loggedUser.getId() || loggedUser.getAdmin()) {
             Form<Recipe> f = formFactory.form(Recipe.class).bindFromRequest();
             //Comprobamos que si actualiza el título, no coja uno repetido
-            if (Recipe.findByName(f.get().getTitle().toUpperCase()) != null) {
+
+            if (Recipe.findByName(f.get().getTitle().toUpperCase()).getId() != id) {
                 return Results.status(409, new ErrorObject("7", messages.at("recipe.titleAlreadyExists")).convertToJson()).as("application/json");
             }
             if (f.hasErrors()) {
