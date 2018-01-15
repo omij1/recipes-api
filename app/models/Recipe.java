@@ -68,8 +68,14 @@ public class Recipe extends BaseModel {
     @Enumerated(EnumType.STRING)
     @Required(message = "validation.blank")
     public Difficulty difficulty;
-
+    
     /**
+     * Número de personas indicadas para la receta
+     */
+    @NotBlank(message = "validation.blank")
+    String people;
+
+	/**
      * Categoría de la receta
      */
     @Required(message = "validation.blank")
@@ -94,10 +100,11 @@ public class Recipe extends BaseModel {
      * @param steps       Pasos para elaborar la receta
      * @param time        Unidad de tiempo para elaborar la receta
      * @param difficulty  Dificultad de la receta
+     * @param people      Número de personas indicadas para la receta
      * @param category    Categoría de la receta
      */
-    public Recipe(@NotBlank String title, @NotBlank List<Ingredient> ingredients, @Required List<String> steps, @NotBlank String time, @NotBlank Difficulty difficulty,
-                  Category category) {
+    public Recipe(@NotBlank String title, @Required List<Ingredient> ingredients, @Required List<String> steps, @NotBlank String time, @Required Difficulty difficulty,
+                  @NotBlank String people, @Required Category category) {
 
         super();
         this.title = title;
@@ -105,6 +112,7 @@ public class Recipe extends BaseModel {
         this.steps = steps;
         this.time = time;
         this.difficulty = difficulty;
+        this.people = people;
         this.category = category;
     }
 
@@ -354,6 +362,22 @@ public class Recipe extends BaseModel {
     public void setCategory(Category category) {
         this.category = category;
     }
+    
+    /**
+     * Getter de people
+     * @return Número de personas para las que está indicada la receta
+     */
+    public String getPeople() {
+		return people;
+	}
+
+    /**
+     * Setter de people
+     * @param people Número de personas indicadas para la receta
+     */
+	public void setPeople(String people) {
+		this.people = people;
+	}
 
     /**
      * Getter de user

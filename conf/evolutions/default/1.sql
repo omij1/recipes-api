@@ -37,6 +37,7 @@ create table recipe (
   steps                         array,
   time                          varchar(255) not null,
   difficulty                    varchar(11),
+  people                        varchar(255) not null,
   category_id                   bigint,
   user_id                       bigint,
   version                       bigint not null,
