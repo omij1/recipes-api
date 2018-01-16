@@ -1,4 +1,5 @@
-#DESPLIEGUE DE LA APLICACIÓN
+# DESPLIEGUE DE LA APLICACIÓN
+Autores: **Omar Marcos Julián** y **Rafael Hidalgo Otero**
 
 ## Crear una instancia  
 Lo primero que hacemos para desplegar nuestra aplicación es crear la instancia donde se ejecutará. Para ello entramos en la 
