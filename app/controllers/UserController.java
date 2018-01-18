@@ -387,8 +387,7 @@ public class UserController extends Controller {
         //Objeto User donde se guarda la información de la petición
         User updateUser = f.get();
         //Si era administrador, seguirá siéndolo
-        Boolean isAdmin = loggedUser.getAdmin()?true:false;
-        updateUser.setAdmin(isAdmin);
+        updateUser.setAdmin(loggedUser.getAdmin());
 
         //Comprobamos que si actualiza el nick, no coja uno repetido
         User u = User.findByNick(f.get().getNick());
@@ -408,7 +407,7 @@ public class UserController extends Controller {
                 deleteUserCache(user);
                 //Se borra el cache de las recetas asociadas al usuario
                 List<Recipe> list = user.getUserRecipes();
-                for (Recipe recipe: list) {
+                for (Recipe recipe : list) {
                     deleteRecipeCache(recipe);
                 }
                 updateUser.setId(user.getId());
@@ -437,46 +436,43 @@ public class UserController extends Controller {
         //Obtenemos el usuario de la cabecera Authorization
         User loggedUser = (User) Http.Context.current().args.get("loggedUser");
 
+        //Si no es administrador no tiene permiso
+        if (!loggedUser.getAdmin()) {
+            return Results.status(401, messages.at("user.authorization"));
+        }
+
         //Obtenemos el usuario que va a ser o dejar de ser Administrador
         User userToAdmin = User.findById(id_user);
         if (userToAdmin == null) {
             return Results.notFound(messages.at("user.wrongId"));
         }
 
-        if (loggedUser.getAdmin()) {  //Si el usuario que envía la petición es el Administrador
-
-            //Si ya es administrador
-            if (userToAdmin.getAdmin()) {
-                //Si sólo hay un Administrador no se puede quitar
-                if (User.findByAdmin(0).getTotalCount() > 1) {
-                    Ebean.beginTransaction();
-                    try {
-                        userToAdmin.setAdmin(false);     //Deja de ser Administrador
-                        userToAdmin.update();           //Se guarda en la base de datos
-                        Ebean.commitTransaction();
-                    } finally {
-                        Ebean.endTransaction();
-                    }
-                    return ok(messages.at("user.setNoAdmin"));
-                }
-                return Results.status(401, messages.at("user.adminError"));
-            }
-
-            //Si no es administrador
-            if (!userToAdmin.getAdmin()) {
+        //Si el usuario elegido ya es administrador
+        if (userToAdmin.getAdmin()) {
+            //Si sólo hay un Administrador no se puede quitar
+            if (User.findByAdmin(0).getTotalCount() > 1) {
                 Ebean.beginTransaction();
                 try {
-                    userToAdmin.setAdmin(true);     //Pasa a ser administrador
+                    userToAdmin.setAdmin(false);     //Deja de ser Administrador
                     userToAdmin.update();           //Se guarda en la base de datos
                     Ebean.commitTransaction();
                 } finally {
                     Ebean.endTransaction();
                 }
-                return ok(messages.at("user.setAdmin"));
+                return ok(messages.at("user.setNoAdmin"));
             }
-
+            return Results.status(401, messages.at("user.adminError"));
+        } else {
+            Ebean.beginTransaction();
+            try {
+                userToAdmin.setAdmin(true);     //Pasa a ser administrador
+                userToAdmin.update();           //Se guarda en la base de datos
+                Ebean.commitTransaction();
+            } finally {
+                Ebean.endTransaction();
+            }
+            return ok(messages.at("user.setAdmin"));
         }
-        return Results.status(401, messages.at("user.authorization"));
 
     }
 
@@ -510,7 +506,7 @@ public class UserController extends Controller {
         //Si la petición la realiza el propio usuario que se va a borrar, o un administrador
         if (user.getId() == loggedUser.getId() || loggedUser.getAdmin()) {
             if (user.delete()) {
-                deleteUserCache(user);                
+                deleteUserCache(user);
                 return ok(messages.at("user.deleted"));
             }
             return Results.internalServerError(messages.at("user.deletedFailed"));
