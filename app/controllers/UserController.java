@@ -4,6 +4,7 @@ package controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.ebean.Ebean;
 import io.ebean.PagedList;
+import models.Recipe;
 import models.User;
 import play.cache.SyncCacheApi;
 import play.data.Form;
@@ -404,14 +405,12 @@ public class UserController extends Controller {
         if (user.getId() == loggedUser.getId() || loggedUser.getAdmin()) {
             Ebean.beginTransaction();
             try {
-                String key = "user-" + id_user;
-                cache.remove(key);
-                key = "user-" + user.getNick();
-                cache.remove(key);
-                key = "user-" + id_user + "-json";
-                cache.remove(key);
-                key = "user-" + user.getNick() + "-json";
-                cache.remove(key);
+                deleteUserCache(user);
+                //Se borra el cache de las recetas asociadas al usuario
+                List<Recipe> list = user.getUserRecipes();
+                for (Recipe recipe: list) {
+                    deleteRecipeCache(recipe);
+                }
                 updateUser.setId(user.getId());
                 updateUser.update();
                 Ebean.commitTransaction();
@@ -511,16 +510,7 @@ public class UserController extends Controller {
         //Si la petición la realiza el propio usuario que se va a borrar, o un administrador
         if (user.getId() == loggedUser.getId() || loggedUser.getAdmin()) {
             if (user.delete()) {
-                //Se borran la caché de las peticiones de usuario único
-                String key = "user-" + id_user;
-                cache.remove(key);
-                key = "user-" + user.getNick();
-                cache.remove(key);
-                //Se borran la caché de las respuestas
-                key = "user-" + id_user + "-json";
-                cache.remove(key);
-                key = "user-" + user.getNick() + "-json";
-                cache.remove(key);
+                deleteUserCache(user);                
                 return ok(messages.at("user.deleted"));
             }
             return Results.internalServerError(messages.at("user.deletedFailed"));
@@ -629,6 +619,35 @@ public class UserController extends Controller {
         }
         return Results.status(415, messages.at("wrongOutputFormat"));
 
+    }
+
+    /**
+     * Método que borra el caché de los usuarios
+     *
+     * @param user usuario del que se quiere borrar el caché
+     */
+    public void deleteUserCache(User user) {
+        String key = "user-" + user.getId();
+        cache.remove(key);
+        key = "user-" + user.getNick();
+        cache.remove(key);
+        //Se borran la caché de las respuestas
+        key = "user-" + user.getId() + "-json";
+        cache.remove(key);
+        key = "user-" + user.getNick() + "-json";
+        cache.remove(key);
+    }
+
+    /**
+     * Método que borra el caché de las recetas
+     *
+     * @param recipe receta de la que se quiere borrar el caché
+     */
+    public void deleteRecipeCache(Recipe recipe) {
+        String key = "recipe-" + recipe.getId();
+        cache.remove(key);
+        key = "recipe-" + recipe.getId() + "-json";
+        cache.remove(key);
     }
 
 
