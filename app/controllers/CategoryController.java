@@ -62,6 +62,10 @@ public class CategoryController extends Controller {
 
         User loggedUser = (User) Http.Context.current().args.get("loggedUser");
 
+        if (!loggedUser.getAdmin()) {
+            return Results.status(401, messages.at("user.authorization"));
+        }
+
         //Formulario para obtener los datos de la petición
         Form<Category> f = formFactory.form(Category.class).bindFromRequest();
         if (f.hasErrors()) {
@@ -72,13 +76,10 @@ public class CategoryController extends Controller {
         Category c = f.get();
 
         //Comprobación de la existencia de la categoría y guardado en caso de que no exista
-        if (loggedUser.getAdmin()) {
-            if (!c.checkCategory()) {
-                return Results.created(messages.at("category.created"));
-            }
-            return Results.status(409, new ErrorObject("4", messages.at("category.alreadyExist")).convertToJson()).as("application/json");
+        if (!c.checkCategory()) {
+            return Results.created(messages.at("category.created"));
         }
-        return Results.status(401, messages.at("user.authorization"));
+        return Results.status(409, new ErrorObject("4", messages.at("category.alreadyExist")).convertToJson()).as("application/json");
 
     }
 
