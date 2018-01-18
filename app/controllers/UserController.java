@@ -4,7 +4,6 @@ package controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.ebean.Ebean;
 import io.ebean.PagedList;
-import models.Recipe;
 import models.User;
 import play.cache.SyncCacheApi;
 import play.data.Form;
@@ -386,10 +385,13 @@ public class UserController extends Controller {
 
         //Objeto User donde se guarda la información de la petición
         User updateUser = f.get();
-        updateUser.setAdmin(false);
+        //Si era administrador, seguirá siéndolo
+        Boolean isAdmin = loggedUser.getAdmin()?true:false;
+        updateUser.setAdmin(isAdmin);
 
         //Comprobamos que si actualiza el nick, no coja uno repetido
-        if (User.findByNick(updateUser.getNick()).getId() != id_user) {
+        User u = User.findByNick(f.get().getNick());
+        if (u != null && u.getId() != id_user) {
             return Results.status(409, new ErrorObject("6", messages.at("user.nickAlreadyExist")).convertToJson()).as("application/json");
         }
 

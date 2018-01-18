@@ -147,7 +147,8 @@ public class CategoryController extends Controller {
         Category updateCategory = f.get();
 
         //Comprobamos que si actualiza el título, no coja uno repetido
-        if (Category.findByCategoryName(updateCategory.getCategoryName().toUpperCase()).getId() != id) {
+        Category cat = Category.findByCategoryName(updateCategory.getCategoryName().toUpperCase());
+        if (cat != null && cat.getId() != id) {
             return Results.status(409, new ErrorObject("8", messages.at("category.titleAlreadyExists")).convertToJson()).as("application/json");
         }
 
