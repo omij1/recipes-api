@@ -60,11 +60,11 @@ public class UserController extends Controller {
 
         //Validación y guardado en caso de que el nick no exista. En caso contrario se muestra el error correspondiente
         if (user.checkAndSave()) {
-        	
+
             if (request().accepts("application/xml")) {
                 return Results.created(views.xml.apiKey.render(user));
-            } 
-            
+            }
+
             //Si acepta json, no indica el formato o el formato indicado es incorrecto, se envía en json
             ObjectNode apiKey = Json.newObject();
             apiKey.put("apiKey", user.getApiKey().getKey());
@@ -446,7 +446,7 @@ public class UserController extends Controller {
 
             //Si ya es administrador
             if (userToAdmin.getAdmin()) {
-                //Si sólo hay un Administrador no se puede eliminar
+                //Si sólo hay un Administrador no se puede quitar
                 if (User.findByAdmin(0).getTotalCount() > 1) {
                     Ebean.beginTransaction();
                     try {
@@ -490,34 +490,40 @@ public class UserController extends Controller {
     public Result deleteUser(Long id_user) {
 
         messages = Http.Context.current().messages();
+        //Se obtiene el usuario que se quiere borrar
         User user = User.findById(id_user);
-        //Si el usuario existe
-        if (user != null) {
-
-            //Obtenemos el usuario de la cabecera Authorization
-            User loggedUser = (User) Http.Context.current().args.get("loggedUser");
-
-            if (user.getId() == loggedUser.getId() || loggedUser.getAdmin()) {
-                if (user.delete()) {
-                    //Se borran la caché de las peticiones de usuario único
-                    String key = "user-" + id_user;
-                    cache.remove(key);
-                    key = "user-" + user.getNick();
-                    cache.remove(key);
-                    //Se borran la caché de las respuestas
-                    key = "user-" + id_user + "-json";
-                    cache.remove(key);
-                    key = "user-" + user.getNick() + "-json";
-                    cache.remove(key);
-                    return ok(messages.at("user.deleted"));
-                }
-                return Results.internalServerError(messages.at("user.deletedFailed"));
-            }
-            return Results.status(401, messages.at("user.authorization"));
+        //Aunque el usuario ya no exista, por idempotencia la respuesta debe ser correcta
+        if (user == null) {
+            return ok(messages.at("user.deleted"));
         }
 
-        //Por idempotencia, aunque no exista el usuario, la respuesta debe ser correcta.
-        return ok(messages.at("user.deleted"));
+        //Obtenemos el usuario de la cabecera Authorization
+        User loggedUser = (User) Http.Context.current().args.get("loggedUser");
+
+        /*Comprobamos que si se va a borrar el admin, haya al menos otro, de lo contrario no podrá borrarse
+        Si el que quiere borrar al administrador no es administrador, saltará el error de autorización y no éste*/
+        if (user.getAdmin() && loggedUser.getAdmin() && User.findByAdmin(0).getTotalCount() == 1) {
+            return Results.status(401, messages.at("user.adminError"));
+        }
+
+        //Si la petición la realiza el propio usuario que se va a borrar, o un administrador
+        if (user.getId() == loggedUser.getId() || loggedUser.getAdmin()) {
+            if (user.delete()) {
+                //Se borran la caché de las peticiones de usuario único
+                String key = "user-" + id_user;
+                cache.remove(key);
+                key = "user-" + user.getNick();
+                cache.remove(key);
+                //Se borran la caché de las respuestas
+                key = "user-" + id_user + "-json";
+                cache.remove(key);
+                key = "user-" + user.getNick() + "-json";
+                cache.remove(key);
+                return ok(messages.at("user.deleted"));
+            }
+            return Results.internalServerError(messages.at("user.deletedFailed"));
+        }
+        return Results.status(401, messages.at("user.authorization"));
 
     }
 
@@ -573,7 +579,6 @@ public class UserController extends Controller {
     }
 
 
-
     /**
      * Método para obtener un listado de los administradores
      *
@@ -623,7 +628,6 @@ public class UserController extends Controller {
         return Results.status(415, messages.at("wrongOutputFormat"));
 
     }
-
 
 
 }
