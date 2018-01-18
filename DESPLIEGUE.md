@@ -1,7 +1,7 @@
 # DESPLIEGUE DE LA APLICACIÓN
 Autores: **Omar Marcos Julián** y **Rafael Hidalgo Otero**
 
-##Consideraciones previas y justificación
+## Consideraciones previas y justificación
 A la hora de desplegar nuestra aplicación, vamos a utilizar AWS (Amazon Web Services), que es un sistema de Infraestructura
 como servicio (IaaS) ya que nos permite un nivel más bajo de abstracción y nos ofrece todos los elementos que podamos necesitar
 para el despliegue de nuestra aplicación. A diferencia de la Plataforma como Servicio (PaaS), somos nosotros los que debemos 
