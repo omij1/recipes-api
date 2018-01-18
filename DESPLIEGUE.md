@@ -1,6 +1,32 @@
 # DESPLIEGUE DE LA APLICACIÓN
 Autores: **Omar Marcos Julián** y **Rafael Hidalgo Otero**
 
+##Consideraciones previas y justificación
+A la hora de desplegar nuestra aplicación, vamos a utilizar AWS (Amazon Web Services), que es un sistema de Infraestructura
+como servicio (IaaS) ya que nos permite un nivel más bajo de abstracción y nos ofrece todos los elementos que podamos necesitar
+para el despliegue de nuestra aplicación. A diferencia de la Plataforma como Servicio (PaaS), somos nosotros los que debemos 
+configurar todo lo relativo al hardware que va a ejecutar nuestra aplicación y de preparar el entorno en nuestras máquinas.
+Esto nos da más transparencia y control sobre las instancias que ejecutarán nuestra aplicación (a cambio de una mayor dificultad
+ya que somos nosotros los que lo debemos configurar todo: instancias, bases de datos, imágenes, escalado, entorno, etc).
+Nos permite no depender del proveedor y saber cómo funciona todo, haciendo más fácil la resolución de errores en caso de
+que los haya. 
+
+Lo primero que vamos a hacer es crear una primera instancia donde instalaremos las dependencias necesarias y desplegaremos
+nuestra aplicación. Haremos además que la aplicación se ponga en marcha sola en caso de que se detenga por algún motivo. 
+
+Después crearemos una base de datos a la que conectaremos nuestra aplicación, dejándola así sin estado (uno de los 
+12 factores para la construcción de aplicaciones SaaS). Además permite la persistencia de datos ya que se puede reiniciar 
+la instancia o parar la aplicación sin la pérdida de éstos. 
+
+Una vez hecho esto y comprobado que todo funciona correctamente, crearemos una imagen de la instancia del equipo virtual para que podamos replicarlo.
+Mediante un grupo de autoescalado podremos aumentar o disminuir replicas de la instancia en función de la carga de cada una 
+de ellas. Además utilizaremos un balanceador de carga que dirigirá el tráfico a las instancias de nuestras máquinas virtuales
+en función de la carga que tengan. El balanceador nos sirve también para comprobar si las instancias están operativas o si alguna
+ha dejado de funcionar. En ese caso, se creará otra instancia para que siempre estén operativas el número de instancias necesarias
+para el buen fucionamiento de la aplicación, siempre dentro del rango que hayamos configurado (en nuestro caso entre 2 y 10 instancias).
+Con esto conseguimos que nuestra aplicación sea escalable horizontalmente en función de las necesidades y disponer de una
+cierta tolerancia a fallos, ya que si cae una instancia, se creará otra para mantener siempre el mínimo que hayamos configurado.
+
 ## Crear una instancia  
 Lo primero que hacemos para desplegar nuestra aplicación es crear la instancia donde se ejecutará. Para ello entramos en la 
 consola de AWS y seleccionamos EC2 (Elastic Computing). Lo primero que hacemos es cambiar la región a París, ya que en
@@ -129,3 +155,10 @@ Si esto ocurre deberá eliminarnos una instancia. Con esto podemos minimizar gas
 el sistema se encargará de apagarla.
 
 ## Elasticache
+A continuación conectamos nuestra aplicación a un Redis con Amazon Elasticache para Redis. Para ello creamos una instancia de
+Elasticache, elegimos cluster engine de tipo Redis, desmarcamos la casilla multi AZ with Auto Fail-Over, el número de réplicas
+lo ponemos a 1, el tipo de nodo caché t2 micro, elegimos la subred donde están corriendo las instancias (Subnet ID) y el 
+security group de la instancia, en el que tenemos que habilitar el puerto por el que escucha la instancia de Elasticache, y 
+decirle que escuche desde cualquier lugar. 
+Para no tener que rehacer la imagen de nuevo, configuramos las variables de entorno necesarias para que la aplicación
+acceda al Redis, desde un archivo externo. Una vez creado el Redis, la aplicación puede acceder a él a través de su Endpoint.  
