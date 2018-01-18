@@ -158,15 +158,17 @@ public class RecipeController extends Controller {
         //Comprobamos que coinciden el creador y el que la quiere modificar
         if (user.getId() == loggedUser.getId() || loggedUser.getAdmin()) {
             Form<Recipe> f = formFactory.form(Recipe.class).bindFromRequest();
-            //Comprobamos que si actualiza el título, no coja uno repetido
 
-            if (Recipe.findByName(f.get().getTitle().toUpperCase()).getId() != id) {
+            //Comprobamos que si actualiza el título, no coja uno repetido
+            Recipe rec = Recipe.findByName(f.get().getTitle().toUpperCase());
+            if (rec != null && rec.getId() != id) {
                 return Results.status(409, new ErrorObject("7", messages.at("recipe.titleAlreadyExists")).convertToJson()).as("application/json");
             }
             if (f.hasErrors()) {
                 return Results.ok(f.errorsAsJson());
             }
             if (updateFields(r, f)) {
+                deleteRecipeCache(r);
                 return ok(messages.at("recipe.updated"));
             }
             return Results.notFound(messages.at("category.notExist"));
@@ -228,10 +230,7 @@ public class RecipeController extends Controller {
         //Comprobamos que coinciden
         if (user.getId() == loggedUser.getId() || loggedUser.getAdmin()) {
             if (r.delete()) {
-                String key = "recipe-" + r.getId();
-                cache.remove(key);
-                key = "recipe-" + r.getId() + "-json";
-                cache.remove(key);
+                deleteRecipeCache(r);
                 return ok(messages.at("recipe.deleted"));
             }
             return internalServerError();
@@ -484,5 +483,17 @@ public class RecipeController extends Controller {
                 }
             });
         }
+    }
+
+    /**
+     * Método que borra el caché de las recetas
+     *
+     * @param recipe receta de la que se quiere borrar el caché
+     */
+    public void deleteRecipeCache(Recipe recipe) {
+        String key = "recipe-" + recipe.getId();
+        cache.remove(key);
+        key = "recipe-" + recipe.getId() + "-json";
+        cache.remove(key);
     }
 }

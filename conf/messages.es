@@ -58,6 +58,6 @@ user.adminError = Tiene que haber al menos un Administrador
 
 
 
-apiKey.null = Para realizar esta acción, debes introducir el apikey correcto en la cabecera "Authorization"
+apiKey.null = ApiKey incorrecto
 page.null = Debes introducir la página solicitada
 

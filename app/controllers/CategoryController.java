@@ -1,5 +1,6 @@
 package controllers;
 
+import io.ebean.Ebean;
 import models.User;
 import play.cache.SyncCacheApi;
 import play.data.Form;
@@ -137,6 +138,10 @@ public class CategoryController extends Controller {
 
         User loggedUser = (User) Http.Context.current().args.get("loggedUser");
 
+        if (!loggedUser.getAdmin()) {
+            return Results.status(401, messages.at("user.authorization"));
+        }
+
         //Formulario para obtener los datos de la petición
         Form<Category> f = formFactory.form(Category.class).bindFromRequest();
         if (f.hasErrors()) {
@@ -147,7 +152,8 @@ public class CategoryController extends Controller {
         Category updateCategory = f.get();
 
         //Comprobamos que si actualiza el título, no coja uno repetido
-        if (Category.findByCategoryName(updateCategory.getCategoryName().toUpperCase()).getId() != id) {
+        Category cat = Category.findByCategoryName(updateCategory.getCategoryName().toUpperCase());
+        if (cat != null && cat.getId() != id) {
             return Results.status(409, new ErrorObject("8", messages.at("category.titleAlreadyExists")).convertToJson()).as("application/json");
         }
 
@@ -155,22 +161,20 @@ public class CategoryController extends Controller {
         Category c = Category.findByCategoryId(id);
 
         //Se busca la categoría que se quiere actualizar y se actualiza
-
-        if (loggedUser.getAdmin()) {
-            if (c == null) {
-                return Results.notFound(messages.at("category.notExist"));
-            }
-            updateCategory.setId(c.getId());
-            updateCategory.setCategoryName(updateCategory.getCategoryName().toUpperCase());
-            updateCategory.update();
-            String key = "category-" + id;
-            cache.remove(key);
-            key = "category-" + id + "-json";
-            cache.remove(key);
-            return ok(messages.at("category.updated"));
+        if (c == null) {
+            return Results.notFound(messages.at("category.notExist"));
         }
-        return Results.status(401, messages.at("user.authorization"));
-
+        Ebean.beginTransaction();
+        try {
+            deleteRecipeCache(c);
+            updateCategory.setId(c.getId());
+            updateCategory.setCategoryName(updateCategory.getCategoryName().toUpperCase()); //Lo ponemos en mayúsculas
+            updateCategory.update();
+            Ebean.commitTransaction();
+        } finally {
+            Ebean.endTransaction();
+        }
+        return ok(messages.at("category.updated"));
     }
 
     /**
@@ -191,10 +195,7 @@ public class CategoryController extends Controller {
             Category c = Category.findByCategoryId(id);
             if (c != null) {
                 if (c.delete()) {
-                    String key = "category-" + id;
-                    cache.remove(key);
-                    key = "category-" + id + "-json";
-                    cache.remove(key);
+                    deleteRecipeCache(c);
                     return ok(messages.at("category.deleted"));
                 }
                 return internalServerError(messages.at("category.deletedFailed"));
@@ -231,10 +232,10 @@ public class CategoryController extends Controller {
         }
         List<Category> categories = list.getList();
         Integer number = list.getTotalCount();
-        
+
         //Si no hay categorias
-        if(categories.isEmpty()) {
-        		return Results.notFound(messages.at("category.empty"));
+        if (categories.isEmpty()) {
+            return Results.notFound(messages.at("category.empty"));
         }
 
         //Se ordenan las categorías de recetas alfabéticamente y se muestran al usuario
@@ -272,6 +273,18 @@ public class CategoryController extends Controller {
                 }
             });
         }
+    }
+
+    /**
+     * Método que borra el caché de las categorías
+     *
+     * @param category categoría de la que se quiere borrar el caché
+     */
+    public void deleteRecipeCache(Category category) {
+        String key = "category-" + category.getId();
+        cache.remove(key);
+        key = "category-" + category.getId() + "-json";
+        cache.remove(key);
     }
 
 }

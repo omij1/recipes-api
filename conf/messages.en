@@ -56,5 +56,5 @@ user.setNoAdmin = The user is no longer an Administrator
 user.adminError = There must be at least one Administrator
 
 
-apiKey.null = To do this action, you must enter the correct apikey in the "Authorization" header
+apiKey.null = Incorrect ApiKey
 page.null = You must enter the page requested
