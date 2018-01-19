@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import io.ebean.Ebean;
 import io.ebean.PagedList;
 import models.Category;
 import models.Recipe;
@@ -181,7 +182,7 @@ public class RecipeController extends Controller {
      */
     private boolean updateFields(Recipe r, Form<Recipe> f) {
 
-        r.setTitle(f.get().getTitle().toUpperCase());
+    		r.setTitle(f.get().getTitle().toUpperCase());
         r.updateRecipeIngredients(f.get().getIngredients());
         r.setSteps(f.get().getSteps());
         r.setTime(f.get().getTime());
@@ -191,12 +192,19 @@ public class RecipeController extends Controller {
         if (!r.checkCategory()) {
             return false;
         }
-        String key = "recipe-" + r.getId();
-        cache.remove(key);
-        key = "recipe-" + r.getId() + "-json";
-        cache.remove(key);
-        r.save();
-        return true;
+        
+	    	Ebean.beginTransaction();
+	    	try {
+	    	        String key = "recipe-" + r.getId();
+	    	        cache.remove(key);
+	    	        key = "recipe-" + r.getId() + "-json";
+	    	        cache.remove(key);
+	    	        r.save();
+	    	        Ebean.commitTransaction();
+	    	        return true;
+	    	} finally {
+	    		Ebean.endTransaction();
+	    	}
     }
 
     /**
