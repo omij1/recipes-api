@@ -20,7 +20,7 @@ GET           /assets/*file                         controllers.Assets.versioned
 POST          /user                                 controllers.UserController.createUser
 GET           /user/:id_user                        controllers.UserController.retrieveUser(id_user: Long)
 PUT           /user/:id_user                        controllers.UserController.updateUser(id_user: Long)
-PATCH         /user/admin/:id_user                  controllers.UserController.toggleAdmin(id_user: Long)
+PATCH         /user/:id_user                        controllers.UserController.toggleAdmin(id_user: Long)
 DELETE        /user/:id_user                        controllers.UserController.deleteUser(id_user: Long)
 GET           /user/nick/:nick                      controllers.UserController.retrieveUserByNick(nick: String)
 
