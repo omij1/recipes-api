@@ -23,11 +23,11 @@ import java.util.Map;
 public class FunctionalTest extends WithApplication {
 
     @Test
-    public void testGetCategoryWrongFormat() {
+    public void testGetUsersWrongFormat() {
 
         RequestBuilder req = Helpers.fakeRequest()
                 .method("GET")
-                .uri("/category/1")
+                .uri("/users?page=0")
                 .header("Accept", "application/heml");
         Result r = Helpers.route(app, req);
         assertThat(r.status()).isEqualTo(415);
