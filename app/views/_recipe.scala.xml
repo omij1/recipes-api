@@ -10,7 +10,7 @@
 		<steps>@recipe.getSteps()</steps>
 		<time>@recipe.getTime()</time>
 		<difficulty>@recipe.getDifficulty()</difficulty>
-		<people>@recipe.getServing()</people>
+		<serving>@recipe.getServing()</serving>
 			@_category(recipe.getCategory())
 		<userId>@recipe.getUser().getId()</userId>
 		<nick>@recipe.getUser().getNick()</nick>
