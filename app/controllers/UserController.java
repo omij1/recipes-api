@@ -386,19 +386,24 @@ public class UserController extends Controller {
 
         //Objeto User donde se guarda la información de la petición
         User updateUser = f.get();
-        //Si era administrador, seguirá siéndolo
-        updateUser.setAdmin(loggedUser.getAdmin());
-
-        //Comprobamos que si actualiza el nick, no coja uno repetido
-        User u = User.findByNick(f.get().getNick());
-        if (u != null && u.getId() != id_user) {
-            return Results.status(409, new ErrorObject("6", messages.at("user.nickAlreadyExist")).convertToJson()).as("application/json");
-        }
 
         //User correspondiente al id enviado en la petición
         User user = User.findById(id_user);
         if (user == null) {
             return Results.notFound(messages.at("user.wrongId"));
+        }
+
+        //Si era administrador, seguirá siéndolo
+        if (user.getId() == loggedUser.getId()) {
+            updateUser.setAdmin(loggedUser.getAdmin());
+        } else {
+            updateUser.setAdmin(user.getAdmin());
+        }
+
+        //Comprobamos que si actualiza el nick, no coja uno repetido
+        User u = User.findByNick(f.get().getNick());
+        if (u != null && u.getId() != id_user) {
+            return Results.status(409, new ErrorObject("6", messages.at("user.nickAlreadyExist")).convertToJson()).as("application/json");
         }
 
         if (user.getId() == loggedUser.getId() || loggedUser.getAdmin()) {
