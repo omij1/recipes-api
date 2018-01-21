@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import io.ebean.Finder;
 import validators.FirstCapitalLetter;
+import validators.FirstWordFirstCapitalLetter;
 
 /**
  * Clase modelo que representa la tabla Ingredient donde se guardan los ingredientes de las recetas.
@@ -30,7 +31,7 @@ public class Ingredient extends BaseModel {
 	 * Nombre del ingrediente
 	 */
 	@NotBlank(message = "validation.blank")
-	@FirstCapitalLetter(message = "validation.capitalLetter")
+	@FirstWordFirstCapitalLetter(message = "validation.capitalLetter")
 	String ingredientName;
 
 	/**
