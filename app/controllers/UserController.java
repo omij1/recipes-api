@@ -393,20 +393,21 @@ public class UserController extends Controller {
             return Results.notFound(messages.at("user.wrongId"));
         }
 
-        //Si era administrador, seguirá siéndolo
-        if (user.getId() == loggedUser.getId()) {
-            updateUser.setAdmin(loggedUser.getAdmin());
-        } else {
-            updateUser.setAdmin(user.getAdmin());
-        }
-
-        //Comprobamos que si actualiza el nick, no coja uno repetido
-        User u = User.findByNick(f.get().getNick());
-        if (u != null && u.getId() != id_user) {
-            return Results.status(409, new ErrorObject("6", messages.at("user.nickAlreadyExist")).convertToJson()).as("application/json");
-        }
-
         if (user.getId() == loggedUser.getId() || loggedUser.getAdmin()) {
+
+            //Si era administrador, seguirá siéndolo
+            if (user.getId() == loggedUser.getId()) {
+                updateUser.setAdmin(loggedUser.getAdmin());
+            } else {
+                updateUser.setAdmin(user.getAdmin());
+            }
+
+            //Comprobamos que si actualiza el nick, no coja uno repetido
+            User u = User.findByNick(f.get().getNick());
+            if (u != null && u.getId() != id_user) {
+                return Results.status(409, new ErrorObject("6", messages.at("user.nickAlreadyExist")).convertToJson()).as("application/json");
+            }
+
             Ebean.beginTransaction();
             try {
                 deleteUserCache(user);
